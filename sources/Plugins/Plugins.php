@@ -170,7 +170,7 @@ class _Plugins extends \IPS\Patterns\Singleton
             if( $xml->name == 'widget'){
                 $widgets[ $xml->getAttribute('key')] = [
                     'class' => $xml->getAttribute('class'),
-                    'restrict' => $xml->getAttribute('restrict'),
+                    'restrict' => explode( ",", $xml->getAttribute('restrict') ),
                     'default_area' => $xml->getAttribute('default_area'),
                     'allow_reuse' => ( $xml->getAttribute('allow_reuse') == 1) ? true : false,
                     'menu_style' => $xml->getAttribute('menu_style'),
