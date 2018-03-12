@@ -41,8 +41,13 @@ class _Generator extends \IPS\Patterns\Singleton
 
     protected function getForum()
     {
-        $db = \IPS\Db::i()->select( "*", "forums_forums", [ 'parent_id = ?', -1 ], "RAND()" )->first();
-
+        try {
+            $db = \IPS\Db::i()->select("*", "forums_forums", ['parent_id = ?', -1], "RAND()")->first();
+        }
+        catch( \Exception $e ){
+            static::generateForum(true);
+            $db = static::getForum();
+        }
         try
         {
             $db = \IPS\Db::i()->select( "*", "forums_forums", [ 'parent_id = ?', $db[ 'id' ] ], "RAND()" )->first();
@@ -65,6 +70,9 @@ class _Generator extends \IPS\Patterns\Singleton
         {
         }
 
+        if( $db instanceof \IPS\forums\Forum ){
+            return $db;
+        }
         return \IPS\forums\Forum::constructFromData( $db );
     }
 
@@ -130,39 +138,50 @@ class _Generator extends \IPS\Patterns\Singleton
         return $time;
     }
 
-    public function generateForum( $category = true, $start = false )
+    public function generateForum( $category = false, $start = false, $limit=10 )
     {
         $parent = null;
         if( $start )
         {
             try
             {
-                $parent = \IPS\Db::i()->select( "*", "forums_forums", [], "RAND()" )->first();
-                $parent = \IPS\forums\Forum::constructFromData( $parent );
-                try {
-                    $rand = rand( 1, 10);
-                    if( \IPS\Db::i()->select( '*', 'forums_forums', [ 'parent_id = ?', $parent ] )->count() > $rand) {
-                        throw new \Exception;
-                    }
+                $count = \IPS\Db::i()->select( '*', 'forums_forums')->count();
+
+                if( $count < 5 ){
+//                    foreach( range(1, 10) as $f ) {
+                        $parent = static::generateForum();
+//                    }
                 }
-                catch( \Exception $e ){
-                    $category = false;
+                else {
+                    $parent = \IPS\Db::i()->select("*", "forums_forums", [], "RAND()")->first();
+                    $parent = \IPS\forums\Forum::constructFromData($parent);
+                    try {
+                        $rand = rand(1, 10);
+                        if (\IPS\Db::i()->select('*', 'forums_forums', ['parent_id = ?', $parent])->count() > $rand) {
+                            throw new \Exception;
+                        }
+                    } catch (\Exception $e) {
+                        $category = false;
+                    }
                 }
             }
             catch( \Exception $e )
             {
-                $parent = static::generateForum( true );
+                $parent = static::generateForum( true, false, $limit );
             }
+        }
+
+        if( $parent == null ){
+            $category = true;
         }
 
         $rand = \array_rand( $this->adjective, 1 );
         $rand2 = \array_rand( $this->noun, 1 );
         $name = \str_replace( "_", " ", $this->adjective[ $rand ] . " " . $this->noun[ $rand2 ] );
-        $name = \ucwords( mb_strtolower( $name ) );
+        $name = \ucwords( \mb_strtolower( $name ) );
         $desc = $this->adjectiveGloss[ $rand ] . "; " . $this->nounGloss[ $rand2 ];
-        $findType = ( $rand + $rand2 ) / 17;
+        $findType = ( $rand + $rand2 ) / \rand( 1, 20 );
         $type = "normal";
-        $makeCat = $rand / 29;
 
         if( !$category )
         {
@@ -174,7 +193,7 @@ class _Generator extends \IPS\Patterns\Singleton
                 }
                 catch( \Exception $e )
                 {
-                    $parent = static::generateForum( true );
+                    $parent = static::generateForum( true, false, $limit );
                 }
             }
             $parent = $parent->id;

@@ -84,7 +84,7 @@ class _generator extends \IPS\Dispatcher\Controller
             [
                 'class' => "Number",
                 'name' => "storm_mc_limit",
-                'default' => 1,
+                'default' => 10,
                 'options' => [
                     'min' => 1
                 ]
@@ -386,7 +386,8 @@ class _generator extends \IPS\Dispatcher\Controller
                     switch( $type )
                     {
                         case "forums":
-                            \IPS\storm\Pseudo\Generator::i()->generateForum( false, true );
+//                            $b = ($limit < 5 ) ? true : \is_int( $offset / rand(1,5) );
+                            \IPS\storm\Pseudo\Generator::i()->generateForum( false, true, $limit );
                             break;
                         case "topics":
                             \IPS\storm\Pseudo\Generator::i()->generateTopic();
