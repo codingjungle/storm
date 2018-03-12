@@ -130,7 +130,7 @@ class _Generator extends \IPS\Patterns\Singleton
         return $time;
     }
 
-    public function generateForum( $category = false, $start = false )
+    public function generateForum( $category = true, $start = false )
     {
         $parent = null;
         if( $start )
