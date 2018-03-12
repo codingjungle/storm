@@ -49,18 +49,23 @@ class _Sources extends \IPS\Patterns\Singleton
 
         if( $values = $form->values() )
         {
+            $class = 'IPS\\storm\\Sources\\Compile\\';
             $type = $values['storm_class_type'];
             switch( $type ){
                 case 'ar':
-                    $class = 'ActiveRecord';
+                    $class .= 'ActiveRecord';
                     break;
                 case 'node':
-                    $class = 'Node';
+                    $class .= 'Node';
+                    break;
+                case 'trait':
+                    $class .= 'Traits';
                     break;
                 default:
-                    $class = \IPS\storm\Settings::mbUcfirst($type);
+                    $class .= \IPS\storm\Settings::mbUcfirst($type);
                     break;
             }
+
             $class = $class::i();
             $class->process( $values, $this->app );
             $msg = $this->lang->addToStack( 'storm_class_created', false, [ 'sprintf' => [ $type, $class->classname ] ] );

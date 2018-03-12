@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @brief       Interface Class
+ * @brief       Trait Class
  * @author      -storm_author-
  * @copyright   -storm_copyright-
  * @package     IPS Social Suite
@@ -12,10 +12,10 @@
 
 namespace IPS\storm\Sources\Compile;
 
-class _Interface extends \IPS\storm\Sources\Compile
+class _Traits extends \IPS\storm\Sources\Compile
 {
     protected function content(){
-        $this->brief = 'Interface';
-        $this->content = $this->getFile( 'interface.txt' );
+        $this->brief = 'Trait';
+        $this->content = $this->getFile( 'trait.txt' );
     }
 }

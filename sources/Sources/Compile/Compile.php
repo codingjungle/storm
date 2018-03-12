@@ -32,6 +32,7 @@ abstract class _Compile extends \IPS\Patterns\Singleton
 
     public function process( array $values, $app )
     {
+
         $this->appNode = $app;
         
         $this->directory = $this->appNode->directory;
@@ -41,7 +42,6 @@ abstract class _Compile extends \IPS\Patterns\Singleton
         $this->app = \IPS\storm\Settings::mbUcfirst($this->directory );
         
         $this->header = $this->buildHeader();
-        
         foreach( $values as $key => $val ) {
             $key = \mb_strtolower( \mb_substr( $key, \mb_strlen( 'storm_class_' ) ) );
             $this->{$key} = $val;
@@ -128,7 +128,7 @@ abstract class _Compile extends \IPS\Patterns\Singleton
         $this->content = \str_replace( $find, $replace, $this->content);
     }
     
-    abstract public function content();
+    abstract protected function content();
     
     protected function buildHeader(){
         return \file_get_contents( $this->blanks .'/'. "header.txt" );

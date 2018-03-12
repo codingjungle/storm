@@ -642,11 +642,11 @@ class storm_hook_coreModAdminAppDev extends _HOOK_CLASS_
             $j = [];
             foreach( $vals['langlangs'] as $v ){
                 if( $v['stormlang_no_js'] == 0 or $v['stormlang_no_js'] == 2 ){
-                    $l[ $v['stormlang_key'] ] = $v['stormlang_val'];
+                    $l[ trim($v['stormlang_key']) ] = $v['stormlang_val'];
                 }
 
                 if( $v['stormlang_no_js'] == 1 or $v['stormlang_no_js'] == 2 ){
-                    $j[ $v['stormlang_key'] ] = $v['stormlang_val'];
+                    $j[ trim($v['stormlang_key']) ] = $v['stormlang_val'];
                 }
             }
             \file_put_contents( \IPS\ROOT_PATH.'/applications/'.\IPS\Request::i()->appKey .'/dev/lang.php', "<?php\n\n\$lang = " . var_export( $l, true ) . ";\n" );

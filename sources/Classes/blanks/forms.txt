@@ -13,7 +13,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 class _Forms
 {
     /**
-     * @brief multiton store
+     * @var \IPS\Helpers\Form
      */
     protected static $instance = [];
 
@@ -29,38 +29,29 @@ class _Forms
      * @param null $action where it post to
      * @param array $attributes any addition attributes that need to be pass
      *
-     * @return mixed
+     * @return \IPS\Helpers\Form
      */
-    public static function i( array $elements, $object = null, $name = 'default', $form = null, $id = 'form', $submitLang = 'save', $action = null, $attributes = [] )
+    public static function execute( array $config )
     {
-        if( !$name )
+        if( !(isset( $config['id'] ) ) )
         {
             $name = md5( rand( 1, 100000 ) );
+        }
+        else{
+            $name = $config['id'];
         }
 
         if( !isset( static::$instance[ $name ] ) )
         {
             $class = get_called_class();
-            static::$instance[ $name ] = new $class();
-            static::$instance[ $name ]->elements = $elements;
-            static::$instance[ $name ]->obj = $object;
-
-            if( $form instanceof \IPS\Helpers\Form )
-            {
-                static::$instance[ $name ]->form = $form;
-            }
-            else
-            {
-                static::$instance[ $name ]->form = new \IPS\Helpers\Form( $id, $submitLang, $action, $attributes );
-            }
-
-            if( $id )
-            {
-                static::$instance[ $name ]->form->id = $id;
-            }
+            static::$instance[ $name ] = new $class( $config );
         }
 
-        return static::$instance[ $name ]->run();
+        /**
+         * @var $class static
+         */
+        $class = static::$instance[ $name ];
+        return $class->run();
     }
 
     /**
@@ -86,6 +77,12 @@ class _Forms
      * @var null
      */
     protected $langPrefix = null;
+
+    protected $suffix = false;
+
+    protected $header = null;
+
+    protected $tab = null;
 
     /**
      * @brief the class map for form elements
@@ -128,6 +125,7 @@ class _Forms
         'sg' => 'SocialGroup',
         'sort' => 'Sort',
         'stack' => 'Stack',
+        'Telephone' => 'Tel',
         'tel' => 'Tel',
         'text' => 'Text',
         'textarea' => 'TextArea',
@@ -147,18 +145,44 @@ class _Forms
     /**
      * _Forms constructor.
      */
-    final protected function __construct()
+    final protected function __construct( $config )
     {
+        $this->elements = $config['elements'];
+
+        if( isset( $config['object'] ) ) {
+            $this->obj = $config[ 'object' ];
+        }
+
+        $form = isset( $config['form'] ) ? $config['form'] : null;
+
+        if( $form instanceof \IPS\Helpers\Form )
+        {
+            $this->form = $form;
+        }
+        else
+        {
+            $this->form = new \IPS\Helpers\Form( ( isset( $config['id'] ) )? $config['id'] : 'form', ( isset( $config['submitLang'] ) )? $config['submitLang'] : 'save', ( isset( $config['action'] ) )? $config['action'] : null, ( isset( $config['attributes'] ) )? $config['attributes'] : [] );
+        }
+
+        if( !isset( $config['suffix'] ) ){
+            $this->suffix = true;
+        }
+
+        if( isset( $config['id'] ) )
+        {
+            $this->form->id = $config['id'];
+        }
     }
 
     /**
      * executes and builds the form
      *
-     * @return \IPS\Helpers\Form|null
+     * @return \IPS\Helpers\Form
      */
     public function run()
     {
         $langPrefix = '';
+        $currentTab = null;
         if( isset( $this->elements[ 'prefix' ] ) )
         {
             $this->langPrefix = $langPrefix = $this->elements[ 'prefix' ];
@@ -214,7 +238,9 @@ class _Forms
             switch( $type )
             {
                 case 'tab':
-                    $this->form->addTab(  $name . '_tab' );
+                    $suffix = ($this->suffix ) ? '_tab' : '';
+                    $names = $name . $suffix;
+                    $this->form->addTab(  $names );
                     break;
                 case 'header':
                     $this->form->addHeader(  $name . '_header' );
@@ -308,10 +334,10 @@ class _Forms
                         }
                         else
                         {
-                            $prop = $langPrefix . $prop;
-                            if( $obj->{$prop} )
+                            $prop2 = $langPrefix . $prop;
+                            if( $obj->{$prop2} )
                             {
-                                $default = $obj->{$prop};
+                                $default = $obj->{$prop2};
                             }
                         }
 
@@ -323,6 +349,27 @@ class _Forms
                             }
                             else if( array_key_exists( 'def', $el) ){
                                 $default = $el['def'];
+                            }
+
+                            if( $default == null ){
+                                if( method_exists( $obj, 'bitOptions') ){
+                                    $bitoptions = $obj->bitOptions();
+                                    foreach( $bitoptions as $key => $val ){
+                                        $break = false;
+                                        foreach( $val as $k => $v ){
+
+                                            if( isset( $obj->{$k}[ $prop ] ) and $obj->{$k}[ $prop ] ) {
+                                                $default = $obj->{$k}[ $prop ];
+                                                $break = true;
+                                                break;
+                                            }
+                                        }
+                                        if( $break ){
+                                            break;
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -417,7 +464,11 @@ class _Forms
 
                     if( isset( $el[ 'label' ] ) )
                     {
-                        $element->label = $el[ 'label' ];
+                        $label = $el['label'];
+                        if( \IPS\Member::loggedIn()->language()->checkKeyExists( $label ) ){
+                            $label = \IPS\Member::loggedIn()->language()->addToStack( $label );
+                        }
+                        $element->label = $label;
                     }
 
                     if( isset( $el[ 'description' ] ) )
@@ -433,8 +484,8 @@ class _Forms
                                     $sprintf = [ $sprintf ];
                                 }
                                 $desc = \IPS\Member::loggedIn()
-                                    ->language()
-                                    ->addToStack( $desc, false, [ 'sprintf' => $sprintf ] );
+                                                   ->language()
+                                                   ->addToStack( $desc, false, [ 'sprintf' => $sprintf ] );
                             }
                             else
                             {
@@ -445,20 +496,7 @@ class _Forms
                         \IPS\Member::loggedIn()->language()->words[ $name . '_desc' ] = $desc;
                     }
 
-                    $tab = null;
-                    $after = null;
-
-                    if( isset( $el[ 'tab' ] ) )
-                    {
-                        $tab = $langPrefix . $el[ 'tab' ] . '_tab';
-                    }
-
-                    if( isset( $el[ 'after' ] ) )
-                    {
-                        $after = $langPrefix . $el[ 'after' ];
-                    }
-
-                    $this->form->add( $element, $after, $tab );
+                    $this->form->add( $element );
                     break;
                 case 'dummy':
                     $default = null;
@@ -538,14 +576,23 @@ class _Forms
      */
     final protected function setExtra( $el )
     {
+        $suffix = ($this->suffix ) ? '_tab' : '';
+
         if( isset( $el[ 'tab' ] ) )
         {
-            $this->form->addTab( $this->langPrefix . $el[ 'tab' ] . '_tab' );
+            $tab = $this->langPrefix . $el[ 'tab' ] . $suffix;
+            $this->tab = $tab;
+            $this->form->addTab( $tab );
+            unset( $el['tab'] );
         }
 
-        if( isset( $el[ 'header' ] ) )
+        $suffix = ($this->suffix ) ? '_header' : '';
+        if( isset( $el[ 'header' ] ) and $this->header != $this->langPrefix . $el[ 'header' ] . $suffix )
         {
-            $this->form->addHeader( $this->langPrefix . $el[ 'header' ] . '_header' );
+            $header = $this->langPrefix . $el[ 'header' ]. $suffix;
+            $this->header = $header;
+            $this->form->addHeader( $header );
+            unset( $el['header'] );
         }
 
         if( isset( $el[ 'sidebar' ] ) )
@@ -557,6 +604,7 @@ class _Forms
             }
 
             $this->form->addSidebar( $sideBar );
+            unset( $el['sidebar'] );
         }
 
     }
