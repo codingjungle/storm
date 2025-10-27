@@ -201,11 +201,11 @@ class Dev extends Singleton
         }
 
         if ($this->type === 'template' && ReservedWords::check($data)) {
-            throw new InvalidArgumentException('dtdevplus_class_reserved');
+            throw new InvalidArgumentException('storm_devcenter_reserved');
         }
 
         if (!$data) {
-            throw new InvalidArgumentException('dtdevplus_class_no_blank');
+            throw new InvalidArgumentException('storm_devcenter_no_blank');
         }
     }
 

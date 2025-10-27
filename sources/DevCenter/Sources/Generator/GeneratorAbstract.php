@@ -75,6 +75,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @property string $item_node_class
  * @property string $comment_class
  * @property string $review_class
+ * @property bool $strict_types
  */
 abstract class GeneratorAbstract
 {
@@ -112,7 +113,7 @@ abstract class GeneratorAbstract
     /**
      * @var null|Database
      */
-    protected ?Database $db = null;
+    protected ?Database $db;
 
     /**
      * @var ClassGenerator|InterfaceGenerator|TraitGenerator
@@ -133,23 +134,23 @@ abstract class GeneratorAbstract
      */
     protected bool $useImports = true;
 
-    protected string $type;
+    protected string $type = '';
 
-    protected mixed $app;
+    protected mixed $app = null;
 
-    protected string|array|null|false $database;
+    protected ?string $database;
 
-    protected string $prefix;
+    protected ?string $prefix = null;
 
-    protected $mixin;
+    protected ?string $mixin = null;
 
-    protected $baseurl;
+    protected ?string $baseurl = null;
 
     protected bool $includeConstructor = true;
 
     protected bool $overrideDir = false;
 
-    protected mixed $dir;
+    protected mixed $dir = null;
 
     /**
      * @param array $values
@@ -160,12 +161,11 @@ abstract class GeneratorAbstract
     {
         foreach ($values as $key => $val) {
             if ($strip === false) {
-                $key = str_replace('dtdevplus_class_', '', $key);
+                $key = str_replace('storm_devcenter_', '', $key);
             }
 
-            $val = !is_array($val) ? trim($val) : $val;
-            if (!empty($val)) {
-                $this->{$key} = $val;
+            if (empty($val) === false) {
+                $this->{$key} = !is_array($val) ? trim($val) : $val;
             } else {
                 $this->{$key} = null;
             }
@@ -206,13 +206,13 @@ abstract class GeneratorAbstract
             }
 
             $this->database = mb_strtolower($this->database);
+            $this->db = new Database($this->database, $this->prefix);
         }
 
         if ($this->prefix !== null) {
             $this->prefix .= '_';
         }
 
-        $this->db = new Database($this->database, $this->prefix);
 
         if (!in_array($this->type, ['Traits', 'Interfacing'], true)) {
             $this->generator = new ClassGenerator();
@@ -318,7 +318,7 @@ abstract class GeneratorAbstract
             '@since      ' . $ver,
         ];
 
-        $this->generator->addDocumentComment($doc);
+        $this->generator->setDocumentComment($doc);
         $this->generator->addClassComments($this->classname . ' Class');
         $this->generator->setClassName($this->_classname);
         $this->generator->setFileName($this->classname);
@@ -326,6 +326,10 @@ abstract class GeneratorAbstract
 
         if ($this->abstract) {
             $this->generator->setAbstract();
+        }
+
+        if ($this->strict_types === true) {
+            $this->generator->setStrictTypes(true);
         }
 
         try {

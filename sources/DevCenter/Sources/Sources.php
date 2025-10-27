@@ -95,34 +95,34 @@ class Sources
     /**
      * @var Form
      */
-    public $form;
+    public ?Form $form;
 
-    public $type;
+    public ?string $type;
 
     /**
      * @var Application
      */
-    protected $application;
+    protected ?Application $application;
 
     /**
      * @var array
      */
-    protected $elements = [];
+    protected array $elements = [];
 
     /**
      * @var string
      */
-    protected $types;
+    protected string $types;
 
-    protected $findClassWithApp = [];
+    protected array $findClassWithApp = [];
 
-    protected $findClass = [];
+    protected array $findClass = [];
 
-    protected $findNameSpace = [];
+    protected array $findNameSpace = [];
 
-    protected $findInterfaces = [];
+    protected array $findInterfaces = [];
 
-    protected $findTraits = [];
+    protected array $findTraits = [];
 
     /**
      * _Elements constructor.
@@ -308,7 +308,6 @@ class Sources
         $this->form
             ->dialogForm()
             ->setPrefix('storm_devcenter_')
-            ->addExtraPrefix('_r' . $this->type . 'r_')
             ->setId('storm_devcenter__r' . $this->type . 'r_')
             ->submitLang('Create Source');
         foreach ($config as $func) {
@@ -409,21 +408,21 @@ class Sources
     public function classCheck($data): void
     {
         $this->noBlankCheck($data);
-        $ns = 'dtdevplus_class__r' . $this->type . 'r_namespace';
+        $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
         $ns = mb_ucfirst(Request::i()->{$ns});
         $class = mb_ucfirst($data);
         $class = $ns ? '\\IPS\\' . $this->application->directory . '\\' . $ns . '\\' . $class : '\\IPS\\' . $this->application->directory . '\\' . $class;
         $class2 = '\\IPS\\' . $this->application->directory . '\\' . $class;
         try {
             if ($data !== 'Form' && class_exists($class)) {
-                throw new InvalidArgumentException('dtdevplus_class_exists');
+                throw new InvalidArgumentException('storm_devcenter_exists');
             }
         } catch (InvalidArgumentException $e) {
             throw $e;
         } catch (\Throwable) {
             try {
                 if ($data !== 'Form' && class_exists($class2)) {
-                    throw new InvalidArgumentException('dtdevplus_class_exists');
+                    throw new InvalidArgumentException('storm_devcenter_exists');
                 }
             } catch (InvalidArgumentException $e) {
                 throw $e;
@@ -432,7 +431,7 @@ class Sources
         }
 
         if (ReservedWords::check($data)) {
-            throw new InvalidArgumentException('dtdevplus_class_reserved');
+            throw new InvalidArgumentException('storm_devcenter_reserved');
         }
     }
 
@@ -447,7 +446,7 @@ class Sources
     public function traitClassCheck($data): void
     {
         $this->noBlankCheck($data);
-        $ns = 'dtdevplus_class__r' . $this->type . 'r_namespace';
+        $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
         $ns = mb_ucfirst(Request::i()->{$ns});
         $class = mb_ucfirst($data);
         if ($ns) {
@@ -457,11 +456,11 @@ class Sources
         }
 
         if (trait_exists($class)) {
-            throw new InvalidArgumentException('dtdevplus_class_trait_exists');
+            throw new InvalidArgumentException('storm_devcenter_trait_exists');
         }
 
         if (ReservedWords::check($data)) {
-            throw new InvalidArgumentException('dtdevplus_class_reserved');
+            throw new InvalidArgumentException('storm_devcenter_reserved');
         }
     }
 
@@ -476,7 +475,7 @@ class Sources
     public function interfaceClassCheck($data): void
     {
         $this->noBlankCheck($data);
-        $ns = 'dtdevplus_class__r' . $this->type . 'r_namespace';
+        $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
         $ns = mb_ucfirst(Request::i()->{$ns});
         $class = mb_ucfirst($data);
         if ($ns) {
@@ -486,11 +485,11 @@ class Sources
         }
 
         if (interface_exists($class)) {
-            throw new InvalidArgumentException('dtdevplus_class_interface_exists');
+            throw new InvalidArgumentException('storm_devcenter_interface_exists');
         }
 
         if (ReservedWords::check($data)) {
-            throw new InvalidArgumentException('dtdevplus_class_reserved');
+            throw new InvalidArgumentException('storm_devcenter_reserved');
         }
     }
 
@@ -505,7 +504,7 @@ class Sources
     public function noBlankCheck($data): void
     {
         if (!$data) {
-            throw new InvalidArgumentException('dtdevplus_class_no_blank');
+            throw new InvalidArgumentException('storm_devcenter_no_blank');
         }
     }
 
@@ -520,7 +519,7 @@ class Sources
     public function extendsCheck($data): void
     {
         if ($data && (!class_exists($data, true) && !class_exists('\\IPS\\' . $data))) {
-            throw new InvalidArgumentException('dtdevplus_class_extended_class_no_exist');
+            throw new InvalidArgumentException('storm_devcenter_extended_class_no_exist');
         }
     }
 
@@ -538,7 +537,7 @@ class Sources
             foreach ($data as $implement) {
                 if (!interface_exists($implement)) {
                     $lang = Member::loggedIn()->language()->addToStack(
-                        'dtdevplus_class_implemented_no_interface',
+                        'storm_devcenter_implemented_no_interface',
                         false,
                         ['sprintf' => $implement]
                     );
@@ -563,7 +562,7 @@ class Sources
             foreach ($data as $trait) {
                 if (!trait_exists($trait)) {
                     $lang = Member::loggedIn()->language()->addToStack(
-                        'dtdevplus_class_no_trait',
+                        'storm_devcenter_no_trait',
                         false,
                         ['sprintf' => [$trait]]
                     );
@@ -587,11 +586,11 @@ class Sources
         if ($data) {
             $class = "IPS\\{$this->application->directory}\\{$data}";
             if (!class_exists($class)) {
-                throw new InvalidArgumentException('dtdevplus_class_node_item_missing');
+                throw new InvalidArgumentException('storm_devcenter_node_item_missing');
             }
 
             if (ReservedWords::check($data)) {
-                throw new InvalidArgumentException('dtdevplus_class_reserved');
+                throw new InvalidArgumentException('storm_devcenter_reserved');
             }
         }
     }
@@ -624,6 +623,12 @@ class Sources
             ->prefix("IPS\\{$this->application->directory}\\");
     }
 
+    protected function elStrictTypes(): void
+    {
+        $this
+            ->form
+            ->addElement('strict_types', 'yn')->value(1);
+    }
     /**
      * classname element
      */

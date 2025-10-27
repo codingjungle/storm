@@ -221,10 +221,7 @@ trait ModuleBuilder
             '@since ' . $ver,
         ];
 
-        foreach ($docBlock as $doc) {
-            $classGenerator->addDocumentComment($doc);
-        }
-
+        $classGenerator->setDocumentComment($docBlock);
         $classGenerator->addClassComments($classLower . ' Class');
         $classGenerator->save();
 

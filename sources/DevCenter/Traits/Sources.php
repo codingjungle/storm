@@ -38,6 +38,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Abstract',
             'Extends',
@@ -52,6 +53,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Traits',
             'Interfaces',
             (new Element('oauth_message', 'message'))->extra(['css' => 'ipsMessage ipsMessage_error'])
@@ -79,7 +81,12 @@ trait Sources
         } elseif ($return === null) {
             Output::i()->output = $output;
         } else {
-            Output::i()->json(['msg' => $return, 'type' => 'dtsources']);
+            if(Request::i()->isAjax()) {
+                Output::i()->json(['msg' => $return, 'type' => 'dtsources']);
+            }
+            else{
+                Output::i()->redirect(Request::i()->url(), $return);
+            }
         }
     }
 
@@ -123,6 +130,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
         ];
 
         $this->doOutput($config, 'interfacing', 'Interface');
@@ -134,6 +142,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
         ];
 
         $this->doOutput($config, 'traits', 'Trait');
@@ -144,6 +153,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Interfaces',
             'Traits',
@@ -157,6 +167,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Database',
             'prefix',
@@ -173,6 +184,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Database',
             'prefix',
@@ -190,6 +202,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Database',
             'prefix',
@@ -208,6 +221,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Database',
             'prefix',
@@ -224,6 +238,7 @@ trait Sources
         $config = [
             'Namespace',
             'ClassName',
+            'StrictTypes',
             'Imports',
             'Database',
             'prefix',
@@ -349,6 +364,7 @@ trait Sources
     {
         $config = [
             'ClassName',
+            'StrictTypes',
             'apiType',
         ];
         $this->doOutput($config, 'api', 'API Class');

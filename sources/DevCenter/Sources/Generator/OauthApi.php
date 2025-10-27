@@ -17,6 +17,7 @@ use Exception;
 use IPS\Http\Response;
 use IPS\Http\Url;
 use IPS\Patterns\Singleton;
+use IPS\storm\Writers\ClassGenerator;
 use Laminas\Code\Reflection\ClassReflection;
 use Throwable;
 
@@ -63,8 +64,8 @@ class OauthApi extends GeneratorAbstract
                     '@since      ' . $this->application->version ?? '1.0.0',
                 '@version    -storm_version-',
             ];
-            $gen->addDocumentComment($doc);
-            $gen->addDocumentComment(['ApiException Class'], true);
+            $gen->setDocumentComment($doc);
+            $gen->addClassComments(['ApiException Class']);
             $gen->addClassName('_ApiException');
             $gen->addFileName('ApiException');
             $gen->addNameSpace('IPS\\'.$this->application->directory.'\\Api');
@@ -101,8 +102,8 @@ class OauthApi extends GeneratorAbstract
                 '@version    -storm_version-',
             ];
 
-            $gen->addDocumentComment($doc);
-            $gen->addDocumentComment(['Oauth Class'], true);
+            $gen->setDocumentComment($doc);
+            $gen->addClassComment(['Oauth Class'], true);
             $gen->addClassName('_Oauth');
             $gen->addFileName('Oauth');
             $gen->addNameSpace('IPS\\'.$this->application->directory.'\\Api');

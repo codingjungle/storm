@@ -114,8 +114,8 @@ abstract class SourcesFormAbstract
      * syntax. it uses arrays to build the form, but you can also pass it a \IPS\Helper\Forms.
      * example:
      * $elements[] = [ 'class' => 'yesno', 'name' => 'myfield', 'label' => 'My Field'(this is optional)]; this will add
-     * a yesno form helper, with the name of dtdevplus_class_myfield, its label will be "My Field' (that is option,
-     * as you can define a language string dtdevplus_class_myfield and it will us it).
+     * a yesno form helper, with the name of storm_devcenter_myfield, its label will be "My Field' (that is option,
+     * as you can define a language string storm_devcenter_myfield and it will us it).
      *
      * @param $elements
      */

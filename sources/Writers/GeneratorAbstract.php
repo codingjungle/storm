@@ -104,6 +104,7 @@ abstract class GeneratorAbstract
     protected string $fileName = '';
     public string $pathFileName;
     public string $extension = 'php';
+    public bool $strictTypes = false;
     protected ?Filesystem $filesystem = null;
 
     public static function i(): static
@@ -114,6 +115,12 @@ abstract class GeneratorAbstract
     public function __construct()
     {
         $this->filesystem = new Filesystem();
+    }
+
+    public function setStrictTypes(bool $strictTypes): static
+    {
+        $this->strictTypes = $strictTypes;
+        return $this;
     }
 
     /**
@@ -133,10 +140,10 @@ abstract class GeneratorAbstract
      *
      * @return $this
      */
-    public function addDocumentComment(array $comment): static
+    public function setDocumentComment(array $comment): static
     {
 
-        $this->docComment[] = $comment;
+        $this->docComment = $comment;
         return $this;
     }
 
@@ -273,11 +280,22 @@ EOF;
             if ($this->docComment) {
                 $this->output("\n");
                 $this->output("/**\n");
-                foreach ($this->docComment as $item) {
-                    $this->output('* ' . $item . "\n");
+                try {
+                    foreach ($this->docComment as $item) {
+                        $this->output('* ' . $item . "\n");
+                    }
+                }catch(\Throwable $e) {
+                    _p($item,$this->docComment);
                 }
                 $this->output('*/');
                 $this->output("\n");
+            }
+
+            if($this->strictTypes === true){
+                $strictTypes = <<<eof
+declare(strict_types=1);
+eof;
+                $this->output($strictTypes);
             }
 
             if ($this->nameSpace) {
