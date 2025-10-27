@@ -1,0 +1,4 @@
+<ips:template parameters="string $id, mixed $title, ?string $panel = null, ?string $tooltip = null, string $icon='cubes', string $color ='black', string $textColor='white', ?int $count=null, bool $customIcon = false, ?int $date = null" />
+<div id="{$id}" class="stormProfilerButton" style="border-color:{$color};background-color:{$color};color:{$textColor};" data-panel="{$panel}" data-button{{if $tooltip}} title="{$tooltip}" data-ipstooltip{{endif}} {{if $date !== null}} data-date="{$date|raw}"{{endif}}>
+    <i class="{{if $customIcon === true}}{$icon}{{else}}fa fa-{$icon}{{endif}}"></i> {$title} {{if $count !== null && $count >= 0}}(<span class="stormProfilerCount">{$count}</span>){{endif}}{{if $panel}}  <i class="fa fa-chevron-up"></i>{{endif}}
+</div>

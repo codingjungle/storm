@@ -1,0 +1,52 @@
+<?php
+
+namespace IPS\{app}\extensions\storm\ProxyHelpers;
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * {class}
+ */
+class {class}
+{
+
+    /**
+     * add property to \IPS\Data\Store DocComment
+     *
+     * @param array $classDoc
+     */
+    public function store(&$classDoc)
+    {
+        //add an element to the $classDoc array
+        //$classDoc[] = ['pt' => 'p', 'prop' => 'dtdevfolder_app', 'type' => 'string'];
+        // 'pt' (property type, p/w/r), 'prop' (property name), 'type' (what is the typecast of this property, can be string, int, etc or a object)
+    }
+
+    /**
+     * add property to \IPS\Request proxy DocComment
+     *
+     * @param array $classDoc
+     */
+    public function request(&$classDoc)
+    {
+         //add an element to the $classDoc array
+         //$classDoc[] = ['pt' => 'p', 'prop' => 'dtdevfolder_app', 'type' => 'string'];
+         // 'pt' (property type, p/w/r), 'prop' (property name), 'type' (what is the typecast of this property, can be string, int, etc or a object)
+    }
+
+    /**
+    * returns a list of classes available to run on classes
+    * @return array
+    * $heelpers[ class\to\look\for ][] = class\of\helper\class;
+    * @param $helpers
+    */
+    public function map(&$helpers)
+    {
+        //see toolbox\extensions\toolbox\ProxyHelpers\proxy.php::map()
+    }
+}

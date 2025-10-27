@@ -1,0 +1,31 @@
+{
+    "admin": {
+        "general": {
+            "default_controller": "",
+            "protected": 0,
+            "default": 1
+        },
+        "generators": {
+            "default_controller": "",
+            "protected": 0,
+            "default": 0
+        },
+        "developer": {
+            "default_controller": "",
+            "protected": false,
+            "default": null
+        }
+    },
+    "front": {
+        "profiler": {
+            "default_controller": "",
+            "protected": 0,
+            "default": 0
+        },
+        "other": {
+            "default_controller": "",
+            "protected": 0,
+            "default": 0
+        }
+    }
+}

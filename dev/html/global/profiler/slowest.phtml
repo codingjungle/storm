@@ -1,0 +1,33 @@
+<ips:template parameters="$entry" />
+<a href='#' data-ipsdialog data-ipsdialog-content='#slowestQuery' data-ipsdialog-title='SQL Query'>{$entry['time']} ms
+</a>
+<div id='slowestQuery' class='ipsHide'>
+    <div class="ipsClearfix stormProfilerPadding stormProfilerListItem" data-searchable data-src="{$entry['query']}">
+        <code class="query prettyprint lang-sql p-10">
+            {{if $entry['server']}}({$entry['server']|raw}): {{endif}}{$entry['query']}
+        </code>
+        {{if isset($entry['time'])}}
+        <div class="timestormProfilerPadding">
+            Time: {$entry['time']} ms
+        </div>
+        {{endif}}
+        {{if isset($entry['mem'])}}
+        <div class="timestormProfilerPadding">
+            Memory: {$entry['mem']}
+        </div>
+        {{endif}}
+        <div class="stormProfilerPadding"> 
+            {{foreach $entry['bt'] as $i => $bt}}
+            <div class="ipsClearfix">
+                <div class="float-start p-2">{$i}:</div>
+                <div class="float-start">
+                    <a href="{$bt['url']}">
+                        <p>{$bt['class']}{$bt['type']}{$bt['function']}()</p>
+                        <p>{$bt['file']}::{$bt['line']}</p>
+                    </a>
+                </div>
+            </div>
+            {{endforeach}}
+        </div>
+    </div>
+</div>

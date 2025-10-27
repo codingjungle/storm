@@ -1,0 +1,364 @@
+.stormProfilerBar,
+.stormProfilerShim {
+    min-height:80px;
+    width:100%;
+    display:block;
+}
+
+.stormProfilerBar {
+    background-color: black;
+    position: fixed;
+    bottom: 0;  
+    left: 0;
+}
+
+.stormProfilerButton {
+    padding:5px;
+    max-width:200px;
+    height:40px;
+    /* line-height:30px; */
+    text-align:center;
+    font-size:18px;
+    cursor:pointer;
+    float:left;
+    border-left:1px solid;
+    border-right:1px solid;
+    border-bottom: 1px solid;
+    opacity:.75;
+}
+.stormProfilerButtonActive {
+    opacity:1;
+    border-color:#ffff!important;
+}
+.stormDeleteAllButton,
+.stormDeleteButton {
+    color:#fff;
+    background: #650101;
+}
+.stormDeleteButton {
+    margin-right:5px;
+}
+.stormProfilerPanels {
+    padding:10px;
+}
+.float-start {
+    float:left;
+}
+.float-end {
+    float:right;
+}
+.p-2 {
+    padding:4px;
+}
+.p-4 {
+    padding:8px;
+}
+.p-10 {
+    padding:10px;
+}
+.p-double {
+    padding:25px;
+}
+.mt-2 {
+    margin-top:10px;
+}
+.stormProfilerPadding {
+    padding:5px;
+}
+.stormProfilerPanelsContainer {
+    position: fixed;
+    bottom: 80px;  
+    left: 0;
+    width:100%;
+    max-height:800px;
+    overflow:auto;
+    z-index:9999;
+    border:1px solid white;
+    background-color:#000;
+}
+
+.stormPhpInfo a,
+.stormPhpInfo a:link {color: #fff; text-decoration: none;}
+.stormPhpInfo {font-family: sans-serif !important; font-size: 16px;}
+
+.stormPhpInfo a:hover {text-decoration: underline;}
+.stormPhpInfo pre {
+    margin: 0;
+    font-family: monospace;
+}
+.stormPhpInfo table {
+    border-collapse: collapse;
+    border: 0;
+    width: 934px;
+    box-shadow: 1px 2px 3px #ccc;
+}
+.stormPhpInfo .center {
+    text-align: center;
+}
+.stormPhpInfo .center table {
+    margin: 1em auto;
+    text-align: left;
+}
+.stormPhpInfo .center th {
+    text-align: center !important;
+}
+.stormPhpInfo td,
+.stormPhpInfo th {
+    border: 1px solid #666;
+    font-size: 75%;
+    vertical-align: baseline;
+    padding: 4px 5px;
+}
+.stormPhpInfo h1 {
+    font-size: 150%;
+}
+.stormPhpInfo h2 {
+    font-size: 125%;
+}
+.stormPhpInfo .p {
+    text-align: left;
+}
+.stormPhpInfo .e {
+    color:#000;
+    background-color: #87C1FA;
+    width: 300px;
+    font-weight: bold;
+}
+.stormPhpInfo .h {
+    color: #fff;
+    background-color: #3399FF;
+    font-weight: bold;
+}
+.stormPhpInfo .v {
+    max-width: 300px;
+    overflow-x: auto;
+    word-wrap: break-word;
+}
+.stormPhpInfo .v i {
+    color: #999;
+}
+.stormPhpInfo img {
+    float: right;
+    border: 0;
+}
+.stormPhpInfo hr {
+    width: 934px;
+    background-color: #ccc;
+    border: 0;
+    height: 1px;
+}
+
+/*pretty-print stuff*/
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.clo,.opn,.pun{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.kwd,.tag,.typ{font-weight:700}.str{color:#060}.kwd{color:#006}.com{color:#600;font-style:italic}.typ{color:#404}.lit{color:#044}.clo,.opn,.pun{color:#440}.tag{color:#006}.atn{color:#404}.atv{color:#060}}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+
+a,code.prettyprint a,pre.prettyprint a{text-decoration:none}code .str,pre .str{color:#fec243}code .kwd,pre .kwd{color:#8470FF}code .com,pre .com{color:#32cd32;font-style:italic}code .typ,pre .typ{color:#6ecbcc}code .lit,pre .lit{color:#d06}code .pun,pre .pun{color:#8B8970}code .pln,pre .pln{color:#f0f0f0}code .tag,pre .tag{color:#9c9cff}code .htm,pre .htm{color:plum}code .xsl,pre .xsl{color:#d0a0d0}code .atn,pre .atn{color:#46eeee;font-weight:400}code .atv,pre .atv{color:#EEB4B4}code .dec,pre .dec{color:#3387CC}code.prettyprint,pre.prettyprint{font-family:'Droid Sans Mono','CPMono_v07 Bold','Droid Sans';font-weight:700;font-size:16px;background-color:#0f0f0f;-moz-border-radius:8px;-webkit-border-radius:8px;-o-border-radius:8px;-ms-border-radius:8px;-khtml-border-radius:8px;border-radius:8px}pre.prettyprint{width:95%;margin:1em auto;padding:1em;white-space:pre-wrap}ol.linenums{margin-top:0;margin-bottom:0;color:#8B8970}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}@media print{code.prettyprint,pre.prettyprint{background-color:#fff}code .str,pre .str{color:#088}code .kwd,pre .kwd{color:#006;font-weight:700}code .com,pre .com{color:#oc3;font-style:italic}code .typ,pre .typ{color:#404;font-weight:700}code .lit,pre .lit{color:#044}code .pun,pre .pun{color:#440}code .pln,pre .pln{color:#000}code .tag,pre .tag{color:#b66ff7;font-weight:700}code .htm,code .xsl,pre .htm,pre .xsl{color:#606;font-weight:700}code .atn,pre .atn{color:#c71585;font-weight:400}code .atv,pre .atv{color:#088;font-weight:400}}
+
+.stormProfilerColumns {
+    display: flex;
+  }
+  
+  .stormProfilerColumnFluid {
+    vertical-align: top;
+    flex: 9999 1 100%;
+  }
+  
+  .stormProfilerColumnLarge {
+    vertical-align: top;
+    flex: 1 1 300px;
+  } 
+  .stormProfilerMedium {
+    vertical-align: top;
+    width: 200px;
+    flex: 1 1 200px;
+  }
+  
+  .stormProfilerSmall {
+    vertical-align: top;
+    width: 100px;
+    flex: 1 1 100px;
+  }
+  
+  .stormProfilerCloseBox {
+    vertical-align: top;
+    width: 50px;
+    flex: 1 1 50px;
+  }
+
+  .stormProfilerPanelParent {
+      position: relative;
+  }
+
+  .stormProfilerSearch:not(.stormDebugPanel) {
+      position:fixed;
+      width:100%;
+      background-color: black;
+      z-index:100;
+  }
+
+  .stormProfilerSpacer:not(.stormDebugPanelChild) {
+      padding-top:80px;
+  }
+.stormProfilerPanels h2,
+  .stormProfilerPanelParent h2 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+.stormProfilerPanels h2 {
+    border-bottom:1px solid #fff;
+}
+  .stormProfilerListItem {
+    padding:5px;
+    background-color: #404040;
+    border-radius: 8px;
+    margin: 2px;
+  }
+
+  .stormProfilerWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.stormProfilerWrapper input {
+    padding-right: 40px;
+}
+
+.stormProfilerWrapper button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    height:42px;
+    padding:10px;
+    font-size:18px;
+}
+
+.stormProfilerDebugTime {
+    padding:4px;
+    margin:2px;
+    background-color:#ff4500;
+    color: #fff;
+    font-size:16px;
+    line-height:16px;
+    display: inline-flex;
+    align-items: center;
+    background-color: #ff4500;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ff4500;;
+    border-radius: 10px;
+    box-shadow: #000;
+}
+.stormProfilerDebugDate{
+    display: flex;
+    justify-content: center;
+  align-items: center; 
+  gap:5px;
+  border-right:#000 2px solid;
+}
+.stormCopyButton {
+    --i-button--ba-co: #035e2d;
+    --i-button--co: #fff;
+}
+.stormProfilerDebugBt a {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    display:block;
+}
+
+.stormProfilerSlowestQuery,
+.stormProfilerController {
+    font-size:16px;
+    color:#a19c09!important;
+}
+
+.stormProfilerListItem .query{
+    margin-top:10px;
+}
+
+@keyframes stormProfilerFlasher {
+    0% {
+        opacity: .5;
+    }
+    25% {
+        opacity: .25
+    }
+    50% {
+        opacity: .50;
+    }
+    75% {
+        opacity: .75
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.stormProfilerFlash {
+    animation: stormProfilerFlasher 1s infinite;
+}
+
+.stormProfilerPanels h2 {
+
+}
+
+/* HTML: <div class="loader"></div> */
+.stormProfilerLoader {
+    width: 90px;
+    height: 10px;
+    /*box-shadow: 0 3px 0 #fff;*/
+    background: linear-gradient(#137210 0 0) center/4px 100% no-repeat;
+    display: grid;
+}
+.stormProfilerLoader:before,
+.stormProfilerLoader:after{
+    content: "";
+    grid-area: 1/1;
+    background: repeating-linear-gradient(90deg, #9b0707 0 10px,#0000 0 100%) 0 0/calc(100%/4) 100%;
+    clip-path: inset(0 50% 0 0);
+    animation: l2 1s infinite linear;
+}
+.stormProfilerLoader:before{
+    background: radial-gradient(circle 5px at 5px 50%, #137210 92%, rgba(199, 23, 23, 0)) 0 0/calc(100%/4) 100%;
+    clip-path: inset(0 0 0 50%);
+}
+@keyframes l2 {
+    100% {background-position: calc(100%/3) 0}
+}
+.stormProfilerPanelChild {
+    height:680px;
+    overflow:auto;
+}
+.stormProfilerBlock {
+    display:inline-block;
+    margin-right: 5px;
+}
+
+:root {
+    --stormProfilerorderWidth: 7px;
+    --height: 24px;
+    --width: 12px;
+    --borderColor: #78b13f;
+}
+
+.stormProfilerCheck {
+    display: inline-block;
+    transform: rotate(45deg);
+    height: 10px;
+    width: 5px;
+    border-bottom: 3px solid #78b13f;
+    border-right: 3px solid #78b13f;
+}
+.stormProfilerProxyBox {
+    padding:10px;
+}
+
+/*symfony css*/
+.sf-js-enabled pre.sf-dump .sf-dump-compact, .sf-js-enabled .sf-dump-str-collapse .sf-dump-str-collapse, .sf-js-enabled .sf-dump-str-expand .sf-dump-str-expand { display: none; } .sf-dump-hover:hover { background-color: #B729D9; color: #FFF !important; border-radius: 2px; } pre.sf-dump { display: block; white-space: pre; padding: 5px; overflow: initial !important; } pre.sf-dump:after { content: ""; visibility: hidden; display: block; height: 0; clear: both; } pre.sf-dump .sf-dump-ellipsization { display: inline-flex; } pre.sf-dump a { text-decoration: none; cursor: pointer; border: 0; outline: none; color: inherit; } pre.sf-dump img { max-width: 50em; max-height: 50em; margin: .5em 0 0 0; padding: 0; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAHUlEQVQY02O8zAABilCaiQEN0EeA8QuUcX9g3QEAAjcC5piyhyEAAAAASUVORK5CYII=) #D3D3D3; } pre.sf-dump .sf-dump-ellipsis { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; } pre.sf-dump .sf-dump-ellipsis-tail { flex-shrink: 0; } pre.sf-dump code { display:inline; padding:0; background:none; } .sf-dump-public.sf-dump-highlight, .sf-dump-protected.sf-dump-highlight, .sf-dump-private.sf-dump-highlight, .sf-dump-str.sf-dump-highlight, .sf-dump-key.sf-dump-highlight { background: rgba(111, 172, 204, 0.3); border: 1px solid #7DA0B1; border-radius: 3px; } .sf-dump-public.sf-dump-highlight-active, .sf-dump-protected.sf-dump-highlight-active, .sf-dump-private.sf-dump-highlight-active, .sf-dump-str.sf-dump-highlight-active, .sf-dump-key.sf-dump-highlight-active { background: rgba(253, 175, 0, 0.4); border: 1px solid #ffa500; border-radius: 3px; } pre.sf-dump .sf-dump-search-hidden { display: none !important; } pre.sf-dump .sf-dump-search-wrapper { font-size: 0; white-space: nowrap; margin-bottom: 5px; display: flex; position: -webkit-sticky; position: sticky; top: 5px; } pre.sf-dump .sf-dump-search-wrapper > * { vertical-align: top; box-sizing: border-box; height: 21px; font-weight: normal; border-radius: 0; background: #FFF; color: #757575; border: 1px solid #BBB; } pre.sf-dump .sf-dump-search-wrapper > input.sf-dump-search-input { padding: 3px; height: 21px; font-size: 12px; border-right: none; border-top-left-radius: 3px; border-bottom-left-radius: 3px; color: #000; min-width: 15px; width: 100%; } pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next, pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous { background: #F2F2F2; outline: none; border-left: none; font-size: 0; line-height: 0; } pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next { border-top-right-radius: 3px; border-bottom-right-radius: 3px; } pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next > svg, pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous > svg { pointer-events: none; width: 12px; height: 12px; } pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-count { display: inline-block; padding: 0 5px; margin: 0; border-left: none; line-height: 21px; font-size: 12px; }pre.sf-dump, pre.sf-dump .sf-dump-default{background-color:#18171B; color:#FF8400; line-height:1.2em; font:12px Menlo, Monaco, Consolas, monospace; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:99; word-break: break-all}pre.sf-dump .sf-dump-num{font-weight:bold; color:#1299DA}pre.sf-dump .sf-dump-const{font-weight:bold}pre.sf-dump .sf-dump-virtual{font-style:italic}pre.sf-dump .sf-dump-str{font-weight:bold; color:#56DB3A}pre.sf-dump .sf-dump-note{color:#1299DA}pre.sf-dump .sf-dump-ref{color:#A0A0A0}pre.sf-dump .sf-dump-public{color:#FFFFFF}pre.sf-dump .sf-dump-protected{color:#FFFFFF}pre.sf-dump .sf-dump-private{color:#FFFFFF}pre.sf-dump .sf-dump-meta{color:#B729D9}pre.sf-dump .sf-dump-key{color:#56DB3A}pre.sf-dump .sf-dump-index{color:#1299DA}pre.sf-dump .sf-dump-ellipsis{color:#FF8400}pre.sf-dump .sf-dump-ns{user-select:none;}pre.sf-dump .sf-dump-ellipsis-note{color:#1299DA}

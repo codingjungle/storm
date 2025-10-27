@@ -1,0 +1,17 @@
+<ips:template parameters="array $data, string $id, string $panelTitle" />
+<div  id="{$id}" class="stormProfilerPanelParent ipsHide" data-panels data-ipsstormprofilersearch>
+{template="panelHeader" group="profiler" app="storm" location="global" params="$panelTitle"}
+    <div class="stormProfilerSpacer"></div>
+    <div class="stormProfilerPanelChild">
+        {{foreach $data as $key => $datum}}
+        <div class="stormProfilerPadding stormProfilerEnvironmentHeader">
+            <h4>\$_{$key|raw}</h4>
+            {{foreach $datum as $d}}
+            <div class="ipsClearfix stormProfilerPadding stormProfilerListItem" data-searchable data-src="{$d['raw']|raw}"> 
+                <span class="ipsType_break ipsType_noBreak stormProfilerFileLink">{$d['key']|raw}: {$d['name']|raw}</span> 
+            </div>
+            {{endforeach}}
+        </div>
+        {{endforeach}}
+    </div>
+</div>

@@ -1,0 +1,7 @@
+{
+    "storm": {
+        "ProxyHelpers": {
+            "ProxyHelpers": "IPS\\storm\\extensions\\storm\\ProxyHelpers\\ProxyHelpers"
+        }
+    }
+}

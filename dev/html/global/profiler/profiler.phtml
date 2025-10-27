@@ -1,0 +1,22 @@
+<ips:template parameters="array $info, array $buttons, array $panels" />
+<div id="ElstormProfilerShim" class="stormProfilerShim"></div>
+<div id="ElstormProfilerBar" class="stormProfilerBar" >
+    <div class="stormProfilerBarButtons ipsClearfix" data-ipsstormprofiler>
+        {{foreach $buttons as $button}}
+            {$button|raw}
+        {{endforeach}}
+    </div>
+    <div class="ipsClearfix">
+        <div class="stormProfilerController float-start p-2">
+            {$info['loc']|raw}
+        </div>
+        <div class="stormProfilerSlowestQuery float-start p-2">
+            Slowest Query: {$info['sq']|raw}
+        </div>
+    </div>
+</div>
+<div id="elStormProfilerPanelsContainer" class="stormProfilerPanelsContainer"  data-ipsstormprofilerhide>
+    {{foreach $panels as $panel}}
+        {$panel|raw}
+    {{endforeach}}
+</div>

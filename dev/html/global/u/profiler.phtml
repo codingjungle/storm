@@ -1,0 +1,66 @@
+{* smarty *}
+<ips:template parameters="" />
+<div class="chowderProfilerSpacer"></div>
+<div id="chowderProfilerBar" class="chowderProfilerBar" data-chowder-js="chowder.dev.profiler.bar">
+    <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group btn-group-sm ps-1 pt-1 dropup" role="group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                Storm
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" href="{url path='core/profiler/cache' location='front'}">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Clear Cache
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" title="PHP Info Page" data-chowder-js="chowder.ui.modal"
+                       data-url="{url path='core/profiler/phpinfo' location='front'}" data-size="Medium">
+                        <i class="bi bi-filetype-php"></i> {$php}
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <div class="dropdown-item">
+                        <i class="bi bi-filetype-sql"></i>
+                        {$mysql}
+                    </div>
+                </li>
+            </ul>
+            {{foreach $buttons as $button}}
+                <button type="button" class="btn btn-{if isset($button['class'])}{$button['class']}{else}primary{/if}"
+                        id="chowderProfiler{$button['id']}" {if $button['content'] === true} data-content {/if}
+                        title="{lang s="core_dev_profiler_button_{$button['name']}_title" }"
+                        data-chowder-js="chowder.ui.tooltip">
+                    {if isset($button['icon'])}
+                        <i class="bi bi-{$button['icon']}"></i>
+                    {/if}
+                    {if isset($button['count'])}
+                        {lang s="core_dev_profiler_button_{$button['name']}_button" r=['count' => $button['count']]}
+                        {if $button['content'] === true}
+                            <i class="bi bi-caret-up-fill"></i>
+                        {/if}
+                    {else}
+                        {lang s="core_dev_profiler_button_{$button['name']}_button"}
+                    {/if}
+                </button>
+            {{/foreach}}
+        </div>
+    </div>
+    <div class="chowderControllerLocation bg-dark p-2 clearfix">
+        {if isset($location['link'])}
+            <a href="{$location['link']}">{$location['location']}</a>
+        {else}
+            {$location['location']}
+        {/if}
+    </div>
+    <div id="chowderProfilerContentBar" class="chowderProfilerContentBar bg-dark clearfix fixed-bottom">
+        {foreach $contents as $key => $content}
+            {$content|raw}
+        {/foreach}
+    </div>
+</div>

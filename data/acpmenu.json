@@ -1,0 +1,31 @@
+{
+  "general": {
+    "settings": {
+      "tab": "storm",
+      "controller": "settings",
+      "do": "",
+      "restriction": "settings_manage",
+      "subcontrollers": ""
+    }
+  },
+  "generators": {
+  },
+  "developer": {
+    "devfolder": {
+      "tab": "developer",
+      "controller": "devfolder",
+      "do": "",
+      "restriction": null,
+      "subcontrollers": "",
+      "callback": "return \\IPS\\IN_DEV;"
+    },
+    "sources": {
+      "tab": "developer",
+      "controller": "sources",
+      "do": "",
+      "restriction": null,
+      "subcontrollers": "",
+      "callback": "return \\IPS\\IN_DEV;"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+<ips:template parameters="array $entries, string $panelTitle" />
+<div  id="storm_databases_panel" class="stormProfilerPanelParent ipsHide" data-panels data-ipsstormprofilersearch>
+{template="panelHeader" group="profiler" app="storm" location="global" params="$panelTitle"}
+
+    <div class="stormProfilerSpacer"></div>
+    <div class="stormProfilerPanelChild">
+        {{foreach $entries as $entry}}
+        <div class="ipsClearfix stormProfilerPadding stormProfilerListItem" data-searchable data-src="{$entry['query']}">
+            <code class="query prettyprint lang-sql p-10">
+                {{if $entry['server']}}({$entry['server']|raw}): {{endif}}{$entry['query']}
+            </code>
+            {{if isset($entry['time'])}}
+            <div class="timestormProfilerPadding">
+                Time: {$entry['time']} ms
+            </div>
+            {{endif}}
+            {{if isset($entry['mem'])}}
+            <div class="timestormProfilerPadding">
+                Memory: {$entry['mem']}
+            </div>
+            {{endif}}
+            <div>
+                <div>
+                <button class="ipsButton ipsButton--tiny ipsButton--primary mt-2" type="button" data-open>Backtrace</button> 
+                </div>
+                <div class="stormProfilerPadding ipsHide">
+                    {{foreach $entry['bt'] as $i => $bt}}
+                        <div class="ipsClearfix">
+                            <div class="float-start p-2">{$i}:</div>
+                            <div class="float-start">
+                                <a href="{$bt['url']}">
+                                    <p>{$bt['class']}{$bt['type']}{$bt['function']}()</p>
+                                    <p>{$bt['file']}::{$bt['line']}</p>
+                                </a>
+                            </div>
+                        </div>
+                    {{endforeach}}
+                </div>
+            </div>
+        </div>
+        {{endforeach}}
+    </div>
+</div>

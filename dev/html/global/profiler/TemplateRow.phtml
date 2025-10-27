@@ -1,0 +1,11 @@
+<ips:template parameters="string $url, string $time, string $mem, string $name" />
+<div>
+    <a href="{$url}" target="_blank" class="ipsType_break ipsType_noBreak stormProfilerFileLink">
+        {$name|raw}
+    </a>
+    <div class="p-2">
+        Time: {$time} ms
+        <br>
+        Memory: {$mem}
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<ips:template parameters="array $data, string $id, string $panelTitle, bool $anchor = true" />
+<div  id="{$id}" class="stormProfilerPanelParent ipsHide" data-panels data-ipsstormprofilersearch>
+{template="panelHeader" group="profiler" app="storm" location="global" params="$panelTitle"}
+    <div class="stormProfilerSpacer"></div>
+    <div class="stormProfilerPanelChild">
+        {{foreach $data as $d}}
+        <div class="ipsClearfix stormProfilerPadding" data-searchable data-src="{{if $anchor === true}}{$d['name']}{{else}}{$d['raw']|raw}{{endif}}">
+            <div class="stormProfilerListItem">
+                {{if $anchor === true}}
+                <a href="{$d['url']}" target="_blank" class="ipsType_break ipsType_noBreak stormProfilerFileLink">{$d['name']}</a>
+                {{else}}
+                <span class="ipsType_break ipsType_noBreak stormProfilerFileLink">{$d['name']|raw}</span>
+                {{endif}}
+            </div>
+        </div>
+        {{endforeach}}
+    </div>
+</div>

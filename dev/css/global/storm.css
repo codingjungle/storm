@@ -1,0 +1,37 @@
+.stormColumns {
+    display: flex;
+}
+
+.stormColumnFluid {
+    vertical-align: top;
+    flex: 9999 1 100%;
+}
+
+.stormColumnLarge {
+    vertical-align: top;
+    flex: 1 1 300px;
+}
+.stormColumnMedium {
+        width: 250px;
+    flex: 1 1 250px;
+}
+
+.stormColumnSmall {
+    vertical-align: top;
+    width: 100px;
+    flex: 1 1 100px;
+}
+
+.stormCloseBox {
+    vertical-align: top;
+    width: 50px;
+    flex: 1 1 50px;
+}
+.stormColumnLarge .ipsTabs,
+.stormColumnLarge .ipsTabs [role="tablist"] {
+    display: block;
+    width:200px;
+}
+.stormColumnLarge .ipsTabs .ipsTabs__tab {
+    max-width: 200px;
+}

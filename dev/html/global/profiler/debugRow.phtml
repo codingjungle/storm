@@ -1,0 +1,42 @@
+<ips:template parameters="\IPS\storm\Profiler\Debug $logs, ?string $class = null" />
+<div class="ipsClearfix stormProfilerPadding stormProfilerColumns{{if $class !== null}} {$class}{{endif}}">
+    <div class="stormProfilerColumnLarge stormProfilerDebugDate stormProfilerListItem">
+        <div class="stormProfilerDebugTime">
+        {$logs->time|raw}
+        </div>
+    </div>
+    <div class="stormProfilerColumnFluid stormProfilerListItem">
+        <div>
+            {$logs->log|raw}
+        </div>
+        <div class="ipsClearfix">
+            <button class="float-start ipsButton ipsButton--tiny ipsButton--primary mt-2" type="button" data-open>Backtrace</button>
+            <button class="float-end stormCopyButton ipsButton ipsButton--tiny mt-2" type="button"  data-clipboard-text="{$logs->logRaw|raw}">
+                <i class="fa fa-copy"></i>
+                Copy Message
+            </button>
+            <button class="float-end stormDeleteButton ipsButton ipsButton--tiny mt-2" type="button" data-delete data-id="{$logs->id}">
+                <i class="fa fa-delete-left"></i>
+                Delete
+            </button>
+        </div> 
+        <div class="stormProfilerPadding ipsHide"> 
+            <div>
+                {{foreach $logs->backtrace as $i => $bt}}
+                <div class="stormProfilerDebugBt mt-2"> 
+                    <a href="{$bt['url']}">
+                        {$i}: {$bt['class']}{$bt['type']}{$bt['function']}()<br>
+                            {$bt['file']}::{$bt['line']}
+                    </a>
+                </div>
+                {{endforeach}}
+            </div>
+            <div class="ipsClearfix">
+                <button class="stormCopyButton ipsButton ipsButton--tiny mt-2 float-end" type="button" data-clipboard-text="{$logs->btRaw|raw}">
+                    <i class="fa fa-copy"></i>
+                    Copy Backtrace
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

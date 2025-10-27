@@ -1,0 +1,15 @@
+<ips:template parameters="$buttons" />
+<div id="storm_main_panel" class="stormProfilerPanels stormProfilerExecutionPanel ipsHide" data-panels>
+    <ul class="ipsList_reset">
+        {{foreach $buttons as $key => $values}}
+        <li>
+            <h2>{$key|raw}</h2>
+        </li>
+        {{foreach $values as $lang => $button}}
+            <li class="p-2">
+                {{if !\is_int($lang)}}{$lang|raw} {{endif}}{$button|raw}
+            </li>
+        {{endforeach}}
+        {{endforeach}}
+    </ul>
+</div>

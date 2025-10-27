@@ -1,0 +1,22 @@
+{
+    "general": {
+        "settings": {
+            "settings_manage": "settings_manage"
+        }
+    },
+    "generators": {
+        "devfolder": {
+            "devfolder_manage": "devfolder_manage"
+        }
+    },
+    "devcenter": {
+        "test": {
+            "test_manage": "test_manage"
+        }
+    },
+    "developer": {
+        "sources": {
+            "sources_manage": "sources_manage"
+        }
+    }
+}
