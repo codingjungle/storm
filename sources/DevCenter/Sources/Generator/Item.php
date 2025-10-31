@@ -180,7 +180,9 @@ class Item extends GeneratorAbstract
     protected function itemNodeClass(&$dbColumns, &$columnMap): void
     {
         if ($this->item_node_class !== null) {
-            $this->item_node_class = mb_ucfirst($this->item_node_class);
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                $this->item_node_class = mb_ucfirst($this->item_node_class);
+            }
             $itemNodeClass = 'IPS\\' . $this->app . '\\' . $this->item_node_class;
             $this->generator->addImport($itemNodeClass);
             $itemNodeClass = $this->item_node_class;
@@ -217,7 +219,9 @@ class Item extends GeneratorAbstract
             $columnMap['last_comment'] = 'last_comment';
             $columnMap['last_comment_by'] = 'last_comment_by';
             $columnMap['last_comment_name'] = 'last_comment_name';
-            $this->comment_class = mb_ucfirst($this->comment_class);
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                $this->comment_class = mb_ucfirst($this->comment_class);
+            }
             $commentClass = 'IPS\\' . $this->app . '\\' . $this->classname . '\\' . $this->comment_class;
             $this->generator->addImport($commentClass);
             $commentClass = $this->comment_class;
@@ -263,7 +267,10 @@ class Item extends GeneratorAbstract
                 ],
             ];
 
-            $this->review_class = mb_ucfirst($this->review_class);
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                $this->review_class = mb_ucfirst($this->review_class);
+            }
+
             $reviewClass = 'IPS\\' . $this->app . '\\' . $this->classname . '\\' . $this->review_class;
             $this->generator->addImport($reviewClass);
             $reviewClass = $this->review_class;

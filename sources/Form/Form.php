@@ -1047,7 +1047,7 @@ class Form extends ipsForm
 
         $elName = $name;
         if ($this->extraPrefix !== null) {
-            $elName = $this->compileName($element->getProp('name'), true, false);
+            $elName = $this->compileName($plain, true, false);
         }
 
         /** @var FormAbstract $createdElement */
@@ -1065,15 +1065,13 @@ class Form extends ipsForm
                 $exists = true;
             }
 
-            $element->label($name);
+            $element->label($plain);
             $labels = $element->getProp('label');
         }
 
         if (is_array($labels) && isset($labels['key'])) {
             $label = $labels['key'];
-            if ($exists === false) {
-                $label = $this->compileName($label);
-            }
+            $label = $this->compileName($label);
             if (Member::loggedIn()->language()->checkKeyExists($label)) {
                 if (isset($labels['sprintf']) && is_array($labels['sprintf'])) {
                     $label = Member::loggedIn()->language()->addToStack(
@@ -1088,7 +1086,6 @@ class Form extends ipsForm
 
             $createdElement->label = $label;
         }
-
         $descs = $element->getProp('description');
         $exists = false;
 

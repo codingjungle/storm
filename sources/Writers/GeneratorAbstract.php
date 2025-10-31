@@ -13,12 +13,20 @@
 namespace IPS\storm\Writers;
 
 use a;
+use Exception;
 use IPS\Patterns\Singleton;
 use IPS\storm\Application;
+use ReflectionNamedType;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 
+use function array_key_exists;
+use function implode;
+use function is_array;
+use function is_numeric;
+use function is_string;
+use function method_exists;
 use function str_starts_with;
 
 Application::initAutoloader();
@@ -246,9 +254,9 @@ abstract class GeneratorAbstract
         if ($this->classComment) {
             $this->output("\n\n");
             $this->output("/**\n");
-            foreach ($this->classComment as $item) {
-                $this->output('* ' . trim($item) . "\n");
-            }
+                foreach ($this->classComment as $item) {
+                    $this->output('* ' . trim($item) . "\n");
+                }
             $this->output('*/');
         }
 
@@ -284,16 +292,18 @@ EOF;
                     foreach ($this->docComment as $item) {
                         $this->output('* ' . $item . "\n");
                     }
-                }catch(\Throwable $e) {
-                    _p($item,$this->docComment);
+                } catch (\Throwable $e) {
+                    _p($item, $this->docComment);
                 }
                 $this->output('*/');
                 $this->output("\n");
             }
 
-            if($this->strictTypes === true){
+            if ($this->strictTypes === true) {
                 $strictTypes = <<<eof
+
 declare(strict_types=1);
+
 eof;
                 $this->output($strictTypes);
             }
@@ -330,7 +340,7 @@ EOF;
             $this->toWrite .= $output;
             return $this;
         } catch (Throwable) {
-            _P($output);
+            _p($output);
         }
     }
 
@@ -476,5 +486,67 @@ EOF;
         $hash = $this->hash($path);
         $this->included[$hash] = ['path' => $path, 'once' => $once, 'escape' => $escape];
         return $this;
+    }
+
+    public function buildParams(array $params, bool $doImports = true): string
+    {
+        $built = [];
+        foreach ($params as $param) {
+            if (!isset($param['name'])) {
+                continue;
+            }
+            $p = '';
+            if (isset($param['hint']) && $param['hint']) {
+                if (isset($param['nullable']) && $param['nullable'] === true) {
+                    $p .= '?';
+                }
+
+                $hint = $param['hint'];
+                if ($doImports === true && method_exists($this, 'addImport')) {
+                    try {
+                        if ($hint instanceof ReflectionNamedType) {
+                            $hint = $hint->getName();
+                        }
+                        $hint = $this->addImport($hint);
+                    } catch (Exception $e) {
+                    }
+                }
+
+                $p .= $hint . ' ';
+            }
+
+            if (isset($param['reference']) && $param['reference'] === true) {
+                $p .= '&';
+            }
+
+            $p .= '$' . $param['name'];
+
+            if (array_key_exists('value', $param)) {
+                $val = '';
+                if ($param['value'] === '[]' || $param['value'] === 'array()' || is_array($param['value'])) {
+                    $val = '[]';
+                } elseif (empty($param['value']) === false && (mb_strtolower($param['value']) === 'true' || mb_strtolower($param['value']) === 'false')) {
+                    $val = mb_strtolower($param['value']);
+                } elseif ($param['value'] === false) {
+                    $val = 'false';
+                } elseif ($param['value'] === true) {
+                    $val = 'true';
+                } elseif ($param['value'] === null || ( empty($param['value']) === false && mb_strtolower($param['value']) === 'null')) {
+                    $val = 'null';
+                } elseif ($param['value'] === "''" || $param === '""') {
+                    $val = $param['value'];
+                } elseif (is_string($param['value'])) {
+                    $val = "'" . $param['value'] . "'";
+                } elseif (is_numeric($param['value'])) {
+                    $val = $param['value'];
+                } else {
+                    $val = empty($param['value']) ? "''" : $param['value'];
+                }
+                $p .= ' = ' . $val;
+            }
+            $built[] = $p;
+        }
+
+        return implode(',', $built);
     }
 }

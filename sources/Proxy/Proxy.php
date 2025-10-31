@@ -170,31 +170,27 @@ class Proxy extends Singleton
         return [];
     }
 
-    public function rebuildModels(bool $mixin): void
+    public function buildModels(): void
     {
         try {
             foreach ($this->getArRelations() as $table => $dbClass) {
                 if (is_array($dbClass)) {
                     foreach ($dbClass as $db) {
-                        $this->buildDBProps($table, $db, $mixin);
+                        $this->buildDBProps($table, $db);
                     }
                 } else {
-                    $this->buildDBProps($table, $dbClass, $mixin);
+                    $this->buildDBProps($table, $dbClass);
                 }
             }
         } catch (Exception) {
         }
     }
 
-    public function rebuildNonOwnedModels(): void
+    public function buildNonOwnedModels(): void
     {
-        foreach ($this->scrubAr() as $dbClass => $table) {
-            foreach ($this->getArRelations() as $table => $dbClass) {
-                if (is_array($dbClass)) {
-                    foreach ($dbClass as $db) {
-                        $this->buildDBProps($table, $db, false);
-                    }
-                } else {
+        if(Settings::i()->storm_proxy_do_non_owned === true) {
+            foreach ($this->scrubAr() as $table => $classes) {
+                foreach ($classes as $dbClass) {
                     $this->buildDBProps($table, $dbClass, false);
                 }
             }
@@ -236,6 +232,9 @@ class Proxy extends Singleton
 
     protected function buildDBProps(string $table, string $dbClass, bool $mixin = true): void
     {
+        if ($mixin === true) {
+            $mixin = Settings::i()->storm_proxy_write_mixin;
+        }
         $classArray = explode('\\', $dbClass);
         $class = array_pop($classArray);
         $namespace = implode('\\', $classArray);
@@ -263,14 +262,18 @@ class Proxy extends Singleton
             }
 
             $classDoc = $this->buildClassDoc($classDefinition);
+
             $className = $mixin ? '_' . $class : $class;
-            ClassGenerator::i()
+            $nc = ClassGenerator::i()
                 ->setNameSpace($namespace)
                 ->setFileName(str_replace('\\', '_', $namespace) . '_' . $class)
                 ->setClassName($className)
-                ->setDocumentComment($classDoc, true)
-                ->setPath($this->path . 'db')
-                ->save();
+                ->setPath($this->path . 'db');
+
+            foreach ($classDoc as $k => $v) {
+                $nc->addClassComments($v);
+            }
+            $nc->save();
         }
 
         if ($mixin === true) {
@@ -518,14 +521,17 @@ class Proxy extends Singleton
 
             $header = $this->buildClassDoc($classDoc);
 
-            ClassGenerator::i()
+            $nc = ClassGenerator::i()
                 ->setNameSpace('IPS')
                 ->setFileName('Settings')
                 ->setClassName('_Settings')
                 ->setExtends('\\IPS\\Settings')
-                ->setPath($this->path)
-                ->setDocumentComment($header, true)
-                ->save();
+                ->setPath($this->path);
+
+            foreach ($header as $h) {
+                $nc->addClassComments($h);
+            }
+            $nc->save();
         } catch (Exception $e) {
         }
     }
@@ -545,14 +551,17 @@ class Proxy extends Singleton
 
         if (empty($classDoc) === false) {
             $header = $this->buildClassDoc($classDoc);
-            ClassGenerator::i()
+            $nc = ClassGenerator::i()
                 ->setNameSpace('IPS')
                 ->setFileName('Request')
                 ->setClassName('_Request')
                 ->setExtends('\\IPS\\Request')
-                ->setPath($this->path)
-                ->setDocumentComment($header, true)
-                ->save();
+                ->setPath($this->path);
+
+            foreach ($header as $h) {
+                $nc->addClassComments($h);
+            }
+            $nc->save();
         }
     }
 
@@ -571,14 +580,18 @@ class Proxy extends Singleton
 
         if (empty($classDoc) === false) {
             $header = $this->buildClassDoc($classDoc);
-            ClassGenerator::i()
+            $nc = ClassGenerator::i()
                 ->setNameSpace('IPS\\Data')
                 ->setFileName('Store')
                 ->setClassName('_Store')
                 ->setExtends('\\IPS\\Data\\Store')
-                ->setPath($this->path)
-                ->setDocumentComment($header, true)
-                ->save();
+                ->setPath($this->path);
+
+            foreach ($header as $h) {
+                $nc->addClassComments($h);
+            }
+
+            $nc->save();
         }
     }
 

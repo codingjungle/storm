@@ -22,6 +22,7 @@ use IPS\core\CustomBadge;
 use IPS\Node\DelayedCount;
 use IPS\Node\Grouping;
 use IPS\Node\Icon;
+use IPS\storm\Template;
 use IPS\Theme;
 use IPS\storm\Proxy\Proxyclass;
 use Symfony\Component\Finder\Finder;
@@ -308,8 +309,10 @@ class Sources
         $this->form
             ->dialogForm()
             ->setPrefix('storm_devcenter_')
+            ->addExtraPrefix('_r' . $this->type . 'r_')
             ->setId('storm_devcenter__r' . $this->type . 'r_')
             ->submitLang('Create Source');
+
         foreach ($config as $func) {
             if ($func instanceof Form\Element) {
                 $this->form->addToElementStore($func);
@@ -345,12 +348,12 @@ class Sources
         $class = 'IPS\\storm\DevCenter\\Sources\\Generator\\';
         $og = $class;
         $type = $this->type;
-        $values['type'] = mb_ucfirst($type);
+        $values['type'] = $type;
         try {
             switch ($type) {
                 case 'Debug':
                     $class .= 'Profiler';
-                    $values['className'] = mb_ucfirst($type);
+                    $values['className'] = $type;
                     $values['namespace'] = 'Profiler';
                     break;
                 case 'Member':
@@ -373,7 +376,7 @@ class Sources
                     $values['namespace'] = '';
                     break;
                 default:
-                    $class .= mb_ucfirst($type);
+                    $class .= $type;
                     break;
             }
 
@@ -409,8 +412,12 @@ class Sources
     {
         $this->noBlankCheck($data);
         $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
-        $ns = mb_ucfirst(Request::i()->{$ns});
-        $class = mb_ucfirst($data);
+        $ns = Request::i()->{$ns};
+        $class = $data;
+        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+            $ns = mb_ucfirst($ns);
+            $class = mb_ucfirst($class);
+        }
         $class = $ns ? '\\IPS\\' . $this->application->directory . '\\' . $ns . '\\' . $class : '\\IPS\\' . $this->application->directory . '\\' . $class;
         $class2 = '\\IPS\\' . $this->application->directory . '\\' . $class;
         try {
@@ -447,8 +454,14 @@ class Sources
     {
         $this->noBlankCheck($data);
         $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
-        $ns = mb_ucfirst(Request::i()->{$ns});
-        $class = mb_ucfirst($data);
+        $ns = Request::i()->{$ns};
+        $class = $data;
+
+        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+            $ns = mb_ucfirst($ns);
+            $class = mb_ucfirst($class);
+        }
+
         if ($ns) {
             $class = '\\IPS\\' . $this->application->directory . '\\' . $ns . '\\' . $class;
         } else {
@@ -476,8 +489,14 @@ class Sources
     {
         $this->noBlankCheck($data);
         $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
-        $ns = mb_ucfirst(Request::i()->{$ns});
-        $class = mb_ucfirst($data);
+        $ns = Request::i()->{$ns};
+        $class = $data;
+
+        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+            $ns = mb_ucfirst($ns);
+            $class = mb_ucfirst($class);
+        }
+
         if ($ns) {
             $class = "\\IPS\\" . $this->application->directory . "\\" . $ns . "\\" . $class;
         } else {
@@ -518,7 +537,7 @@ class Sources
      */
     public function extendsCheck($data): void
     {
-        if ($data && (!class_exists($data, true) && !class_exists('\\IPS\\' . $data))) {
+        if ($data && !class_exists($data, true) ) {
             throw new InvalidArgumentException('storm_devcenter_extended_class_no_exist');
         }
     }
@@ -676,7 +695,7 @@ class Sources
             'minimized' => null
         ];
         $this->form->addElement('extendsYN', 'yn')->toggles(['extends']);
-        $this->form->addElement('extends')->options($options)->validation([$this, 'extendsCheck'])->prefix('IPS\\');
+        $this->form->addElement('extends')->options($options)->validation([$this, 'extendsCheck']);
     }
 
     /**

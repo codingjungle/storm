@@ -76,7 +76,13 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @property string $comment_class
  * @property string $review_class
  * @property bool $strict_types
+ * @property string $interfaceName
+ * @property string $traitName
+ * @property ?array $ips_traits
+ * @property ?array $ips_implements
+ * @property ?bool $scaffolding_create
  */
+#[\AllowDynamicProperties]
 abstract class GeneratorAbstract
 {
     use LanguageBuilder;
@@ -170,17 +176,24 @@ abstract class GeneratorAbstract
                 $this->{$key} = null;
             }
         }
+
         if ($this->className !== null) {
-            $this->classname = mb_ucfirst($this->className);
+            $this->classname = $this->className;
         } elseif ($this->interfaceName !== null) {
-            $this->classname = mb_ucfirst($this->interfaceName);
+            $this->classname = $this->interfaceName;
         } elseif ($this->traitName !== null) {
-            $this->classname = mb_ucfirst($this->traitName);
+            $this->classname = $this->traitName;
         } else {
             $this->classname = 'Forms';
         }
 
+
+        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+            $this->classname = mb_ucfirst($this->classname);
+        }
+
         $this->classname_lower = mb_strtolower($this->classname);
+
         if (is_array($this->ips_traits)) {
             $this->traits = is_array($this->traits) ? array_merge($this->traits, $this->ips_traits) : $this->ips_traits;
         }
@@ -236,9 +249,13 @@ abstract class GeneratorAbstract
         if (mb_strtolower($this->namespace ?? '') === $this->classname_lower) {
             $this->namespace = 'IPS\\' . $this->app;
         } else {
-            $this->namespace = $this->namespace !== null ? 'IPS\\' . $this->app . '\\' . mb_ucfirst(
-                $this->namespace
-            ) : 'IPS\\' . $this->app;
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                $this->namespace = mb_ucfirst($this->namespace);
+            }
+
+            $this->namespace = $this->namespace !== null ?
+                'IPS\\' . $this->app . '\\' . $this->namespace :
+                'IPS\\' . $this->app;
         }
 
         if (
@@ -307,8 +324,7 @@ abstract class GeneratorAbstract
         }
 
         $this->generator->setPath($dir);
-        $ver = empty($this->application->version) === true ? $this->application->version : 'Pre 1.0.0';
-
+        $ver = empty($this->application->version) === false ? $this->application->version : 'Pre 1.0.0';
         $doc = [
             '@brief      ' . $this->classname . ' ' . $this->brief,
             '@author     -storm_author-',
@@ -328,14 +344,13 @@ abstract class GeneratorAbstract
             $this->generator->setAbstract();
         }
 
-        if ($this->strict_types === true) {
+        if ((bool)$this->strict_types === true) {
             $this->generator->setStrictTypes(true);
         }
 
         try {
             $this->generator->save();
-
-            if ($this->scaffolding_create && in_array($this->type, static::$arDescendent, false)) {
+            if ((bool) $this->scaffolding_create === true && in_array($this->type, static::$arDescendent, false)) {
                 $this->createRelation($file, $dir, $this->database);
                 if (is_array($this->scaffolding_type) && in_array('db', $this->scaffolding_type, false)) {
                     try {

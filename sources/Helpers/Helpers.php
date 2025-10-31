@@ -5,6 +5,7 @@ require_once $upOne . '/Editor/Editor.php';
 
 use IPS\storm\Editor;
 
+const STORM_ALT_THEMES = true;
 
 class Helpers
 {
@@ -259,27 +260,12 @@ function _p()
     (new Helpers(func_get_args()))->_method();
 }
 
-function _print()
-{
-    (new Helpers(func_get_args()))->_method();
-}
-
 function _d()
 {
     (new Helpers(func_get_args()))->_method('var_dump');
 }
 
-function _dump()
-{
-    (new Helpers(func_get_args()))->_method('var_dump');
-}
-
 function _e()
-{
-    (new Helpers(func_get_args()))->_method('var_export');
-}
-
-function _export()
 {
     (new Helpers(func_get_args()))->_method('var_export');
 }

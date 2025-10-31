@@ -19,12 +19,10 @@ class phpstormMeta extends GeneratorAbstract
 namespace PHPSTORM_META {
 eof;
 
-        foreach (Application::appsWithExtension('storm', 'ProxyHelpers') as $app) {
-            $extensions = $app->extensions('storm', 'ProxyHelpers', true);
+        foreach (Application::appsWithExtension('storm', 'MetaData') as $app) {
+            $extensions = $app->extensions('storm', 'MetaData', true);
             foreach ($extensions as $extension) {
-                if (method_exists($extension, 'phpstormMeta')) {
-                    $extension->phpstormMeta($body);
-                }
+                $extension->map($body);
             }
         }
 

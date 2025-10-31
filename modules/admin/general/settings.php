@@ -42,7 +42,7 @@ class settings extends Controller
     protected function manage(): void
     {
         $form = Form::create()->setObject(StormSettings::i());
-        $form->addTab('Profiler');
+        $form->addTab('storm_profiler');
         $form->addHeader('storm_profiler_bar');
         $form->addElement('storm_profiler_enabled', 'yn')
             ->toggles(
@@ -74,6 +74,14 @@ class settings extends Controller
         $form->addElement('storm_profiler_css_enabled', 'yn');
         $form->addElement('storm_profiler_debug_enabled', 'yn')->toggles(['storm_profiler_debug_ajax_enable']);
         $form->addElement('storm_profiler_debug_ajax_enable', 'yn');
+
+        $form->addTab('storm_devcenter');
+        $form->addElement('storm_devcenter_keep_case', 'yn');
+
+        $form->addTab('storm_proxy');
+        $form->addElement('storm_proxy_do_non_owned', 'yn');
+        $form->addElement('storm_proxy_write_mixin', 'yn');
+        $form->addElement('storm_proxy_alt_templates', 'yn');
 
         if ($values = $form->values()) {
             $form->saveAsSettings($values);

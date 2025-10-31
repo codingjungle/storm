@@ -3,9 +3,9 @@
     ips.createModule('ips.storm.profiler.proxy', function () {
         // Functions that become public methods
 
-        var respond = function (elem) {
+        var respond = function (elem, options) {
             if (!$(elem).data("_stormProfilerProxy")) {
-                let stormProfilerProxy = new _stormProfilerProxy($(elem));
+                let stormProfilerProxy = new _stormProfilerProxy($(elem), options);
                 stormProfilerProxy.init();
                 $(elem).data("_stormProfilerProxy", stormProfilerProxy);
             }
@@ -13,7 +13,7 @@
 
         // Register this module as a widget to enable the data API and
         // jQuery plugin functionality
-        ips.ui.registerWidget("stormprofilerproxy", ips.storm.profiler.proxy);
+        ips.ui.registerWidget("stormprofilerproxy", ips.storm.profiler.proxy, ['phpstorm']);
 
         // Expose public methods
         return {
@@ -21,27 +21,29 @@
         };
     });
 
-    let _stormProfilerProxy = function (el) {
+    let _stormProfilerProxy = function (el, options) {
         var ajax = ips.getAjax(),
             url = ips.getSetting("baseURL") +
                 "?app=storm&module=other&controller=proxy",
-            _nonOwned = false,
+            phpstorm = parseInt(options.phpstorm),
             init = function () {
-                el.on('click', '[data-start]', _submit);
+                console.log(options);
+            // el.on('click', '[data-start]', _submit);
+                _do('constants' );
+
             },
             _submit = e => {
                 e.preventDefault();
-                if($('#elStorm_proxy_write_mixin').prop('checked')){
-                     url += '&mixin=1';
-                }
-                if($('#elStorm_proxy_other_models').prop('checked')){
-                    _nonOwned = true;
-                }
+                // if($('#elStorm_proxy_write_mixin').prop('checked')){
+                //      url += '&mixin=1';
+                // }
+                // if($('#elStorm_proxy_other_models').prop('checked')){
+                //     _nonOwned = true;
+                // }
                 el.empty();
-               _do('constants', parseInt($(e.currentTarget).attr('data-phpstorm')));
 
             },
-            _do = (generator, phpstorm) => {
+            _do = generator => {
                 ajax({
                     type: 'GET',
                     data: {do: generator},
@@ -80,67 +82,67 @@
                     complete: () => {
                         switch (generator) {
                             case 'constants':
-                                _do('settings', phpstorm);
+                                _do('settings');
                                 break;
                             case 'settings':
-                                _do('request', phpstorm);
+                                _do('request');
                                 break;
                             case 'request':
-                                _do('store', phpstorm);
+                                _do('store');
                                 break;
                             case 'store':
-                                _do('css', phpstorm);
+                                _do('css');
                                 break;
                             case 'css':
                                 if (phpstorm === 0) {
                                     _write('Complete!');
                                 } else {
-                                    _do('phpCache', phpstorm);
+                                    _do('phpCache');
                                 }
                                 break;
                             case 'phpCache':
-                                _do('phtmlCache', phpstorm);
+                                _do('phtmlCache');
                                 break;
                             case 'phtmlCache':
-                                _do('models', phpstorm);
+                                _do('models');
                                 break;
                             case 'models':
-                                if(_nonOwned === true) {
-                                    _do('nonOwnedModels', phpstorm);
-                                }
-                                else{
-                                    _do('applications', phpstorm);
-                                }
+                                // if(_nonOwned === true) {
+                                    _do('nonOwnedModels');
+                                // }
+                                // else{
+                                //     _do('applications');
+                                // }
                                 break;
                             case 'nonOwnedModels':
-                                _do('applications', phpstorm);
+                                _do('languages');
                                 break;
-                            case 'applications':
-                                _do('database', phpstorm);
-                                break;
-                            case 'database':
-                                _do('languages', phpstorm);
-                                break;
-                            case 'languages':
-                                _do('extensions', phpstorm);
-                                break;
+                            // case 'applications':
+                            //     _do('database');
+                            //     break;
+                            // case 'database':
+                            //     _do('languages');
+                            //     break;
+                            // case 'languages':
+                            //     _do('extensions');
+                            //     break;
                             case 'extensions':
-                                _do('templates', phpstorm);
+                                _do('templates');
                                 break;
                             case 'templates':
-                                _do('moderators', phpstorm);
+                                _do('moderators');
                                 break;
                             case 'moderators':
-                                _do('url', phpstorm);
+                                _do('url');
                                 break;
                             case 'url':
-                                _do('errorCodes', phpstorm);
+                                _do('errorCodes');
                                 break;
                             case 'errorCodes':
-                                _do('phpstormMeta', phpstorm);
+                                _do('phpstormMeta');
                                 break;
                             case 'phpstormMeta':
-                                _do('toolboxMeta', phpstorm);
+                                _do('toolboxMeta');
                                 break;
                             case 'toolboxMeta':
                                 break;

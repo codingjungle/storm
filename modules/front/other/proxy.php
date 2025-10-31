@@ -17,6 +17,7 @@ use IPS\storm\Proxy\Generator\Moderators;
 use IPS\storm\Proxy\Generator\phpstormMeta;
 use IPS\storm\Proxy\Generator\Templates;
 use IPS\storm\Proxy\Generator\Url;
+use IPS\storm\Settings;
 use IPS\Theme;
 
 use function base64_decode;
@@ -88,7 +89,7 @@ class proxy extends Controller
 
     protected function models(): void
     {
-        \IPS\storm\Proxy::i()->rebuildModels((bool) Request::i()->mixin);
+        \IPS\storm\Proxy::i()->buildModels();
 
         $message = 'DB Models proxies built!';
         Output::i()->json(['message' => $message]);
@@ -96,8 +97,11 @@ class proxy extends Controller
 
     protected function nonOwnedModels(): void
     {
-        \IPS\storm\Proxy::i()->rebuildNonOwnedModels();
-        $message = 'Non Owned DB Models proxies built!';
+        \IPS\storm\Proxy::i()->buildNonOwnedModels();
+        $message = 'Non-owned models disabled, change in settings.';
+        if(Settings::i()->storm_proxy_do_non_owned === true) {
+            $message = 'Non Owned DB Models proxies built!';
+        }
         Output::i()->json(['message' => $message]);
     }
 
@@ -143,20 +147,20 @@ class proxy extends Controller
         Output::i()->json(['message' => $message]);
     }
 
-    protected function applications(): void
-    {
-        $this->steps('Applications Registrar & Provider completed', Applications::class);
-    }
+//    protected function applications(): void
+//    {
+//        $this->steps('Applications Registrar & Provider completed', Applications::class);
+//    }
+//
+//    protected function database(): void
+//    {
+//        $this->steps('Databases Registrar & Provider completed', Db::class);
+//    }
 
-    protected function database(): void
-    {
-        $this->steps('Databases Registrar & Provider completed', Db::class);
-    }
-
-    protected function languages(): void
-    {
-        $this->steps('Language Registrar  & Provider  completed', Language::class);
-    }
+//    protected function languages(): void
+//    {
+//        $this->steps('Language Registrar  & Provider  completed', Language::class);
+//    }
 
     protected function extensions(): void
     {

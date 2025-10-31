@@ -324,7 +324,9 @@ eof;
     protected function nodeItemClass()
     {
         //nodeItemClass
-        $this->content_item_class = mb_ucfirst($this->content_item_class);
+        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+            $this->content_item_class = mb_ucfirst($this->content_item_class);
+        }
         $contentItemClass = '\\IPS\\' . $this->app . '\\' . $this->content_item_class . '::class';
         $this->generator->addImport($contentItemClass);
         $contentItemClass = $this->content_item_class . '::class';

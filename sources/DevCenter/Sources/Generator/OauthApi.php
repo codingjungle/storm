@@ -17,7 +17,6 @@ use Exception;
 use IPS\Http\Response;
 use IPS\Http\Url;
 use IPS\Patterns\Singleton;
-use IPS\storm\Writers\ClassGenerator;
 use Laminas\Code\Reflection\ClassReflection;
 use Throwable;
 

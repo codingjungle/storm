@@ -13,6 +13,8 @@
 namespace IPS\storm\Writers\Traits;
 
 use Exception;
+use IPS\storm\Writers\ClassGenerator;
+use IPS\storm\Writers\GeneratorAbstract;
 use ReflectionNamedType;
 
 use function array_key_exists;
@@ -140,68 +142,14 @@ trait ClassMethods
         }
     }
 
-    protected function writeParams(array $params): void
+    public function writeParams(array $params ): void
     {
-        $this->output(' ');
-        $built = [];
+            $this->output(' ');
+        $built = $this->buildParams($params);
 
-        foreach ($params as $param) {
-            if (!isset($param['name'])) {
-                continue;
-            }
-            $p = '';
-            if (isset($param['hint']) && $param['hint']) {
-                if (isset($param['nullable']) && $param['nullable'] === true) {
-                    $p .= '?';
-                }
 
-                $hint = $param['hint'];
-                if (method_exists($this, 'addImport')) {
-                    try {
-                        if ($hint instanceof ReflectionNamedType) {
-                            $hint = $hint->getName();
-                        }
-                        $hint = $this->addImport($hint);
-                    } catch (Exception $e) {
-                    }
-                }
-
-                $p .= $hint . ' ';
-            }
-
-            if (isset($param['reference']) && $param['reference'] === true) {
-                $p .= '&';
-            }
-
-            $p .= '$' . $param['name'];
-
-            if (array_key_exists('value', $param)) {
-                $val = '';
-                if ($param['value'] === '[]' || $param['value'] === 'array()' || is_array($param['value'])) {
-                    $val = '[]';
-                } elseif (empty($param['value']) === false && (mb_strtolower($param['value']) === 'true' || mb_strtolower($param['value']) === 'false')) {
-                    $val = mb_strtolower($param['value']);
-                } elseif ($param['value'] === false) {
-                    $val = 'false';
-                } elseif ($param['value'] === true) {
-                    $val = 'true';
-                } elseif ($param['value'] === null || ( empty($param['value']) === false && mb_strtolower($param['value']) === 'null')) {
-                    $val = 'null';
-                } elseif ($param['value'] === "''" || $param === '""') {
-                    $val = $param['value'];
-                } elseif (is_string($param['value'])) {
-                    $val = "'" . $param['value'] . "'";
-                } elseif (is_numeric($param['value'])) {
-                    $val = $param['value'];
-                } else {
-                    $val = empty($param['value']) ? "''" : $param['value'];
-                }
-                $p .= ' = ' . $val;
-            }
-            $built[] = $p;
-        }
-        $this->output(implode(', ', $built));
-        $this->output(' ');
+            $this->output($built);
+            $this->output(' ');
     }
 
     /**

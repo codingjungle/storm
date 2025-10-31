@@ -11,10 +11,11 @@
 namespace IPS\storm\Proxy\Generator;
 
 use Exception;
+use IPS\Application;
 use IPS\Patterns\Singleton;
 use IPS\storm\Profiler\Debug;
-use IPS\storm\Proxy;
 use IPS\storm\Writers\ClassGenerator;
+use IPS\storm\Writers\FileGenerator;
 use IPS\Theme;
 use ReflectionException;
 use ReflectionFunction;
@@ -27,14 +28,10 @@ use function explode;
 use function file_put_contents;
 use function function_exists;
 use function header;
+use function implode;
 use function ksort;
-use function mb_strtolower;
-use function md5;
-use function rand;
-use function random_int;
 use function randomString;
 use function str_replace;
-use function time;
 use function trim;
 
 use const DIRECTORY_SEPARATOR;
@@ -60,7 +57,7 @@ class Templates extends GeneratorAbstract
      */
     protected static ?Singleton $instance = null;
 
-    public function create()
+    public function create(): void
     {
         $jsonMeta = Store::i()->read('storm_json');
 //        $jsonMeta[ 'registrar' ][] = [
@@ -109,15 +106,22 @@ class Templates extends GeneratorAbstract
         $tempClass = [];
         $templates = Store::i()->read('storm_templates');
         $phpStormMeta = Store::i()->read('storm_phpstorm_templates');
+
+        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+            $altTemplates = Store::i()->read('storm_alt_templates');
+        }
+
         if (empty($templates) === false) {
             foreach ($templates as $key => $template) {
-                $key = str_replace(\IPS\Application::getRootPath() . '/applications/', '', $key);
-                $tpl = explode(DIRECTORY_SEPARATOR, $key);
+                $key = str_replace(Application::getRootPath() . '/applications/', '', $key);
+                $ogkey = $og = $tpl = explode(DIRECTORY_SEPARATOR, $key);
+                if (isset($og[2]) && $og[2] === 'email') {
+                    continue;
+                }
                 array_pop($tpl);
                 $temp = array_pop($tpl);
                 $ori = $temp;
                 $newParams = [];
-
                 if ($temp === 'global') {
                     $temp = 'nglobal';
                 }
@@ -143,7 +147,7 @@ class Templates extends GeneratorAbstract
 
                                 try {
                                     $data['value'] = $param->getDefaultValue();
-                                } catch (Exception | ReflectionException) {
+                                } catch (Exception|ReflectionException) {
                                 }
 
                                 $newParams[$param->getPosition()] = $data;
@@ -152,6 +156,16 @@ class Templates extends GeneratorAbstract
                         }
                     }
                 }
+
+                $app = $og[0] ?? null;
+                $folder = $og[4] ?? null;
+                $location = $og[3] ?? null;
+                unset($og[0], $og[1], $og[2], $og[3], $og[4]);
+                $file = str_replace('.phtml', '', implode('.', $og));
+                $altTemplates[$folder . '.' . $app . '.' . $location][] = [
+                    'func' => $file,
+                    'params' => $newParams
+                ];
 
                 $tempStore[$ori] = [
                     'lookup_string' => $ori
@@ -175,6 +189,59 @@ class Templates extends GeneratorAbstract
         Store::i()->write($jsonMeta, 'storm_json');
         Store::i()->write($tempClass, 'storm_template_class');
         $this->makeTempClasses($tempClass);
+
+        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+            Store::i()->write($altTemplates, 'storm_alt_templates');
+            $this->makeAltTemplates();
+        }
+    }
+
+    /**
+     * @param array $classes
+     */
+    public function makeTempClasses(array $classes)
+    {
+        foreach ($classes as $key => $templates) {
+            try {
+                $nc = ClassGenerator::i()
+                    ->setPath($this->save . '/templates/')
+                    ->setNameSpace('stormProxy')
+                    ->setClassName($key)
+                    ->setFileName($key);
+
+                foreach ($templates as $template) {
+                    $nc->addMethod($template['name'], '', $template['params'], ['returnType' => 'string']);
+                }
+
+                $nc->save();
+            } catch (Exception $e) {
+                Debug::log($e);
+            }
+        }
+    }
+
+    public function makeAltTemplates(): void
+    {
+        //0 = app, 3 = location, 4 = group, 5 =
+        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+            $altTemplates = Store::i()->read('storm_alt_templates');
+            $nc = FileGenerator::i()
+                ->setPath($this->save)
+                ->setFilename('altTemplates');
+
+            foreach ($altTemplates as $k => $v) {
+                $ns = str_replace('.', '_', $k);
+                $nc = ClassGenerator::i()
+                    ->setPath($this->save . DIRECTORY_SEPARATOR . 'altTemplates' )
+                    ->setNameSpace('stormProxy')
+                    ->setClassName($ns)
+                    ->setFileName($ns);
+                foreach ($v as $vv) {
+                    $nc->addMethod($vv['func'],'',$vv['params'], ['returnType' => 'string']);
+                }
+                $nc->save();
+            }
+        }
     }
 
     public function amendFile(string $file, string $method, array $params)
@@ -226,30 +293,6 @@ class Templates extends GeneratorAbstract
             $toWrite .= '){}';
             $cc .= "\n\n" . $toWrite . "\n\n}";
             file_put_contents($file, $cc);
-        }
-    }
-
-    /**
-     * @param array $classes
-     */
-    public function makeTempClasses(array $classes)
-    {
-        foreach ($classes as $key => $templates) {
-            try {
-                $nc = ClassGenerator::i()
-                    ->setPath($this->save . '/templates/')
-                    ->setNameSpace('stormProxy')
-                    ->setClassName($key)
-                    ->setFileName($key);
-
-                foreach ($templates as $template) {
-                    $nc->addMethod($template['name'], '', $template['params']);
-                }
-
-                $nc->save();
-            } catch (Exception $e) {
-                Debug::log($e);
-            }
         }
     }
 }

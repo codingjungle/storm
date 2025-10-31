@@ -15,6 +15,7 @@ namespace IPS\storm\DevCenter\Traits;
 use IPS\Output;
 use IPS\Request;
 use IPS\storm\Proxy\Generator\Store;
+use IPS\storm\Template;
 use IPS\Theme;
 use IPS\storm\Form\Element;
 use IPS\storm\Proxy\Generator\Cache;
@@ -49,7 +50,8 @@ trait Sources
         $this->doOutput($config, 'standard', 'Standard Class');
     }
 
-    protected function oauthApi(){
+    protected function oauthApi()
+    {
         $config = [
             'Namespace',
             'ClassName',
@@ -65,9 +67,7 @@ trait Sources
     {
         $this->elements->buildForm($config, $type);
         $return = $this->elements->create();
-
         $output = Theme::i()->getTemplate('devcenter', 'storm', 'global')->wrapper($title, $this->elements->form);
-
         if ($this->elements->form->valuesError === true) {
             $alt = $this->alt ?? $type;
             Output::i()->output = Theme::i()->getTemplate('devcenter', 'storm', 'global')->sources(
@@ -81,10 +81,9 @@ trait Sources
         } elseif ($return === null) {
             Output::i()->output = $output;
         } else {
-            if(Request::i()->isAjax()) {
+            if (Request::i()->isAjax()) {
                 Output::i()->json(['msg' => $return, 'type' => 'dtsources']);
-            }
-            else{
+            } else {
                 Output::i()->redirect(Request::i()->url(), $return);
             }
         }
@@ -109,7 +108,6 @@ trait Sources
             (new Element('settings_message', 'message'))->extra(['css' => 'ipsMessage ipsMessage_error'])
         ];
         $this->doOutput($config, 'Settings', 'Settings');
-
     }
 
     protected function orm()

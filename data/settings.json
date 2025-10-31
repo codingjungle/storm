@@ -1,5 +1,9 @@
 [
     {
+        "key": "storm_devcenter_keep_case",
+        "default": "0"
+    },
+    {
         "key": "storm_profiler_admin_enabled",
         "default": "1"
     },
@@ -49,6 +53,18 @@
     },
     {
         "key": "storm_profiler_templates_enabled",
+        "default": "1"
+    },
+    {
+        "key": "storm_proxy_alt_templates",
+        "default": "0"
+    },
+    {
+        "key": "storm_proxy_do_non_owned",
+        "default": "1"
+    },
+    {
+        "key": "storm_proxy_write_mixin",
         "default": "1"
     }
 ]

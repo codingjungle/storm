@@ -91,7 +91,10 @@ class Comment extends Item
     protected function contentItemClass(): void
     {
         if ($this->content_item_class !== null) {
-            $this->content_item_class = mb_ucfirst($this->content_item_class);
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                $this->content_item_class = mb_ucfirst($this->content_item_class);
+            }
+
             $itemClass = '\\IPS\\' . $this->app . '\\' . $this->content_item_class;
             $this->generator->addImport($itemClass);
             $itemClass = $this->content_item_class;
