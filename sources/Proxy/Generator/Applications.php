@@ -2,6 +2,8 @@
 
 namespace IPS\storm\Proxy\Generator;
 
+use IPS\Application;
+
 use function implode;
 
 class Applications

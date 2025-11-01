@@ -58,7 +58,8 @@ class proxy extends Controller
 
     protected function constants()
     {
-        \IPS\storm\Proxy::i()->emptyDirectory(\IPS\storm\Proxy::i()->path);
+        //\IPS\storm\Proxy::i()->emptyDirectory(\IPS\storm\Proxy::i()->path);
+        \IPS\storm\Proxy::i()->clearJsonFiles();
         \IPS\storm\Proxy::i()->constants();
         $message = 'Constants proxy file built!';
         Output::i()->json(['message' => $message]);
@@ -131,11 +132,11 @@ class proxy extends Controller
     protected function phpCache(): void
     {
         \IPS\storm\Proxy::i()->build();
-        $path = \IPS\Application::getRootPath() . '/applications/storm/data/storm/';
-        $jsonMeta = json_decode(file_get_contents($path . 'defaults.json'), true);
-        $jsonMeta2 = json_decode(file_get_contents($path . 'defaults2.json'), true);
-        $jsonMeta += $jsonMeta2;
-        \IPS\storm\Proxy\Generator\Store::i()->write($jsonMeta, 'storm_json');
+//        $path = \IPS\Application::getRootPath() . '/applications/storm/data/storm/';
+//        $jsonMeta = json_decode(file_get_contents($path . 'defaults.json'), true);
+//        $jsonMeta2 = json_decode(file_get_contents($path . 'defaults2.json'), true);
+//        $jsonMeta += $jsonMeta2;
+//        \IPS\storm\Proxy\Generator\Store::i()->write($jsonMeta, 'storm_json');
 
         $message = 'MetaData: PHP Meta Caches completed.';
         Output::i()->json(['message' => $message]);

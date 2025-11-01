@@ -8,13 +8,13 @@ use Barryvdh\Reflection\DocBlock\Serializer;
 use Barryvdh\Reflection\DocBlock\Tag;
 use Exception;
 use IPS\Application;
-use IPS\Data\Store;
 use IPS\IPS;
 use IPS\Output;
 use IPS\Output\System;
 use IPS\Patterns\Singleton;
 use IPS\storm\Profiler\Debug;
 use IPS\storm\Proxy\Generator\Cache;
+use IPS\storm\Proxy\Generator\Store;
 use IPS\storm\Writers\ClassGenerator;
 use IPS\storm\Writers\FileGenerator;
 use IPS\Theme;
@@ -189,7 +189,7 @@ class Proxy extends Singleton
 
     public function buildNonOwnedModels(): void
     {
-        if(Settings::i()->storm_proxy_do_non_owned === true) {
+        if (Settings::i()->storm_proxy_do_non_owned === true) {
             foreach ($this->scrubAr() as $table => $classes) {
                 foreach ($classes as $dbClass) {
                     $this->buildDBProps($table, $dbClass, false);
@@ -200,7 +200,7 @@ class Proxy extends Singleton
 
     protected function scrubAr()
     {
-        $relations = Proxy\Generator\Store::i()->read('storm_ar_relations');
+        $relations = Store::i()->read('storm_ar_relations');
         try {
             foreach ($this->getArRelations() as $table => $dbClass) {
                 unset($relations[$table]);
@@ -497,7 +497,7 @@ class Proxy extends Singleton
             /**
              * @var array $load
              */
-            $load = Store::i()->settings;
+            $load = \IPS\Data\Store::i()->settings;
             foreach ($load as $key => $val) {
                 if (isset($arrays[$key]) || is_array(Settings::i()->{$key})) {
                     $type = 'array';
@@ -1062,28 +1062,33 @@ class Proxy extends Singleton
         ];
     }
 
+    public function clearJsonFiles(): void
+    {
+        Store::i()->delete('storm_alt_templates');
+        Store::i()->delete('storm_metadata_final');
+        Store::i()->delete('storm_phpstorm_templates');
+        Store::i()->delete('storm_templates_class');
+    }
+
     public function build(array $extensions = ['php']): void
     {
 
         $files = $this->dirIterator(null, $extensions);
         $fileName = 'storm_md5_phtml';
 
-        if(in_array('php', $extensions) === true){
+        if (in_array('php', $extensions) === true) {
             $fileName = 'storm_md5_php';
         }
 
-        $md5 = \IPS\storm\Proxy\Generator\Store::i()->read($fileName);
-
+        $md5 = Store::i()->read($fileName);
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($files as $file) {
-            if(isset($md5[$file->getRealPath()]))
-            {
-                if( $file->getMTime() < $md5[$file->getRealPath()] )
-                {
-                   continue;
+            if (isset($md5[$file->getRealPath()])) {
+                if (sha1($file->getMTime()) === $md5[$file->getRealPath()]) {
+                    continue;
                 }
             }
-            $md5[$file->getRealPath()] = $file->getMTime();
+            $md5[$file->getRealPath()] = sha1($file->getMTime());
 
             if ($file->getExtension() === 'phtml') {
                 $templates = Proxy\Generator\Store::i()->read('storm_templates');
@@ -1096,19 +1101,17 @@ class Proxy extends Singleton
                     if (isset($params[1])) {
                         $parameters = $params[1];
                     }
-
-                    $templates[$file] = [
+                    $templates[$file->getRealPath()] = [
                         'method' => $methodName,
                         'params' => $parameters
                     ];
                 }
                 Proxy\Generator\Store::i()->write($templates, 'storm_templates');
             } elseif ($file->getExtension() === 'php') {
-
                 $this->create($file);
             }
         }
 
-        \IPS\storm\Proxy\Generator\Store::i()->write($md5, $fileName);
+        Store::i()->write($md5, $fileName);
     }
 }

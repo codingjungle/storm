@@ -13,7 +13,7 @@
 
         // Register this module as a widget to enable the data API and
         // jQuery plugin functionality
-        ips.ui.registerWidget("stormprofilerproxy", ips.storm.profiler.proxy, ['phpstorm']);
+        ips.ui.registerWidget("stormprofilerproxy", ips.storm.profiler.proxy);
 
         // Expose public methods
         return {
@@ -25,23 +25,8 @@
         var ajax = ips.getAjax(),
             url = ips.getSetting("baseURL") +
                 "?app=storm&module=other&controller=proxy",
-            phpstorm = parseInt(options.phpstorm),
             init = function () {
-                console.log(options);
-            // el.on('click', '[data-start]', _submit);
                 _do('constants');
-
-            },
-            _submit = e => {
-                e.preventDefault();
-                // if($('#elStorm_proxy_write_mixin').prop('checked')){
-                //      url += '&mixin=1';
-                // }
-                // if($('#elStorm_proxy_other_models').prop('checked')){
-                //     _nonOwned = true;
-                // }
-                el.empty();
-
             },
             _do = generator => {
                 ajax({
@@ -55,10 +40,10 @@
                             steps = {
                                 'constants': msg,
                                 'settings': msg,
-                                'request' : msg,
-                                'store' : msg,
+                                'request': msg,
+                                'store': msg,
                                 'models': msg,
-                                'nonOwnedModels' : msg,
+                                'nonOwnedModels': msg,
                                 'css': msg,
                                 'phpCache': altMsg + ' PHP Data',
                                 'phtmlCache': altMsg + 'PHTML Data',
@@ -94,11 +79,7 @@
                                 _do('css');
                                 break;
                             case 'css':
-                                if (phpstorm === 0) {
-                                    _write('Complete!');
-                                } else {
-                                    _do('phpCache');
-                                }
+                                _do('phpCache');
                                 break;
                             case 'phpCache':
                                 _do('phtmlCache');
@@ -107,19 +88,14 @@
                                 _do('models');
                                 break;
                             case 'models':
-                                // if(_nonOwned === true) {
-                                    _do('nonOwnedModels');
-                                // }
-                                // else{
-                                //     _do('applications');
-                                // }
+                                _do('nonOwnedModels');
                                 break;
                             case 'nonOwnedModels':
+                                _do('applications');
+                                break;
+                            case 'applications':
                                 _do('database');
                                 break;
-                            // case 'applications':
-                            //     _do('database');
-                            //     break;
                             case 'database':
                                 _do('languages');
                                 break;
