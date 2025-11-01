@@ -27,6 +27,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 
+use function _p;
 use function array_keys;
 use function array_merge;
 use function array_pop;
@@ -598,9 +599,10 @@ class Proxy extends Singleton
     /**
      * @param $content
      */
-    public function create(string $path): void
+    public function create(\Symfony\Component\Finder\SplFileInfo $file): void
     {
-        $content = file_get_contents($path);
+        $path = $file->getRealPath();
+        $content = $file->getContents();
         $data = $this->tokenize($content);
 
         //make sure it is an IPS class
@@ -916,7 +918,7 @@ class Proxy extends Singleton
      * @param array $extension
      * @return array
      */
-    public function dirIterator(?string $dir = null, array $extension = ['php']): array
+    public function dirIterator(?string $dir = null, array $extension = ['php']): Finder
     {
         $finder = new Finder();
 
@@ -946,10 +948,7 @@ class Proxy extends Singleton
             return true;
         };
 
-        $finder->filter($filter)->files();
-        $files = array_keys(iterator_to_array($finder));
-        asort($files);
-        return $files;
+        return $finder->filter($filter)->files();
     }
 
     /**
@@ -1067,13 +1066,29 @@ class Proxy extends Singleton
     {
 
         $files = $this->dirIterator(null, $extensions);
-        foreach ($files as $file) {
-            $finder = new SplFileInfo($file);
+        $fileName = 'storm_md5_phtml';
 
-            if ($finder->getExtension() === 'phtml') {
+        if(in_array('php', $extensions) === true){
+            $fileName = 'storm_md5_php';
+        }
+
+        $md5 = \IPS\storm\Proxy\Generator\Store::i()->read($fileName);
+
+        /** @var \Symfony\Component\Finder\SplFileInfo $file */
+        foreach ($files as $file) {
+            if(isset($md5[$file->getRealPath()]))
+            {
+                if( $file->getMTime() < $md5[$file->getRealPath()] )
+                {
+                   continue;
+                }
+            }
+            $md5[$file->getRealPath()] = $file->getMTime();
+
+            if ($file->getExtension() === 'phtml') {
                 $templates = Proxy\Generator\Store::i()->read('storm_templates');
-                $content = file_get_contents($file);
-                $methodName = $finder->getBasename('.' . $finder->getExtension());
+                $content = $file->getContents();
+                $methodName = $file->getBasename('.' . $file->getExtension());
                 preg_match('/^<ips:template parameters="(.+?)?"(.+?)?\/>(\r\n?|\n)/', $content, $params);
 
                 if (isset($params[0])) {
@@ -1088,9 +1103,12 @@ class Proxy extends Singleton
                     ];
                 }
                 Proxy\Generator\Store::i()->write($templates, 'storm_templates');
-            } elseif ($finder->getExtension() === 'php') {
+            } elseif ($file->getExtension() === 'php') {
+
                 $this->create($file);
             }
         }
+
+        \IPS\storm\Proxy\Generator\Store::i()->write($md5, $fileName);
     }
 }

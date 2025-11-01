@@ -19,6 +19,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 use function defined;
 use function header;
+use function implode;
 use function is_dir;
 use function str_replace;
 
@@ -95,38 +96,30 @@ class Extensions extends GeneratorAbstract
                 }
             }
         }
+        $body = Store::i()->read('storm_metadata_final');
+        $toWrite = [];
 
-        $jsonMeta = \IPS\storm\Proxy\Generator\Store::i()->read('storm_json');
+        foreach ($name as $val) {
+            $toWrite[] = "'" . $val. "'";
+        }
+        $toWrite = implode(',', $toWrite);
+        $body[] = <<<EOF
+    registerArgumentsSet('Extensions', {$toWrite});
+EOF;
 
-        $jsonMeta['registrar'][] = [
-            'signature'  => [
-                'IPS\\Application::extensions:1',
-                'IPS\\Application::allExtensions:1',
-            ],
-            'signatures' => [
-                [
-                    'class'  => Application::class,
-                    'method' => 'extensions',
-                    'index'  => 1,
-                    'type'   => 'type',
-                ],
-
-            ],
-            'provider'   => 'extensionLookup',
-            'language'   => 'php',
+        $methods = [
+            ['f' => '\\IPS\\Application::extensions()', 'i' => 1],
+            ['f' => '\\IPS\\Application::allExtensions()', 'i' => 1]
         ];
 
-        $jsonMeta['providers'][] = [
-            'name'   => 'extensionLookup',
-            'source' => [
-                'contributor' => 'return_array',
-                'parameter'   => 'stormProxy\\ExtensionsNameProvider::get',
-            ],
-        ];
+        foreach ( $methods as $m )
+        {
+            $body[] = <<<EOF
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Extensions'));
+EOF;
+        }
 
-        \IPS\storm\Proxy\Generator\Store::i()->write($jsonMeta, 'storm_json');
-
-        $this->writeClass('Extensions', 'ExtensionsNameProvider', $name);
+        Store::i()->write($body, 'storm_metadata_final');
     }
 }
 

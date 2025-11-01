@@ -59,50 +59,7 @@ class Templates extends GeneratorAbstract
 
     public function create(): void
     {
-        $jsonMeta = Store::i()->read('storm_json');
-//        $jsonMeta[ 'registrar' ][] = [
-//            'signature' => [
-//                "IPS\\Theme::getTemplate:0",
-//            ],
-//            'provider'  => 'templateGroup',
-//            'language'  => 'php',
-//        ];
-        //this pisses me off, this use to work!
-        $jsonMeta['registrar'][] = [
-            'signature' => [
-                "IPS\\Theme::getTemplate:0",
-            ],
-            'signatures' => [
-                [
-                    'class' => Theme::class,
-                    'method' => 'getTemplate',
-                    'index' => 0,
-                    'type' => 'type',
-                ],
-
-            ],
-            'provider' => 'templateClass',
-            'language' => 'php',
-        ];
-        $jsonMeta['registrar'][] = [
-            'signature' => [
-                'IPS\\Theme::getTemplate:2',
-                'IPS\\Output::js:2',
-                'IPS\\Output::css:2',
-            ],
-            'provider' => 'templateLocation',
-            'language' => 'php',
-        ];
-        $jsonMeta['providers'][] = [
-            'name' => 'templateLocation',
-            'lookup_strings' => [
-                'admin',
-                'front',
-                'global',
-            ],
-        ];
-
-        $tempStore = [];
+        $body = Store::i()->read('storm_metadata_final');
         $tempClass = [];
         $templates = Store::i()->read('storm_templates');
         $phpStormMeta = Store::i()->read('storm_phpstorm_templates');
@@ -166,10 +123,6 @@ class Templates extends GeneratorAbstract
                     'func' => $file,
                     'params' => $newParams
                 ];
-
-                $tempStore[$ori] = [
-                    'lookup_string' => $ori
-                ];
                 $phpStormMeta[$ori] = 'stormProxy\\' . $ori;
                 $tempClass[$temp][$template['method']] = [
                     'name' => $template['method'],
@@ -177,30 +130,86 @@ class Templates extends GeneratorAbstract
                 ];
             }
         }
-
-        ksort($tempStore);
         ksort($phpStormMeta);
         Store::i()->write($phpStormMeta, 'storm_phpstorm_templates');
-        $tempStore = array_values($tempStore);
-        $jsonMeta['providers'][] = [
-            'name' => 'templateClass',
-            'items' => $tempStore,
-        ];
-        Store::i()->write($jsonMeta, 'storm_json');
         Store::i()->write($tempClass, 'storm_template_class');
-        $this->makeTempClasses($tempClass);
-
+        $this->makeTempClasses();
         if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
             Store::i()->write($altTemplates, 'storm_alt_templates');
             $this->makeAltTemplates();
         }
+
+        $body[] = <<<EOF
+    registerArgumentsSet('Locations', 'admin','front','global');
+    expectedArguments(\\IPS\\Theme::getTemplate(), 2, argumentsSet('Locations'));
+    expectedArguments(\\IPS\\Output::js(), 2, argumentsSet('Locations'));
+    expectedArguments(\\IPS\\Output::css(), 2, argumentsSet('Locations'));
+EOF;
+
+        $toWrite = [];
+
+        foreach (Store::i()->read('storm_extensions') as $key => $val) {
+            $toWrite[] = "'" . $key . "'";
+        }
+
+        $toWrite = implode(',', $toWrite);
+        $body[] = <<<EOF
+    registerArgumentsSet('Extensions', {$toWrite});
+EOF;
+
+        $methods = [
+            ['f' => '\\IPS\\Application::extensions()', 'i' => 1],
+            ['f' => '\\IPS\\Application::allExtensions()', 'i' => 1]
+        ];
+
+        foreach ($methods as $m) {
+            $body[] = <<<EOF
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Extensions'));
+EOF;
+        }
+
+        $body[] = <<<EOF
+        override(\IPS\Theme::getTemplate(), map([
+EOF;
+        $templates = Store::i()->read('storm_phpstorm_templates');
+
+        foreach ($templates as $ori => $template) {
+            $body[] = "'{$ori}' => '{$template}',";
+        }
+
+        $body[] = "]));";
+
+        $body[] = <<<EOF
+    override(\\IPS\\nucleus\\Template::get(), map([
+EOF;
+        $altTemplates = Store::i()->read('storm_alt_templates');
+
+        $parts = '';
+        foreach ($altTemplates as $k => $v) {
+            $ns = str_replace('.', '_', $k);
+            $parts .=  "'{$k}' => 'stormProxy\\{$ns}',\n";
+        }
+
+        $body[] = $parts;
+
+        $body[] = "]));";
+
+        $body[] = <<<EOF
+    override(\\IPS\\storm\\Tpl::get(), map([
+EOF;
+        $body[] = $parts;
+
+        $body[] = "]));";
+
+        Store::i()->write($body, 'storm_metadata_final');
     }
 
     /**
      * @param array $classes
      */
-    public function makeTempClasses(array $classes)
+    public function makeTempClasses()
     {
+        $classes = Store::i()->read('storm_template_class');
         foreach ($classes as $key => $templates) {
             try {
                 $nc = ClassGenerator::i()

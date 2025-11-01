@@ -1,71 +1,19 @@
 <?php
-/**
- * @brief      Moderators Singleton
- * @copyright  -storm_copyright-
- * @package    IPS Social Suite
- * @subpackage toolbox\Proxy
- * @since      -storm_since_version-
- * @version    -storm_version-
- */
 
 namespace IPS\storm\Proxy\Generator;
 
-use Exception;
 use IPS\Application;
-use IPS\core\extensions\core\ModeratorPermissions\ModeratorPermissions;
-use IPS\storm\Proxy;
-
 use Throwable;
 
 use function array_keys;
 use function array_merge;
-use function defined;
-use function header;
+use function implode;
 
-if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header((isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0') . ' 403 Forbidden');
-    exit;
-}
-
-/**
- * Moderators Class
- *
- */
-class Moderators extends GeneratorAbstract
+class Moderators
 {
-
-    /**
-     * @brief Singleton Instances
-     * @note  This needs to be declared in any child class.
-     * @var static
-     */
-    protected static ?\IPS\Patterns\Singleton $instance = null;
-
-    /**
-     * creates the jsonMeta for the json file and writes the provider to disk.
-     */
-    public function create()
+    public static function run() : void
     {
-        $jsonMeta = \IPS\storm\Proxy\Generator\Store::i()->read('storm_json');
-
-        $jsonMeta['registrar'][] = [
-            'signature' => [
-                'IPS\\Member::modPermission',
-            ],
-            'provider'  => 'mods',
-            'language'  => 'php',
-        ];
-
-        $jsonMeta['providers'][] = [
-            'name'   => 'mods',
-            'source' => [
-                'contributor' => 'return_array',
-                'parameter'   => 'stormProxy\\modsProvider::get',
-            ],
-        ];
-
-        \IPS\storm\Proxy\Generator\Store::i()->write($jsonMeta, 'storm_json');
-
+        $body = Store::i()->read('storm_metadata_final');
         $toggles = [
             'view_future'         => [],
             'future_publish'      => [],
@@ -90,7 +38,13 @@ class Moderators extends GeneratorAbstract
             'delete_item_message' => [],
         ];
 
-        foreach (Application::allExtensions('core', 'ModeratorPermissions', false) as $k => $ext) {
+        foreach (
+            Application::allExtensions(
+                'core',
+                'ModeratorPermissions',
+                false
+            ) as $k => $ext
+        ) {
             if ($ext instanceof ModeratorPermissions) {
                 /**
                  * @var \IPS\Content\ModeratorPermissions $ext
@@ -138,7 +92,27 @@ class Moderators extends GeneratorAbstract
 
         $perms = array_merge(...$perms);
 
-        $this->writeClass('Mods', 'modsProvider', $perms);
+        $toWrite = [];
+
+        foreach ($perms as $key => $val) {
+            $toWrite[] = "'" . $val . "'";
+        }
+
+        $toWrite = implode(',', $toWrite);
+        $body[] = <<<EOF
+    registerArgumentsSet('Moderators', {$toWrite});
+EOF;
+
+        $methods = [
+            ['f' => '\\IPS\\Member::modPermission()', 'i' => 0]
+        ];
+
+        foreach ($methods as $m) {
+            $body[] = <<<EOF
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Moderators'));
+EOF;
+        }
+
+        Store::i()->write($body, 'storm_metadata_final');
     }
 }
-

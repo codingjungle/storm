@@ -1,10 +1,6 @@
 {
     "storm": {
         "MetaData": {
-            "Applications": "IPS\\storm\\extensions\\storm\\MetaData\\Applications",
-            "Db": "IPS\\storm\\extensions\\storm\\MetaData\\Db",
-            "ErrorCodes": "IPS\\storm\\extensions\\storm\\MetaData\\ErrorCodes",
-            "Language": "IPS\\storm\\extensions\\storm\\MetaData\\Language",
             "Other": "IPS\\storm\\extensions\\storm\\MetaData\\Other"
         },
         "ProxyHelpers": {

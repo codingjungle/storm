@@ -8,11 +8,12 @@ use IPS\Output;
 use IPS\Request;
 use IPS\storm\Form;
 use IPS\storm\Proxy\Generator\Applications;
+use IPS\storm\Proxy\Generator\Database;
 use IPS\storm\Proxy\Generator\Db;
 use IPS\storm\Proxy\Generator\ErrorCodes;
 use IPS\storm\Proxy\Generator\Extensions;
 use IPS\storm\Proxy\Generator\GeneratorAbstract;
-use IPS\storm\Proxy\Generator\Language;
+use IPS\storm\Proxy\Generator\Languages;
 use IPS\storm\Proxy\Generator\Moderators;
 use IPS\storm\Proxy\Generator\phpstormMeta;
 use IPS\storm\Proxy\Generator\Templates;
@@ -147,54 +148,63 @@ class proxy extends Controller
         Output::i()->json(['message' => $message]);
     }
 
-//    protected function applications(): void
-//    {
-//        $this->steps('Applications Registrar & Provider completed', Applications::class);
-//    }
-//
-//    protected function database(): void
-//    {
-//        $this->steps('Databases Registrar & Provider completed', Db::class);
-//    }
+    protected function applications(): void
+    {
+        Applications::run();
+        Output::i()->json(['message' => 'Applications Registrar & Provider completed']);
+    }
 
-//    protected function languages(): void
-//    {
-//        $this->steps('Language Registrar  & Provider  completed', Language::class);
-//    }
+    protected function database(): void
+    {
+        Database::run();
+        Output::i()->json(['message' => 'Databases Registrar & Provider completed']);
+    }
+
+    protected function languages(): void
+    {
+        Languages::run();
+        Output::i()->json(['message' => 'Language Registrar & Provider completed']);
+    }
 
     protected function extensions(): void
     {
-        $this->steps('Extensions Registrar & Provider  completed', Extensions::class);
+        Extensions::i()->create();
+        Output::i()->json(['message' => 'Extensions Registrar & Provider completed']);
     }
 
     protected function templates(): void
     {
-        $this->steps('Templates Registrars & Providers completed', Templates::class);
+        Templates::i()->create();
+        Output::i()->json(['message' => 'Templates Registrar & Provider completed']);
     }
 
     protected function moderators(): void
     {
-        $this->steps('Moderators Perms Registrar & Provider completed', Moderators::class);
+        Moderators::run();
+        Output::i()->json(['message' => 'Moderators Perms Registrar & Provider completed']);
     }
 
     protected function url(): void
     {
-        $this->steps('Url Registrar & Provider completed', Url::class);
+        Url::run();
+        Output::i()->json(['message' => 'Url Registrar & Provider completed']);
     }
 
     protected function errorCodes(): void
     {
-        $this->steps('ErrorCodes Registrars and Providers completed', ErrorCodes::class);
+        ErrorCodes::run();
+        Output::i()->json(['message' => 'ErrorCodes Registrar & Provider completed']);
     }
 
     protected function phpstormMeta(): void
     {
-        $this->steps('phpstorm meta file created', phpstormMeta::class);
+        phpstormMeta::i()->create();
+        Output::i()->json(['message' => 'phpstorm meta file created']);
     }
 
     protected function toolboxMeta(): void
     {
-        \IPS\storm\Proxy::i()->metaJson();
+//        \IPS\storm\Proxy::i()->metaJson();
         $message = 'Wrapping up! completed!';
         Output::i()->json(['message' => $message]);
     }
@@ -202,6 +212,5 @@ class proxy extends Controller
     private function steps(string $message, string $class)
     {
         $class::i()->create();
-        Output::i()->json(['message' => $message]);
     }
 }

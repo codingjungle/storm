@@ -29,7 +29,7 @@
             init = function () {
                 console.log(options);
             // el.on('click', '[data-start]', _submit);
-                _do('constants' );
+                _do('constants');
 
             },
             _submit = e => {
@@ -115,17 +115,17 @@
                                 // }
                                 break;
                             case 'nonOwnedModels':
-                                _do('languages');
+                                _do('database');
                                 break;
                             // case 'applications':
                             //     _do('database');
                             //     break;
-                            // case 'database':
-                            //     _do('languages');
-                            //     break;
-                            // case 'languages':
-                            //     _do('extensions');
-                            //     break;
+                            case 'database':
+                                _do('languages');
+                                break;
+                            case 'languages':
+                                _do('extensions');
+                                break;
                             case 'extensions':
                                 _do('templates');
                                 break;

@@ -19,6 +19,8 @@ class phpstormMeta extends GeneratorAbstract
 namespace PHPSTORM_META {
 eof;
 
+        $body = array_merge($body, Store::i()->read('storm_metadata_final'));
+
         foreach (Application::appsWithExtension('storm', 'MetaData') as $app) {
             $extensions = $app->extensions('storm', 'MetaData', true);
             foreach ($extensions as $extension) {
