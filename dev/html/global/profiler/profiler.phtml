@@ -2,16 +2,25 @@
 <div id="ElstormProfilerShim" class="stormProfilerShim"></div>
 <div id="ElstormProfilerBar" class="stormProfilerBar" >
     <div class="stormProfilerBarButtons ipsClearfix" data-ipsstormprofiler>
-        {{foreach $buttons as $button}}
+        {{foreach $buttons['panelButtons'] as $button}}
             {$button|raw}
         {{endforeach}}
     </div>
-    <div class="ipsClearfix">
-        <div class="stormProfilerController float-start p-2">
-            {$info['loc']|raw}
+    <div class="stormColumns">
+        <div class="stormColumnHalf">
+            <div class="stormProfilerController float-start p-2">
+                {$info['loc']|raw}
+            </div>
+            <div class="stormProfilerSlowestQuery float-start p-2">
+                Slowest Query: {$info['sq']|raw}
+            </div>
         </div>
-        <div class="stormProfilerSlowestQuery float-start p-2">
-            Slowest Query: {$info['sq']|raw}
+        <div class="stormColumnHalf">
+            <div class="float-end">
+            {{foreach $buttons['extraButtons'] as $button}}
+            {$button|raw}
+            {{endforeach}}
+            </div>
         </div>
     </div>
 </div>

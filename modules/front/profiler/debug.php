@@ -8,6 +8,7 @@ use IPS\Member;
 use IPS\Output;
 use IPS\Request;
 use IPS\Theme;
+use Throwable;
 use UnderflowException;
 
 use function defined;
@@ -87,5 +88,21 @@ class debug extends Controller
         }
 
         Output::i()->json($send);
+    }
+
+    protected function delete(): void
+    {
+        $id = (int) Request::i()->id;
+        $msg = 'Debug log deleted';
+        $error = 0;
+        try {
+            Db::i()->delete('storm_debug', ['debug_id' => $id]);
+        }
+        catch( Throwable){
+            $error = 1;
+            $msg = 'Error deleting debug log';
+        }
+
+        Output::i()->json(['error' => $error, 'msg' => $msg]);
     }
 }

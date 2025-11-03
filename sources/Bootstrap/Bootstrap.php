@@ -1,9 +1,10 @@
 <?php
 
-namespace IPS;
 
-require_once __DIR__ . '/buinit.php';
-require_once __DIR__ . '/applications/storm/sources/Helpers/Helpers.php';
+use const IPS\ROOT_PATH;
+
+//require_once ROOT_PATH . '/init.php';
+require_once ROOT_PATH . '/applications/storm/sources/Helpers/Helpers.php';
 class dinit extends \IPS\IPS {
 
     protected static array $hf = [
@@ -16,8 +17,8 @@ class dinit extends \IPS\IPS {
 	{ 
         $vendor = ROOT_PATH.'/applications/storm/sources/vendor/autoload.php';
         require $vendor;
-		spl_autoload_register( array( '\IPS\dinit', 'autoloader' ), true, true );
-		set_exception_handler( array( '\IPS\dinit', 'exceptionHandler' ) );
+		spl_autoload_register( array('\dinit', 'autoloader' ), true, true );
+		set_exception_handler( array('\dinit', 'exceptionHandler' ) );
 	}
 
 	/**

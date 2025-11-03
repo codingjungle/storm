@@ -1,6 +1,7 @@
 <?php
 
 return <<<eof
+\\IPS\\storm\\Head::i()->js(['global_alert']);
 if (\\IPS\\storm\\Settings::i()->storm_profiler_enabled === true && \\IPS\\QUERY_LOG && !\\IPS\\Request::i()->isAjax()) {
     \\IPS\\Output::i()->jsVars['debugAjax'] = \\IPS\\storm\\Settings::i()->storm_profiler_debug_ajax_enable;
     \\IPS\\storm\\Head::i()->js(['global_profiler', 'global_modal']);

@@ -14,11 +14,17 @@ namespace IPS\storm;
 use IPS\Application as SystemApplication;
 use IPS\IPS;
 
+require \IPS\ROOT_PATH . '/applications/storm/sources/Bootstrap/Bootstrap.php';
 /**
  * Dev Storm Application Class
  */
 class Application extends SystemApplication
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     protected static $loaded = false;
     

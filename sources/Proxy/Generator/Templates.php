@@ -14,6 +14,7 @@ use Exception;
 use IPS\Application;
 use IPS\Patterns\Singleton;
 use IPS\storm\Profiler\Debug;
+use IPS\storm\Settings;
 use IPS\storm\Writers\ClassGenerator;
 use IPS\storm\Writers\FileGenerator;
 use IPS\Theme;
@@ -21,15 +22,21 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionParameter;
 
+use function _p;
+use function array_combine;
 use function array_pop;
+use function array_reverse;
 use function array_values;
 use function defined;
 use function explode;
+use function file_exists;
 use function file_put_contents;
 use function function_exists;
 use function header;
 use function implode;
 use function ksort;
+use function preg_match_all;
+use function preg_replace_callback;
 use function randomString;
 use function str_replace;
 use function trim;
@@ -63,8 +70,8 @@ class Templates extends GeneratorAbstract
         $tempClass = [];
         $templates = Store::i()->read('storm_templates');
         $phpStormMeta = Store::i()->read('storm_phpstorm_templates');
-
-        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+        $templateCheck = Store::i()->read('storm_template_check');
+        if (Settings::i()->storm_proxy_alt_templates === true) {
             $altTemplates = Store::i()->read('storm_alt_templates');
         }
 
@@ -83,7 +90,7 @@ class Templates extends GeneratorAbstract
                     $temp = 'nglobal';
                 }
 
-                if (!empty($template['params'])) {
+                if (empty($template['params'])) {
                     $rand = trim($template['method']) . randomString(20) . randomString(20);
                     $fun = 'function ' . $rand . '( ' . $template['params'] . ' ) {}';
                     @eval($fun);
@@ -114,27 +121,42 @@ class Templates extends GeneratorAbstract
                     }
                 }
 
+                $checkParams = md5(json_encode($newParams));
                 $app = $og[0] ?? null;
                 $folder = $og[4] ?? null;
                 $location = $og[3] ?? null;
+                $saveKey = $folder . '.' . $app . '.' . $location;
                 unset($og[0], $og[1], $og[2], $og[3], $og[4]);
                 $file = str_replace('.phtml', '', implode('.', $og));
-                $altTemplates[$folder . '.' . $app . '.' . $location][] = [
-                    'func' => $file,
-                    'params' => $newParams
-                ];
+
+                if (isset($templateCheck[$saveKey]) && $templateCheck[$saveKey] === $checkParams) {
+                    continue;
+                }
+
+                $templateCheck[$saveKey] = $checkParams;
+
+                if (Settings::i()->storm_proxy_alt_templates === true) {
+                    $altTemplates[$saveKey][] = [
+                        'func' => $file,
+                        'params' => $newParams
+                    ];
+                }
+
                 $phpStormMeta[$ori] = 'stormProxy\\' . $ori;
                 $tempClass[$temp][$template['method']] = [
-                    'name' => $template['method'],
+                    'func' => $template['method'],
                     'params' => $newParams
                 ];
             }
         }
+
         ksort($phpStormMeta);
+        Store::i()->write($templateCheck, 'storm_template_check');
         Store::i()->write($phpStormMeta, 'storm_phpstorm_templates');
         Store::i()->write($tempClass, 'storm_template_class');
         $this->makeTempClasses();
-        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+
+        if (Settings::i()->storm_proxy_alt_templates === true) {
             Store::i()->write($altTemplates, 'storm_alt_templates');
             $this->makeAltTemplates();
         }
@@ -187,7 +209,7 @@ EOF;
         $parts = '';
         foreach ($altTemplates as $k => $v) {
             $ns = str_replace('.', '_', $k);
-            $parts .=  "'{$k}' => 'stormProxy\\{$ns}',\n";
+            $parts .= "'{$k}' => 'stormProxy\\{$ns}',\n";
         }
 
         $body[] = $parts;
@@ -213,11 +235,16 @@ EOF;
         foreach ($classes as $key => $templates) {
             try {
                 $nc = ClassGenerator::i()
+                    ->setOverwrite()
                     ->setPath($this->save . '/templates/')
                     ->setNameSpace('stormProxy')
                     ->setClassName($key)
                     ->setFileName($key);
 
+                if ($nc->exists() === true) {
+                    $this->amendFile($nc, $key, $nc->content(), $templates);
+                    continue;
+                }
                 foreach ($templates as $template) {
                     $nc->addMethod($template['name'], '', $template['params'], ['returnType' => 'string']);
                 }
@@ -229,79 +256,75 @@ EOF;
         }
     }
 
+    public function amendFile(ClassGenerator $nc, string $file, string $content, array $methods): void
+    {
+        $write = false;
+
+        foreach ($methods as $method) {
+            preg_match_all('#function (.*?)\(#msu', $content, $matching);
+            $v = array_values($matching[1]);
+            $found = array_combine($v, $v);
+            $params = $nc->buildParams($method['params']);
+            $newMethod = 'function ' . $method['func'] . '(' . $params . ')';
+            if (isset($found[$method['name']])) {
+                preg_match_all('#function ' . trim($method['func']) . '\((.*?)\)#msu', $content, $m);
+
+                $content = preg_replace_callback(
+                    '#function ' . trim($method['name']) . '\((.*?)\)#msu',
+                    function ($m) use ($method, $newMethod, $write) {
+                        if (isset($m[0]) && $m[0] === $newMethod) {
+                            return $m[0];
+                        }
+                        $write = true;
+                        return $newMethod;
+                    },
+                    $content
+                );
+            } else {
+                $write = true;
+                $cc = array_reverse(explode(PHP_EOL, $content));
+
+                foreach ($cc as $line => $value) {
+                    if ($value === "}") {
+                        unset($cc[$line]);
+                        break;
+                    }
+                }
+
+                $content = implode("\n", array_reverse($cc)) . "\n\n" . $newMethod . ": string {}\n\n}";
+            }
+        }
+
+        if ($write === true) {
+            FileGenerator::i()->setFileName($file)->addBody($content)->save();
+        }
+    }
+
     public function makeAltTemplates(): void
     {
         //0 = app, 3 = location, 4 = group, 5 =
-        if (defined('STORM_ALT_THEMES') && STORM_ALT_THEMES === true) {
+        if (Settings::i()->storm_proxy_alt_templates === true) {
             $altTemplates = Store::i()->read('storm_alt_templates');
-            $nc = FileGenerator::i()
-                ->setPath($this->save)
-                ->setFilename('altTemplates');
 
             foreach ($altTemplates as $k => $v) {
                 $ns = str_replace('.', '_', $k);
                 $nc = ClassGenerator::i()
-                    ->setPath($this->save . DIRECTORY_SEPARATOR . 'altTemplates' )
+                    ->setPath($this->save . DIRECTORY_SEPARATOR . 'altTemplates')
                     ->setNameSpace('stormProxy')
                     ->setClassName($ns)
                     ->setFileName($ns);
-                foreach ($v as $vv) {
-                    $nc->addMethod($vv['func'],'',$vv['params'], ['returnType' => 'string']);
+
+                if ($nc->exists() === true) {
+                    $this->amendFile($nc, $ns, $nc->content(), $v);
+                    continue;
                 }
+
+                foreach ($v as $vv) {
+                    $nc->addMethod($vv['func'], '', $vv['params'], ['returnType' => 'string']);
+                }
+
                 $nc->save();
             }
-        }
-    }
-
-    public function amendFile(string $file, string $method, array $params)
-    {
-        $content = trim(file_get_contents($file));
-        $funcNames = preg_match_all('#function (.*?)\(#msu', $content, $matching);
-        $v = array_values($matching[1]);
-        $found = array_combine($v, $v);
-        $append = 0;
-        if (!isset($found[$method])) {
-            $cc = array_reverse(explode(PHP_EOL, $content));
-            $newDoc = [];
-
-            foreach ($cc as $line => $value) {
-                if ($value === "}") {
-                    unset($cc[$line]);
-                    break;
-                }
-            }
-            $cc = implode("\n", array_reverse($cc));
-
-            $toWrite = 'public function ' . $method . '(';
-            $pp = [];
-            if (empty($params) === false) {
-                foreach ($params as $data) {
-                    $paramBody = '';
-                    if (isset($data['hint'])) {
-                        $paramBody .= ' ' . $data['hint'] . ' ';
-                    }
-                    $paramBody .= '$' . $data['name'];
-                    if (isset($data['value'])) {
-                        $val = $data['value'];
-                        $paramBody .= ' = ';
-                        if (is_int($val)) {
-                            $paramBody .= $val;
-                        } elseif (is_bool($val)) {
-                            $paramBody .= $val === false ? 'false' : 'true';
-                        } elseif ($val === 'null' || $val === null) {
-                            $paramBody .= 'null';
-                        } else {
-                            $paramBody .= '"' . $val . '"';
-                        }
-                    }
-                    $pp[] = $paramBody;
-                }
-
-                $toWrite .= implode(', ', $pp);
-            }
-            $toWrite .= '){}';
-            $cc .= "\n\n" . $toWrite . "\n\n}";
-            file_put_contents($file, $cc);
         }
     }
 }

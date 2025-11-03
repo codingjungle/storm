@@ -56,6 +56,13 @@ class proxy extends Controller
     {
     }
 
+    protected function clearMetaData(): void
+    {
+        \IPS\storm\Proxy::i()->emptyDirectory(\IPS\storm\Proxy::i()->path);
+        $message = 'MetaData: Proxy files cleared!';
+        Output::i()->json(['message' => $message]);
+    }
+
     protected function constants()
     {
         //\IPS\storm\Proxy::i()->emptyDirectory(\IPS\storm\Proxy::i()->path);
@@ -101,7 +108,7 @@ class proxy extends Controller
     {
         \IPS\storm\Proxy::i()->buildNonOwnedModels();
         $message = 'Non-owned models disabled, change in settings.';
-        if(Settings::i()->storm_proxy_do_non_owned === true) {
+        if (Settings::i()->storm_proxy_do_non_owned === true) {
             $message = 'Non Owned DB Models proxies built!';
         }
         Output::i()->json(['message' => $message]);
@@ -208,10 +215,5 @@ class proxy extends Controller
 //        \IPS\storm\Proxy::i()->metaJson();
         $message = 'Wrapping up! completed!';
         Output::i()->json(['message' => $message]);
-    }
-
-    private function steps(string $message, string $class)
-    {
-        $class::i()->create();
     }
 }

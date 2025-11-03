@@ -5,8 +5,6 @@ require_once $upOne . '/Editor/Editor.php';
 
 use IPS\storm\Editor;
 
-const STORM_ALT_THEMES = true;
-
 class Helpers
 {
     protected $args = [];

@@ -33,8 +33,40 @@
               if(data.panel === 'storm_profiler_debug_panel'){
                   _check(data.button);
               }
-          })
+          });
+          el.on('click', '[data-delete]', _delete);
+          el.on('click', '[data-delete-all]', _deleteAll);
       },
+        _deleteAll = () => {
+            console.log('delete all');
+        },
+        _delete = e =>{
+            e.preventDefault();
+            let target = $(e.currentTarget),
+                id = target.attr('data-id');
+
+            console.log(id);
+
+            ajax({
+                type: "GET",
+                url: url,
+                data: {do: 'delete', id: id},
+                dataType: "json",
+                bypassRedirect: true,
+                showLoading: true,
+                success: function (data) {
+                    ips.ui.flashMsg.show(data.msg);
+                    if(parseInt(data.error) === 0) {
+                        target.closest('.stormColumns').fadeOut().promise().done(() => {
+                            target.closest('.stormColumns').remove();
+                        });
+                    }
+                },
+                error: function (data) {
+                    ips.ui.flashMsg.show("Something went wrong! try again later.");
+                },
+            });
+        },
       _check = function (target) {
         let date = target.attr('data-date'),
             pdate = el.attr('data-date');
@@ -59,12 +91,9 @@
                            let log = $(l);
                             log.css('opacity', 0);
                             el.find('.stormProfilerPanelChild').prepend(log);
-                           setTimeout(() => {
                                log.fadeIn().promise().done(()=>{
                                    log.animate({ opacity:1});
                                });
-                           }, time);
-                           time += 20;
                         });
                     }
                 },

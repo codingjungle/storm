@@ -27,6 +27,7 @@ use function is_array;
 use function is_numeric;
 use function is_string;
 use function method_exists;
+use function str_replace;
 use function str_starts_with;
 
 Application::initAutoloader();
@@ -234,6 +235,16 @@ abstract class GeneratorAbstract
         return $this;
     }
 
+    public function setOverwrite(): static
+    {
+        $this->delete = true;
+        return $this;
+    }
+
+    public function exists(): bool
+    {
+        return $this->filesystem->exists($this->saveFileName());
+    }
 
     /**
      * @param null $path
@@ -254,9 +265,9 @@ abstract class GeneratorAbstract
         if ($this->classComment) {
             $this->output("\n\n");
             $this->output("/**\n");
-                foreach ($this->classComment as $item) {
-                    $this->output('* ' . trim($item) . "\n");
-                }
+            foreach ($this->classComment as $item) {
+                $this->output('* ' . trim($item) . "\n");
+            }
             $this->output('*/');
         }
 
@@ -275,6 +286,13 @@ abstract class GeneratorAbstract
 //        }
 
         $this->filesystem->appendToFile($this->saveFileName(), $this->toWrite);
+    }
+
+    public function delete(): void
+    {
+        if ($this->filesystem->exists($this->saveFileName())) {
+            $this->filesystem->remove($this->saveFileName());
+        }
     }
 
     protected function writeHead(): void
@@ -318,8 +336,8 @@ EOF;
             }
 
             $this->afterNameSpace();
-            $this->toWrite .= '#generator_token_includes#';
-            $this->toWrite .= '#generator_token_imports#';
+            $this->toWrite .= '#generator_token_includes#' . PHP_EOL;
+            $this->toWrite .= '#generator_token_imports#' . PHP_EOL;
 
             if ($this->headerCatch === true) {
                 $headerCatch = <<<'EOF'
@@ -402,6 +420,8 @@ EOF;
             }
 
             $this->toWrite = str_replace('#generator_token_includes#', $replacement, $this->toWrite);
+
+            $this->toWrite = str_replace('#generator_token_imports#', '', $this->toWrite);
         }
     }
 
@@ -548,5 +568,14 @@ EOF;
         }
 
         return implode(',', $built);
+    }
+
+    public function content(): string
+    {
+        if ($this->filesystem->exists($this->saveFileName())) {
+            return $this->filesystem->readFile($this->saveFileName());
+        }
+
+        return '';
     }
 }

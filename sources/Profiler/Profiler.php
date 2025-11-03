@@ -96,17 +96,20 @@ class Profiler extends Singleton
         }
 
         $buttons = [
-            $storm['button'] ?? '',
-            $executionButton,
-            $memory['button'] ?? '',
-            $files['button'] ?? '',
-            $database['button'] ?? '',
-            $environment['button'] ?? '',
-            $templates['templates']['button'] ?? '',
-            $templates['css']['button'] ?? '',
-            $templates['js']['button'] ?? '',
-            $templates['jsVars']['button'] ?? '',
-            $debug['button'] ?? ''
+            'panelButtons' => [
+                $storm['button'] ?? '',
+                $executionButton,
+                $memory['button'] ?? '',
+                $files['button'] ?? '',
+                $database['button'] ?? '',
+                $environment['button'] ?? '',
+                $templates['templates']['button'] ?? '',
+                $templates['css']['button'] ?? '',
+                $templates['js']['button'] ?? '',
+                $templates['jsVars']['button'] ?? '',
+                $debug['button'] ?? ''
+            ],
+            'extraButtons' => $this->extraButtons()
         ];
 
         $panels = [
@@ -193,7 +196,7 @@ class Profiler extends Singleton
             'do' => 'clearCaches',
             'data' => $data,
         ]);
-
+        $url = base64_encode((string) $url);
         $phpVer = '<a href="' .
             (string) Url::internal('app=storm&module=profiler&controller=phpinfo', 'front') .
             '" data-ipsDialog data-ipsDialog-title="phpinfo()">' .
@@ -202,22 +205,13 @@ class Profiler extends Singleton
             '</a>';
         $ipsVer = Application::load('core')->version;
         $mySqlVer = Db::i()->server_info;
-            $generateMeta = '<a href="' .
-                (string)Url::internal(
-                    'app=storm&module=other&controller=proxy&do=generators&url=' .
-                    base64_encode(Request::i()->url()),
-                    'front'
-                ) .
-                '" data-ipsdialog data-ipsdialog-title="Proxy & Meta Data" data-ipsdialog-size="medium" data-ipsdialog-destructOnClose="true">Proxy & Meta Data</a>';
+
 
         $buttons = [
             'Info' => [
                 $phpVer,
                 'IPS Version: ' => $ipsVer,
                 'MySQL Version: ' => $mySqlVer,
-            ],
-            'Other' => [
-                $generateMeta
             ]
         ];
 
@@ -227,6 +221,23 @@ class Profiler extends Singleton
         return [
             'button' => $button,
             'panel' => $panel
+        ];
+    }
+
+    protected function extraButtons(): array
+    {
+        $generateMeta = '<a href="' .
+            (string)Url::internal(
+                'app=storm&module=other&controller=proxy&do=generators&url=' .
+                base64_encode(Request::i()->url()),
+                'front'
+            ) .
+            '" class="stormButtons" data-ipsdialog data-ipsdialog-title="Proxy & Meta Data" data-ipsdialog-size="medium" data-ipsdialog-destructOnClose="true">Proxy & Meta Data</a>';
+
+        $clearCaches = '<a href="#" class="stormButtons" data-ipsstormalert data-ipsstormalert-type="confirm" data-ipsstormalert-msg="This will clear the metadata caches that storm generates." data-ipsstormalert-url="' . (string) Url::internal('app=storm&module=other&controller=proxy&do=clearMetaData', 'front') . '" >Clear Storm Caches</a>';
+        return [
+            $clearCaches,
+            $generateMeta
         ];
     }
 

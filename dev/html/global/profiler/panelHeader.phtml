@@ -1,10 +1,10 @@
 <ips:template parameters="string $title, bool $search=true, string $class=''" />
-<div class="stormProfilerColumns stormProfilerSearch p-10{{if empty($class) === false}} {$class|raw}{{endif}}" data-ipssticky>
-    <div class="stormProfilerColumnLarge">
+<div class="stormColumns stormProfilerSearch p-10{{if empty($class) === false}} {$class|raw}{{endif}}" data-ipssticky>
+    <div class="stormColumnLarge">
         <h2>{$title|raw}</h2>
     </div>
     {{if $search === true}}
-    <div class="stormProfilerColumnFluid stormProfilerWrapper">
+    <div class="stormColumnFluid stormProfilerWrapper">
         <input type="text" class="ipsInput ipsInput--text" placeholder="Search..." data-search />
         <button data-clear>
             <i class="fa fa-times"></i>
@@ -12,7 +12,7 @@
         <span></span>
     </div>
     {{endif}}
-    <div class="{{if $search === false}}stormProfilerColumnFluid{{else}}stormProfilerSmall{{endif}} ipsClearfix">
+    <div class="{{if $search === false}}stormColumnFluid{{else}}stormColumnSmall{{endif}} ipsClearfix">
         <button type="button" class="ipsButton ipsButton--secondary float-end" data-close>
             <i class="fa fa-close"></i>
         </button>
