@@ -74,13 +74,14 @@ class sources extends DeveloperController
             $newMenus[$key] = $menu;
         }
         $og['menu'] = $newMenus;
-       // _p($og,$newMenus);
-//        $sideBarApps = str_replace('app=core&module=developer&controller=sources', 'app=storm&module=developer&controller=sources', $sideBarApps);
-//        $sideBarApps = json_decode($sideBarApps, true);
-////        _p($sideBarApps, $og);
         Output::i()->sidebar['actions']['apps'] = $og;
         array_pop(Output::i()->breadcrumb);
         Output::i()->breadcrumb[] = [null,'Sources'];
+
+    }
+
+    protected function queue(): void
+    {
 
     }
 

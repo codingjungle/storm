@@ -1,6 +1,6 @@
-<ips:template parameters="array $data, string $id, string $panelTitle, bool $anchor = true" />
+<ips:template parameters="array $data, string $id, string $panelTitle, bool $anchor = true, bool $search = true" />
 <div  id="{$id}" class="stormProfilerPanelParent ipsHide" data-panels data-ipsstormprofilersearch>
-{template="panelHeader" group="profiler" app="storm" location="global" params="$panelTitle"}
+{template="panelHeader" group="profiler" app="storm" location="global" params="$panelTitle, $search"}
     <div class="stormProfilerSpacer"></div>
     <div class="stormProfilerPanelChild">
         {{foreach $data as $d}}

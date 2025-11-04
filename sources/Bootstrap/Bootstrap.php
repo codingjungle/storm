@@ -6,11 +6,12 @@ use const IPS\ROOT_PATH;
 //require_once ROOT_PATH . '/init.php';
 require_once ROOT_PATH . '/applications/storm/sources/Helpers/Helpers.php';
 class dinit extends \IPS\IPS {
+    public static bool $override = false;
 
     protected static array $hf = [
         'IPS\\Db' => ['ips' => 'system/Db/Db.php', 'hook' => 'Db.php'],
         'IPS\\Theme' => ['ips' => 'system/Theme/Theme.php', 'hook' => 'Theme.php'],
-        'IPS\\Theme\\Dev\\Template' => ['ips' => 'system/Theme/Dev/Template.php', 'hook' => 'Template.php'],
+        'IPS\\Theme\\Dev\\Template' => ['ips' => 'system/Theme/Dev/Template.php', 'hook' => 'Template.php']
     ];
 
 	public static function dinit()

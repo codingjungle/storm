@@ -8,6 +8,10 @@
         "default": "1"
     },
     {
+        "key": "storm_profiler_ajax_enabled",
+        "default": "1"
+    },
+    {
         "key": "storm_profiler_css_enabled",
         "default": "1"
     },

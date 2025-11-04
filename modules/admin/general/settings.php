@@ -74,7 +74,7 @@ class settings extends Controller
         $form->addElement('storm_profiler_css_enabled', 'yn');
         $form->addElement('storm_profiler_debug_enabled', 'yn')->toggles(['storm_profiler_debug_ajax_enable']);
         $form->addElement('storm_profiler_debug_ajax_enable', 'yn');
-
+        $form->addElement('storm_profiler_ajax_enabled', 'yn');
         $form->addTab('storm_devcenter');
         $form->addElement('storm_devcenter_keep_case', 'yn');
 

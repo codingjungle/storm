@@ -27,7 +27,7 @@ $lang = array(
     'storm_profiler_title_jsvars' => 'JS Vars (%1$s)',
     'storm_profiler_button_jsvars' => 'JS Vars',
     'storm_profiler_button_debug' => 'Debug Log',
-    'storm_profiler_title_debug' => 'Debug Log (<span id="storm_profiler_panel_debug_title">%1$s</span>)',
+    'storm_profiler_title_debug' => 'Debug Log (<a href="#"  data-delete-all>Clear</a>)',
     'storm_profiler_templates_enabled' => 'Enable Templates',
     'storm_profiler_execution_times_enabled' => 'Execution Times',
     'storm_profiler_memory_tab_enabled' => 'Memory Usage',
@@ -135,6 +135,10 @@ $lang = array(
     'storm_proxy_write_mixin_desc' => 'Write a @mixin tag to your DB model if one doesn\'t exist.',
     'storm_proxy_alt_templates' => 'Alternative Templates',
     'storm_proxy_alt_templates_desc' => 'You can mostly ignore this setting, as it only works with my apps.',
+    'storm_profiler_ajax_enabled' => 'Ajax Log',
+    'storm_profiler_ajax_enabled_desc' => 'Enabling the ajax log, will capture ajax requests and log them.',
+    'storm_profiler_button_ajax' => 'Ajax Log',
+    'storm_profiler_title_ajax' => 'Ajax Log (<a href="#" data-wipe>Clear</a>)',
 
 
 

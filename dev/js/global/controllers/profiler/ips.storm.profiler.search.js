@@ -22,7 +22,12 @@
     });
 
     let _stormProfilerSearch = function (el) { 
-        var init = function () { 
+        var init = function () {
+            let buttonId = el.attr('id').replace('_panel','');
+            el.on('click', '[data-wipe]', e => {
+                el.find('.stormProfilerPanelChild').empty();
+                $('#'+buttonId).find('.stormProfilerCount').html('0');
+            });
             el.on('click', '[data-clear]', (e) => {
                 e.preventDefault();
                 let t = $(e.currentTarget);

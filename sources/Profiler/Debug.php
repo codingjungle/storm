@@ -33,6 +33,7 @@ use function htmlentities;
 use function is_array;
 use function json_decode;
 use function json_encode;
+use function lang;
 use function md5;
 use function method_exists;
 use function nl2br;
@@ -93,50 +94,15 @@ class Debug extends ActiveRecord
     public static function log($message, $key = null)
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
-        //        if (!Settings::i()->dtprofiler_enable_debug) {
-        //            Log::debug($message, $key);
-        //            return;
-        //        }
-        //        if (!\IPS\QUERY_LOG) {
-        //            Log::debug($message, $key);
-        //            return;
-        //        }
-
             $debug = new static();
-        // $prev = null;
-        // $next = null;
-        // foreach ($bt as $b) {
-        //     $file = str_replace(['/', '.'], '', $b['file']);
-        //     if (mb_substr($file, -16) === 'ProfilerDebugphp') {
-        //         continue;
-        //     }
-
-        //     if ($prev === null) {
-        //         $prev = $b;
-        //         continue;
-        //     }
-
-        //     if ($prev !== null && $next === null) {
-        //         $next = $b;
-        //         break;
-        //     }
-        // }
-        // if ($key === null) {
-        //     $next = $next ?? $prev;
-        //     $key = $next['function'];
-        //     if (!$key) {
-        //         $file = new SplFileInfo($next['file']);
-        //         $key = $file->getFilename();
-        //     }
-        // }
             $debug->key = $key;
             $debug->bt = json_encode(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-        // $debug->path = $prev['file'];
-        // $debug->line = $prev['line'];
+
             if ($message instanceof Exception) {
                 $data['class'] = get_class($message);
                 $data['ecode'] = $message->getCode();
-
+                $data['line'] = $message->getLine();
+                $data['file'] = $message->getFile();
                 if (method_exists($message, 'extraLogData')) {
                     $data['message'] = $message->extraLogData() . "\n" . $message->getMessage();
                 } else {
@@ -156,23 +122,7 @@ class Debug extends ActiveRecord
             $debug->log = $message;
             $debug->date = time();
 
-        // if(defined('DT_NODE') && DT_NODE){
-        //     try {
-        //         $return = [
-        //             'count' => 1,
-        //             'to' => 'debug',
-        //             'loc' => \IPS\SUITE_UNIQUE_KEY,
-        //             'items' => Theme::i()->getTemplate('generic', 'storm', 'front')->li($debug->body())
-        //         ];
-        //         Sockets::i()->post($return);
-        //     }catch(\Exception | Throwable $e){
-        //         $debug->save();
-        //     }
-        // }
-        // else {
-
             $debug->save();
-        // }
         }
     }
 
@@ -198,7 +148,8 @@ class Debug extends ActiveRecord
         }
 
         $count = count($list) ?: 0;
-        $button = Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
+
+        $button =  Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
             'storm_profiler_debug',
             '',
             'storm_profiler_debug_panel',
@@ -217,6 +168,29 @@ class Debug extends ActiveRecord
             'button' => $button,
             'panel' => $panel
         ];
+    }
+
+    public static function popup(): string
+    {
+        $iterators = static::all([
+            'order' => 'debug_id DESC',
+            'limit' => [0, 100],
+        ]);
+        $list = [];
+        $last = 0;
+
+        /* @var Debug $obj */
+        foreach ($iterators as $obj) {
+            $list[] = Theme::i()->getTemplate('profiler', 'storm', 'global')->debugRow($obj);
+            if ($obj->date > $last) {
+                $last = $obj->date;
+            }
+        }
+
+        return Theme::i()->getTemplate('profiler', 'storm', 'global')
+            ->debugPanel(lang('storm_profiler_title_debug', false), $list, $last);
+
+
     }
 
     /**
@@ -245,7 +219,7 @@ class Debug extends ActiveRecord
         } else {
             $list = $this->_data['log'];
         }
-
+        $list = str_replace('"', '', $list);
         return $list;
     }
 

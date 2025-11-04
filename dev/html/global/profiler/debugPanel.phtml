@@ -1,13 +1,9 @@
-<ips:template parameters="string $title, array $data, ?int $date = null" />
-<div id="storm_profiler_debug_panel" class="stormProfilerPanelParent ipsHide" data-panels  data-ipsstormprofilersearch data-ipsstormprofilercopy data-ipsstormprofilerdebug{{if $date !== null}}  data-date="{$date}"{{endif}}>
-    {template="panelHeader" group="profiler" app="storm" location="global" params="$title,false,'stormDebugPanel'"}
-    <div class="ipsClearfix p-2 stormDeleteAllButtonParent stormDebugPanel">
-        <button class="float-end stormDeleteAllButton ipsButton mt-2" type="button" data-delete-all>
-            <i class="fa fa-close"></i>
-            Delete All
-        </button>
+<ips:template parameters="string $title, array $data, ?int $last = null" />
+<div id="storm_profiler_debug_panel" class="stormDebugPanelParent" data-ipsstormprofilerhide data-ipsstormprofilercopy data-ipsstormprofilerdebug data-last="{$last}">
+    <div class="p-10 stormDebugPanel">
+        <h2>{$title|raw}</h2>
     </div>
-    <div class="stormProfilerPanelChild stormDebugPanelChild">
+    <div class="stormDebugPanelChild">
         {{foreach $data as $d}}
             {$d|raw}
         {{endforeach}}

@@ -58,7 +58,8 @@ class Settings extends \IPS\Settings
         'storm_devcenter_keep_case' => 1,
         'storm_proxy_do_non_owned' => 1,
         'storm_proxy_write_mixin' => 1,
-        'storm_proxy_alt_templates' => 1
+        'storm_proxy_alt_templates' => 1,
+        'storm_profiler_ajax_enabled' => 1
     ];
 
     protected const INTEGERS = [

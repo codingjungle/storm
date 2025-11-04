@@ -11,6 +11,7 @@
 
 namespace IPS\storm;
 
+use IPS\Http\Url;
 use IPS\Output;
 use IPS\Patterns\Singleton;
 use IPS\Theme;
@@ -113,5 +114,17 @@ class Head extends Singleton
         foreach ($jsVars as $key => $jsVar) {
             Output::i()->jsVars[$key] = $jsVar;
         }
+    }
+
+    public function insertAfterJs(){
+        $js = Output::i()->jsFiles;
+        $newJs = [];
+        foreach ($js as $j){
+            $newJs[] = $j;
+            if(str_contains($j, 'app.js')){
+                $newJs[] = Url::baseUrl(Url::PROTOCOL_RELATIVE) . 'applications/storm/interface/storm.js';
+            }
+        }
+        Output::i()->jsFiles = $newJs;
     }
 }

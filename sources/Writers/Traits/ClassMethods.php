@@ -145,9 +145,7 @@ trait ClassMethods
     public function writeParams(array $params ): void
     {
             $this->output(' ');
-        $built = $this->buildParams($params);
-
-
+            $built = $this->buildParams($params);
             $this->output($built);
             $this->output(' ');
     }

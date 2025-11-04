@@ -8,7 +8,7 @@
 }
 
 .stormColumnFluid {
-    flex: 9999 1 100%;
+    flex: 9999 9999 100%;
 }
 
 .stormColumnHalf {
@@ -45,7 +45,14 @@
     border-radius: 8px;
     margin:2px 5px;
     font-weight:bolder;
-    text-shadow: 0 0 1px #000;
+    color:#fff;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.stormButtons--small {
+    font-size:0.8rem;
+    padding:2px 4px;
+    margin:1px 3px;
 }
 
 .stormButtons:hover {
@@ -62,6 +69,8 @@
 
 .stormButtons:nth-child(2) {
     background-color:orange;
+    color:#000;
+    text-shadow: 1px 1px 1px #fff;
 }
 
 .stormButtons:nth-child(3) {

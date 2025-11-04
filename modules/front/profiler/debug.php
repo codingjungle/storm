@@ -3,16 +3,21 @@
 namespace IPS\storm\modules\front\profiler;
 
 use IPS\Db;
+use IPS\dinit;
+use IPS\Dispatcher;
 use IPS\Dispatcher\Controller;
 use IPS\Member;
 use IPS\Output;
 use IPS\Request;
+use IPS\storm\Tpl;
 use IPS\Theme;
 use Throwable;
 use UnderflowException;
 
 use function defined;
+use function ini_get;
 use function json_encode;
+use function time;
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -68,26 +73,50 @@ class debug extends Controller
 
     protected function logs()
     {
-        $date = (int) Request::i()->date;
-        $all = \IPS\storm\Profiler\Debug::all(
-            [
-                'where' => ['debug_date > ?', $date],
-                'order' => 'debug_id ASC'
-            ]
-        );
-        $logs = [];
-        $send = ['error' => 1];
-        $count = 0;
-        foreach ($all as $log) {
-            $logs[] = Theme::i()->getTemplate('profiler', 'storm', 'global')->debugRow($log);
-            $count++;
-        }
+        $max = (ini_get('max_execution_time') / 2) - 5;
+        $time = time();
+        $since = Request::i()->last ?: 0;
+        while (true) {
+            $ct = time() - $time;
+            if ($ct >= $max) {
+                Output::i()->json(['error' => 1]);
+            }
 
-        if (empty($logs) === false) {
-            $send = ['error' => 0, 'logs' => $logs, 'count' => $count];
-        }
+            $config =
+                [
+                    'where' => ['debug_date > ?', $since],
+                    'order' => 'debug_id ASC'
+                ];
 
-        Output::i()->json($send);
+            $debug = \IPS\storm\Profiler\Debug::all($config, true);
+            if ($debug !== 0) {
+                $all = \IPS\storm\Profiler\Debug::all($config);
+                $logs = [];
+                $send = ['error' => 1];
+                $last = 0;
+                /* @var \IPS\storm\Profiler\Debug $log */
+                foreach ($all as $log) {
+                    $logs[] = Theme::i()->getTemplate('profiler', 'storm', 'global')->debugRow($log);
+                    if ($log->date > $last) {
+                        $last = $log->date;
+                    }
+                }
+
+                if (empty($logs) === false) {
+                    $send = [
+                        'error' => 0,
+                        'logs' => $logs,
+                        'last' => $last
+                    ];
+                    Output::i()->json($send);
+                }
+            }
+            else
+            {
+                sleep(1);
+                continue;
+            }
+        }
     }
 
     protected function delete(): void
@@ -96,13 +125,35 @@ class debug extends Controller
         $msg = 'Debug log deleted';
         $error = 0;
         try {
-            Db::i()->delete('storm_debug', ['debug_id' => $id]);
+            Db::i()->delete('storm_debug', ['debug_id=?', $id]);
         }
-        catch( Throwable){
+        catch( Throwable $e){
             $error = 1;
-            $msg = 'Error deleting debug log';
+            $msg = $e->getMessage();
         }
 
         Output::i()->json(['error' => $error, 'msg' => $msg]);
+    }
+
+    protected function deleteAll(): void
+    {
+        $msg = 'All debug logs deleted';
+        $error = 0;
+        try {
+            Db::i()->delete('storm_debug');
+        }
+        catch( Throwable $e){
+            $error = 1;
+            $msg = $e->getMessage();
+        }
+
+        Output::i()->json(['error' => $error, 'msg' => $msg]);
+    }
+
+    protected function popup(): void
+    {
+        Dispatcher\Front::i()->init();
+        $output = Tpl::get('global.core.front')->blankTemplate(\IPS\storm\Profiler\Debug::popup());
+        Output::i()->sendOutput($output);
     }
 }

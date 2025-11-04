@@ -70,6 +70,7 @@ class Templates extends GeneratorAbstract
         $tempClass = [];
         $templates = Store::i()->read('storm_templates');
         $phpStormMeta = Store::i()->read('storm_phpstorm_templates');
+        //$templateCheck = [];
         $templateCheck = Store::i()->read('storm_template_check');
         if (Settings::i()->storm_proxy_alt_templates === true) {
             $altTemplates = Store::i()->read('storm_alt_templates');
@@ -90,7 +91,7 @@ class Templates extends GeneratorAbstract
                     $temp = 'nglobal';
                 }
 
-                if (empty($template['params'])) {
+                if (empty($template['params']) === false) {
                     $rand = trim($template['method']) . randomString(20) . randomString(20);
                     $fun = 'function ' . $rand . '( ' . $template['params'] . ' ) {}';
                     @eval($fun);
@@ -98,7 +99,6 @@ class Templates extends GeneratorAbstract
                         try {
                             $reflection = new ReflectionFunction($rand);
                             $params = $reflection->getParameters();
-
                             /** @var ReflectionParameter $param */
                             foreach ($params as $param) {
                                 $data = [
@@ -106,7 +106,7 @@ class Templates extends GeneratorAbstract
                                 ];
 
                                 if ($param->getType()) {
-                                    $data['hint'] = $param->getType();
+                                    $data['hint'] = $param->getType()->getName();
                                 }
 
                                 try {
@@ -117,6 +117,7 @@ class Templates extends GeneratorAbstract
                                 $newParams[$param->getPosition()] = $data;
                             }
                         } catch (Exception $e) {
+                            _p($e->getMessage());
                         }
                     }
                 }
@@ -246,7 +247,7 @@ EOF;
                     continue;
                 }
                 foreach ($templates as $template) {
-                    $nc->addMethod($template['name'], '', $template['params'], ['returnType' => 'string']);
+                    $nc->addMethod($template['func'], '', $template['params'], ['returnType' => 'string']);
                 }
 
                 $nc->save();
@@ -266,11 +267,11 @@ EOF;
             $found = array_combine($v, $v);
             $params = $nc->buildParams($method['params']);
             $newMethod = 'function ' . $method['func'] . '(' . $params . ')';
-            if (isset($found[$method['name']])) {
+            if (isset($found[$method['func']])) {
                 preg_match_all('#function ' . trim($method['func']) . '\((.*?)\)#msu', $content, $m);
 
                 $content = preg_replace_callback(
-                    '#function ' . trim($method['name']) . '\((.*?)\)#msu',
+                    '#function ' . trim($method['func']) . '\((.*?)\)#msu',
                     function ($m) use ($method, $newMethod, $write) {
                         if (isset($m[0]) && $m[0] === $newMethod) {
                             return $m[0];

@@ -20,6 +20,7 @@ use IPS\Dispatcher;
 use ReflectionClass;
 
 use function base64_encode;
+use function lang;
 
 class Profiler extends Singleton
 {
@@ -94,6 +95,30 @@ class Profiler extends Singleton
                 $profileTime
             );
         }
+        $ajaxButton = '';
+        $ajaxPanel = '';
+        if (Settings::i()->storm_profiler_ajax_enabled === true)
+        {
+            $ajaxButton = Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
+                'storm_profiler_ajax',
+                '',
+                'storm_profiler_ajax_panel',
+                lang('storm_profiler_button_ajax'),
+                'repeat',
+                'orange',
+                'black',
+                0,
+                false
+            );
+           $ajaxPanel = Tpl::get('profiler.storm.global')->listPanel(
+               [],
+               'storm_profiler_ajax_panel',
+               lang('storm_profiler_title_ajax', false, ['sprintf'=> [ 0 ] ]),
+               false,
+               false
+           );
+                //Theme::i()->getTemplate('profiler', 'storm', 'global')->listPanel( [], 'storm_profiler_ajax_panel', lang('storm_profiler_title_ajax', false, ['sprintf'=> [ 0 ] ]) );
+        }
 
         $buttons = [
             'panelButtons' => [
@@ -107,7 +132,8 @@ class Profiler extends Singleton
                 $templates['css']['button'] ?? '',
                 $templates['js']['button'] ?? '',
                 $templates['jsVars']['button'] ?? '',
-                $debug['button'] ?? ''
+              //  $debug['button'] ?? '',
+                $ajaxButton
             ],
             'extraButtons' => $this->extraButtons()
         ];
@@ -123,7 +149,8 @@ class Profiler extends Singleton
             $templates['css']['panel'] ?? '',
             $templates['js']['panel'] ?? '',
             $templates['jsVars']['panel'] ?? '',
-            $debug['panel'] ?? ''
+           // $debug['panel'] ?? '',
+            $ajaxPanel
         ];
 
         $return = Theme::i()->getTemplate('profiler', 'storm', 'global')
@@ -197,21 +224,23 @@ class Profiler extends Singleton
             'data' => $data,
         ]);
         $url = base64_encode((string) $url);
+        $phpImage = \IPS\Theme::i()->resource( 'php.png', 'storm', 'global');
         $phpVer = '<a href="' .
             (string) Url::internal('app=storm&module=profiler&controller=phpinfo', 'front') .
             '" data-ipsDialog data-ipsDialog-title="phpinfo()">' .
-            '<i class="fa">🅟🅗🅟</i> Version: ' .
+            '<i class="fa"><img src="'.$phpImage.'"/></i> ' .
             PHP_VERSION .
             '</a>';
         $ipsVer = Application::load('core')->version;
         $mySqlVer = Db::i()->server_info;
 
-
+        $mysql = \IPS\Theme::i()->resource( 'mysql.png', 'storm', 'global');
+        $ips = \IPS\Theme::i()->resource( 'ips.png', 'storm', 'global');
         $buttons = [
             'Info' => [
                 $phpVer,
-                'IPS Version: ' => $ipsVer,
-                'MySQL Version: ' => $mySqlVer,
+                '<img src="'.$ips.'">' => $ipsVer,
+                '<img src="'.$mysql.'">' => $mySqlVer,
             ]
         ];
 
@@ -232,12 +261,16 @@ class Profiler extends Singleton
                 base64_encode(Request::i()->url()),
                 'front'
             ) .
-            '" class="stormButtons" data-ipsdialog data-ipsdialog-title="Proxy & Meta Data" data-ipsdialog-size="medium" data-ipsdialog-destructOnClose="true">Proxy & Meta Data</a>';
+            '" class="stormButtons stormButtons--small" data-ipsdialog data-ipsdialog-title="Proxy & Meta Data" data-ipsdialog-size="medium" data-ipsdialog-destructOnClose="true">Proxy & Meta Data</a>';
 
-        $clearCaches = '<a href="#" class="stormButtons" data-ipsstormalert data-ipsstormalert-type="confirm" data-ipsstormalert-msg="This will clear the metadata caches that storm generates." data-ipsstormalert-url="' . (string) Url::internal('app=storm&module=other&controller=proxy&do=clearMetaData', 'front') . '" >Clear Storm Caches</a>';
+        $clearCaches = '<a href="#" class="stormButtons stormButtons--small" data-ipsstormalert data-ipsstormalert-type="confirm" data-ipsstormalert-msg="This will clear the metadata caches that storm generates." data-ipsstormalert-url="' . (string) Url::internal('app=storm&module=other&controller=proxy&do=clearMetaData', 'front') . '" >Clear Storm Caches</a>';
+
+        $url = Url::internal('app=storm&module=profiler&controller=debug&do=popup', 'front');
+        $debug = "<a href=\"#\" class=\"stormButtons stormButtons--small\" onClick=\"DebugLog=window.open('".(string) $url."','DebugLog','width=950,height=400'); return false;\"><i class='fa fa-bug'></i>".lang('storm_profiler_button_debug')."</a>";
         return [
             $clearCaches,
-            $generateMeta
+            $generateMeta,
+            $debug
         ];
     }
 

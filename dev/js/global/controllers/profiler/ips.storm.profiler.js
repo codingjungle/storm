@@ -47,8 +47,9 @@
                     let target = $(e.target);
                     if(target.length !== 0) {
                         let parents1 = target.closest('.stormProfilerPanelsContainer'),
-                            parents2 = target.closest('.stormProfilerBar');
-                        if (parents1.length === 0 && parents2.length === 0) {
+                            parents2 = target.closest('.stormProfilerBar'),
+                            parents3 = target.parents('.ipsAlert');
+                        if (parents1.length === 0 && parents2.length === 0 && parents3.length === 0) {
                             _close();
                         }
                     }
@@ -121,12 +122,14 @@
                         _setTimers();
                     }
                 }
-                $('.stormProfilerButton').removeClass('stormProfilerButtonActive');
+                $('.stormProfilerButton').removeClass('stormProfilerDim');
             },
             _open = function (e) {
                 e.preventDefault();
                 let target = $(e.currentTarget),
                     panel = $('#' + target.data('panel'));
+
+                $('.stormProfilerButton').addClass('stormProfilerDim');
                 if (panel.data('active') !== 1) {
                     let h = $('#ElstormProfilerBar').outerHeight();
                     $('#elStormProfilerPanelsContainer').css('bottom', h+'px');
@@ -138,14 +141,17 @@
                         if(target.attr('data-panel') === 'storm_profiler_debug_panel') {
                             _clearTimers();
                         }
+                        target.removeClass('stormProfilerDim');
                     });
                 } else {
+
                     panel.data('active', 0).fadeOut().promise().done(function(){
                         target.removeClass('stormProfilerButtonActive').removeClass('stormProfilerFlash');
                         panel.removeClass('stormProfilerPanelActive');
                         if(target.attr('data-panel') === 'storm_profiler_debug_panel') {
                             _setTimers();
                         }
+                        $('.stormProfilerButton').removeClass('stormProfilerDim');
                     });
 
                     $(document).trigger('stormProfilerPanelOff', {panel: target.data('panel'), button: target})
