@@ -1,0 +1,9 @@
+{
+    "topLevel": "",
+    "pages": {
+        "stormManifest": {
+            "friendly": "stormmanifest.webmanifest",
+            "real": "app=storm&module=profiler&controller=debug&do=manifest"
+        }
+    }
+}

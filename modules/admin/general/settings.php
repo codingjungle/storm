@@ -75,6 +75,17 @@ class settings extends Controller
         $form->addElement('storm_profiler_debug_enabled', 'yn')->toggles(['storm_profiler_debug_ajax_enable']);
         $form->addElement('storm_profiler_debug_ajax_enable', 'yn');
         $form->addElement('storm_profiler_ajax_enabled', 'yn');
+
+        $form->addHeader('storm_profiler_ajax_options');
+
+        $options = [
+            'ips' => 'IPS Apps',
+            'instant' => 'Instant Notifications',
+        ];
+
+        $form->addElement('storm_profiler_filter_default', 'cbs')->options(['options' => $options]);
+        $form->addElement('storm_profiler_filter_url', 'stack');
+
         $form->addTab('storm_devcenter');
         $form->addElement('storm_devcenter_keep_case', 'yn');
 

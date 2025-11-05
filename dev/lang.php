@@ -139,6 +139,9 @@ $lang = array(
     'storm_profiler_ajax_enabled_desc' => 'Enabling the ajax log, will capture ajax requests and log them.',
     'storm_profiler_button_ajax' => 'Ajax Log',
     'storm_profiler_title_ajax' => 'Ajax Log (<a href="#" data-wipe>Clear</a>)',
+    'storm_profiler_ajax_options_header' => 'Ajax Panel Options',
+    'storm_profiler_filter_url' => 'Url Fragments Filters',
+    'storm_profiler_filter_default' => 'Common Filters',
 
 
 

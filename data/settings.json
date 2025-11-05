@@ -44,6 +44,14 @@
         "default": "1"
     },
     {
+        "key": "storm_profiler_filter_default",
+        "default": "[]"
+    },
+    {
+        "key": "storm_profiler_filter_url",
+        "default": "{'js.php?src=core/front/controllers/widgets/ips.widgets.block.js','applications/core/interface/static/pagebuilder/manifest.json'}"
+    },
+    {
         "key": "storm_profiler_js_enabled",
         "default": "1"
     },

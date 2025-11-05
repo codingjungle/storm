@@ -218,6 +218,11 @@ a,code.prettyprint a,pre.prettyprint a{text-decoration:none}code .str,pre .str{c
     margin: 2px;
   }
 
+  .stormProfilerListItem a {
+    word-break: break-all;
+      word-wrap: break-word;
+  }
+
   .stormProfilerWrapper {
     position: relative;
     display: inline-block;
@@ -370,6 +375,10 @@ a,code.prettyprint a,pre.prettyprint a{text-decoration:none}code .str,pre .str{c
 }
 .stormDebugPanelParent {
     width:100%;
+}
+
+.stormProfilerDebugContainer {
+    margin-bottom: 10px;
 }
 
 /*symfony css*/

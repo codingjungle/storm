@@ -40,6 +40,8 @@ use function nl2br;
 use function rand;
 use function time;
 
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
+
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
@@ -91,18 +93,24 @@ class Debug extends ActiveRecord
      * @param $key
      * @param $message
      */
-    public static function log($message, $key = null)
+    public static function log($message, $key = null): void
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
             $debug = new static();
             $debug->key = $key;
-            $debug->bt = json_encode(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+            $bt = [];
 
             if ($message instanceof Exception) {
                 $data['class'] = get_class($message);
                 $data['ecode'] = $message->getCode();
-                $data['line'] = $message->getLine();
-                $data['file'] = $message->getFile();
+
+                $bt[] = [
+                    'file' => $message->getFile(),
+                    'line' => $message->getLine(),
+                    'function' => '',
+                    'class' => '',
+                    'type' => ''
+                ];
                 if (method_exists($message, 'extraLogData')) {
                     $data['message'] = $message->extraLogData() . "\n" . $message->getMessage();
                 } else {
@@ -117,11 +125,12 @@ class Debug extends ActiveRecord
             } else {
                 $type = 'string';
             }
+            $bt = array_merge($bt, debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
 
+            $debug->bt = json_encode($bt);
             $debug->type = $type;
             $debug->log = $message;
             $debug->date = time();
-
             $debug->save();
         }
     }
@@ -189,8 +198,6 @@ class Debug extends ActiveRecord
 
         return Theme::i()->getTemplate('profiler', 'storm', 'global')
             ->debugPanel(lang('storm_profiler_title_debug', false), $list, $last);
-
-
     }
 
     /**

@@ -36,7 +36,8 @@ class Settings extends \IPS\Settings
     ];
 
     protected const ARRAYS = [
-
+        'storm_profiler_filter_url' => 1,
+        'storm_profiler_filter_default' => 1
     ];
 
     protected const OBJECTS = [];

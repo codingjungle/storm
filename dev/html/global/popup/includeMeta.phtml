@@ -1,0 +1,53 @@
+<ips:template parameters="" />
+
+{{if !\IPS\Request::i()->isAjax()}}
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	
+	{{if !isset( \IPS\Output::i()->metaTags['og:image'] )}}
+		{{$shareLogos = \IPS\Settings::i()->icons_sharer_logo ? json_decode( \IPS\Settings::i()->icons_sharer_logo, true ) : array();}}
+		{{foreach $shareLogos as $logo}}
+			<meta property="og:image" content="{file="$logo" extension="core_Icons" scheme="full"}">
+		{{endforeach}}
+	{{endif}}
+	{{if !isset( \IPS\Output::i()->metaTags['og:image'] ) and !\count( $shareLogos ) }}
+		<meta name="twitter:card" content="summary">
+	{{else}}
+		<meta name="twitter:card" content="summary_large_image">
+	{{endif}}
+	{{if \IPS\Settings::i()->site_twitter_id}}
+		{{if mb_substr( \IPS\Settings::i()->site_twitter_id, 0, 1 ) === '@'}}
+			<meta name="twitter:site" content="{setting="site_twitter_id"}">
+		{{else}}
+			<meta name="twitter:site" content="@{setting="site_twitter_id"}">
+		{{endif}}
+	{{endif}}
+	{{foreach \IPS\Output::i()->metaTags as $name => $content}}
+		{{if $name == 'canonical'}}
+			<link rel="canonical" href="{$content}">
+		{{else}}
+			{{if $name != 'title'}}
+				{{if \is_array( $content ) }}
+					{{foreach $content as $_value }}
+						<meta {{if mb_substr( $name, 0, 3 ) === 'og:' or mb_substr( $name, 0, 3 ) === 'fb:'}}property{{else}}name{{endif}}="{$name}" content="{$_value}">
+					{{endforeach}}
+				{{elseif $content}}
+					<meta {{if mb_substr( $name, 0, 3 ) === 'og:' or mb_substr( $name, 0, 3 ) === 'fb:'}}property{{else}}name{{endif}}="{$name}" content="{$content}">
+				{{endif}}
+			{{endif}}
+		{{endif}}
+	{{endforeach}}
+	{{foreach \IPS\Output::i()->linkTags as $type => $value}}
+		{{if \is_array( $value )}}
+			<link {{foreach $value as $k => $v}}{$k}="{expression="$v"}" {{endforeach}}/>
+		{{elseif $type != 'canonical' OR !isset( \IPS\Output::i()->metaTags['canonical'] )}}
+			<link rel="{$type}" href="{expression="$value"}">
+		{{endif}}
+	{{endforeach}}
+	{{foreach \IPS\Output::i()->rssFeeds as $title => $url}}<link rel="alternate" type="application/rss+xml" title="{lang="$title"}" href="{$url}">{{endforeach}}
+	{{if \IPS\Output::i()->base}}
+		<base target="{expression="\IPS\Output::i()->base"}">
+	{{endif}}
+
+{{endif}}

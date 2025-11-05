@@ -6,7 +6,7 @@
 * @copyright  -storm_copyright-
 * @package    IPS Social Suite
 * @subpackage nucleus
-* @since      
+* @since
 */
 
 namespace IPS\storm;
@@ -14,6 +14,7 @@ namespace IPS\storm;
 use IPS\Log;
 use Exception;
 use IPS\Login;
+use IPS\storm\Profiler\Debug;
 use IPS\Theme;
 use IPS\Member;
 use IPS\Request;
@@ -28,6 +29,7 @@ use UnexpectedValueException;
 use IPS\Helpers\Form\CheckboxSet;
 use IPS\Helpers\Form\FormAbstract;
 use IPS\Helpers\Form as ipsForm;
+
 use function sha1;
 use function count;
 use function header;
@@ -52,14 +54,13 @@ use function array_combine;
 use function func_get_args;
 use function property_exists;
 use function array_key_exists;
-use const null;
 
+use const null;
 use const false;
 use const true;
 
-
-if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) ) {
-    header( ( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden' );
+if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
+    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
     exit;
 }
 
@@ -68,7 +69,8 @@ if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) ) {
 * @mixin \IPS\nucleus\Form
 */
 class Form extends ipsForm
-{/**
+{
+/**
      * @var bool
      */
     public bool $valuesError = false;
@@ -274,27 +276,31 @@ class Form extends ipsForm
     public function setObject(object $object): self
     {
         $this->object = $object;
-        if(property_exists($object, 'nodeTitle')) {
+        if (property_exists($object, 'nodeTitle')) {
             try {
                 $this->formPrefix = $object::$nodeTitle;
-            }catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
         if (property_exists($object, 'formLangPrefix')) {
             try {
                 $this->formPrefix = $object::$formLangPrefix;
-            }catch(\Throwable $e){}
+            } catch (\Throwable $e) {
+            }
         }
 
-        if(property_exists($object, 'formPrefix')) {
+        if (property_exists($object, 'formPrefix')) {
             try {
                 $this->formPrefix = $object::$formPrefix;
-            }catch(\Throwable $e){}
+            } catch (\Throwable $e) {
+            }
         }
 
         if (property_exists($object, 'bitOptions')) {
             try {
                 $this->setBitOptions($object::$bitOptions);
-            }catch(\Throwable $e){}
+            } catch (\Throwable $e) {
+            }
         }
 
         return $this;
@@ -504,7 +510,7 @@ class Form extends ipsForm
      * @param $attributes
      * @return $this
      */
-    public function addButton( string $lang, string $type, string $href=NULL, string $class='', array $attributes=array() ): void
+    public function addButton(string $lang, string $type, string $href = null, string $class = '', array $attributes = array()): void
     {
         parent::addButton($lang, $type, $href, $class, $attributes);
     }
@@ -569,7 +575,7 @@ class Form extends ipsForm
      * @return Element
      * @throws Exception
      */
-    public function add( mixed $input, string $after=NULL, string $tab=NULL ) : void
+    public function add(mixed $input, string $after = null, string $tab = null): void
     {
         if ($input instanceof FormAbstract) {
             $element = $input;
@@ -608,15 +614,17 @@ class Form extends ipsForm
     /**
      * @return bool|array
      */
-    public function values( bool $stringValues=false ): array|false
+    public function values(bool $stringValues = false): array|false
     {
         $name = "{$this->id}_submitted";
         $newValues = [];
         /* Did we submit the form? */
-        if (isset(Request::i()->{$name}) && Login::compareHashes(
+        if (
+            isset(Request::i()->{$name}) && Login::compareHashes(
                 (string)Session::i()->csrfKey,
                 (string)Request::i()->csrfKey
-            )) {
+            )
+        ) {
             if ($this->built === false) {
                 $this->build();
             };
@@ -873,7 +881,7 @@ class Form extends ipsForm
     {
         $this->_insert(Theme::i()->getTemplate('forms', 'core', 'front')->seperator());
     }
-    
+
     protected function compileMessage(Element $element)
     {
         //->extra(['css' => $css, 'id' => $_id, 'parse' => $parse,'sprintf' => $sprintf]);
@@ -890,7 +898,7 @@ class Form extends ipsForm
         }
         $css = $extra['css'] ?? '';
         $id = $extra['id'] ?? '';
-        if(!isset($this->messagesExist[$id])) {
+        if (!isset($this->messagesExist[$id])) {
             $this->messagesExist[$id] = true;
             $this->_insert(Theme::i()->getTemplate('forms', 'core', 'global')->message($name, $id, $css, $parse));
         }
@@ -994,7 +1002,7 @@ class Form extends ipsForm
                             break;
                         case 'togglesOff':
                         case 'natogglesOff':
-                        foreach ($toggle['elements'] as $k => $val) {
+                            foreach ($toggle['elements'] as $k => $val) {
                                 if (\is_array($val)) {
                                     foreach ($val as $v) {
                                         if ($this->togglesAppending) {
@@ -1020,7 +1028,8 @@ class Form extends ipsForm
                 }
             }
         }
-        if (is_array($options) &&
+        if (
+            is_array($options) &&
             isset($options['options']) &&
             isset($options['prefixLang']) &&
             $options['prefixLang']
@@ -1111,7 +1120,9 @@ class Form extends ipsForm
             if (Member::loggedIn()->language()->checkKeyExists($desc)) {
                 if (isset($descs['sprintf'])) {
                     $desc = Member::loggedIn()->language()->addToStack(
-                        $desc, false, ['sprintf' => $descs['sprintf']]
+                        $desc,
+                        false,
+                        ['sprintf' => $descs['sprintf']]
                     );
                 } else {
                     $desc = Member::loggedIn()->language()->addToStack($desc);
@@ -1220,7 +1231,7 @@ class Form extends ipsForm
      * @return $this
      * @throws Exception
      */
-    public function addMatrix( mixed $name, Matrix $matrix, string $after=NULL, string $tab=NULL ): void
+    public function addMatrix(mixed $name, Matrix $matrix, string $after = null, string $tab = null): void
     {
         $element = new Element($name, 'matrix');
         $element->extra(['matrix' => $matrix]);
@@ -1240,13 +1251,21 @@ class Form extends ipsForm
      * @return Element|mixed|void
      * @throws Exception
      */
-    public function addHeader( string $lang, string $after=NULL, string $tab=NULL ) : void
+    public function addHeader(string $lang, string $after = null, string $tab = null): void
     {
-        $this->addHeaders($lang, $after, $tab);
+        try {
+            $this->addHeaders($lang, $after, $tab);
+        }catch(Exception $e){
+            Debug::log($e);
+        }
     }
 
-    protected function addHeaders($lang, $after = null, $tab = null, ?string $css = null, ?string $id = null){
-        $key = $lang.'_header';
+    /**
+     * @throws Exception
+     */
+    protected function addHeaders($lang, $after = null, $tab = null, ?string $css = null, ?string $id = null): void
+    {
+        $key = $lang . '_header';
         $element = new Element($lang, 'header');
         if ($css !== null) {
             $element->extra(['css' => $css]);
@@ -1267,7 +1286,7 @@ class Form extends ipsForm
      * @return $this
      * @throws Exception
      */
-    public function addSeparator( string $after=NULL, string $tab=NULL ): void
+    public function addSeparator(string $after = null, string $tab = null): void
     {
         $name = uniqid('separator_', true);
         $element = new Element($name, 'separator');
@@ -1289,7 +1308,7 @@ class Form extends ipsForm
      * @return $this
      * @throws Exception
      */
-    public function addMessage( string $lang, ?string $css='', bool $parse=TRUE, string $_id=NULL, string $after=NULL, string $tab=NULL ): void
+    public function addMessage(string $lang, ?string $css = '', bool $parse = true, string $_id = null, string $after = null, string $tab = null): void
     {
         $key = $lang . '_message';
 
@@ -1320,7 +1339,7 @@ class Form extends ipsForm
      * @throws Exception
      */
 
-    public function addDummy( string $langKey, string $value, string $desc='', string $warning='', string $id='', string $after=NULL, string $tab=NULL ): void
+    public function addDummy(string $langKey, string $value, string $desc = '', string $warning = '', string $id = '', string $after = null, string $tab = null): void
     {
         if (empty($id) === true) {
             $id = uniqid('dummy_');
@@ -1352,7 +1371,7 @@ class Form extends ipsForm
      * @return $this
      * @throws Exception
      */
-    public function addHtml( string $html, string $after=NULL, string $tab=NULL ): void
+    public function addHtml(string $html, string $after = null, string $tab = null): void
     {
         $name = sha1($html);
         $element = (new Element($name, 'html'))->extra(['html' => $html]);
@@ -1363,7 +1382,7 @@ class Form extends ipsForm
         }
     }
 
-    public function addSidebar( string $contents ): void
+    public function addSidebar(string $contents): void
     {
         $name = sha1($contents);
         $element = new Element($contents, 'sidebar');
@@ -1379,7 +1398,7 @@ class Form extends ipsForm
         return $this->build();
     }
 
-    public function customTemplate( callable $template ): string
+    public function customTemplate(callable $template): string
     {
         $args = func_get_args();
         $this->build();

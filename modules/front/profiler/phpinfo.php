@@ -6,6 +6,7 @@ use Exception;
 use IPS\Dispatcher\Controller;
 use IPS\Output;
 use IPS\Theme;
+use Throwable;
 
 use function defined;
 use function randomString;
@@ -39,7 +40,6 @@ class phpinfo extends Controller
      */
     protected function manage(): void
     {
-        \IPS\storm\Profiler\Debug::log(randomString());
         ob_start();
         phpinfo();
         $content = ob_get_clean();

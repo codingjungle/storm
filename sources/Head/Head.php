@@ -12,6 +12,7 @@
 namespace IPS\storm;
 
 use IPS\Http\Url;
+use IPS\IPS;
 use IPS\Output;
 use IPS\Patterns\Singleton;
 use IPS\Theme;
@@ -19,9 +20,10 @@ use IPS\Theme;
 use function array_merge;
 use function count;
 use function explode;
+use function stripos;
 
-if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) ) {
-    header( ( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden' );
+if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
+    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
     exit;
 }
 
@@ -38,7 +40,8 @@ class Head extends Singleton
     */
     protected static ?Singleton $instance = null;
 
-    public function both(array $files){
+    public function both(array $files)
+    {
         $this->js($files);
         $this->css($files);
     }
@@ -57,18 +60,16 @@ class Head extends Singleton
         foreach ($files as $f) {
             $v = explode('_', $f);
             //determine if we need to change the $app
-            if(count($v) === 2){
-                [$loc, $file] = explode('_',$f);
+            if (count($v) === 2) {
+                [$loc, $file] = explode('_', $f);
+            } else {
+                [$app, $loc, $file] =  explode('_', $f);
             }
-            else {
-                [$app, $loc, $file] =  explode('_',$f);
-            }
-            if($loc !== 'interface') {
+            if ($loc !== 'interface') {
                 $file = $loc . '_' . $file . '.js';
+            } else {
+                $file = $file . '.js';
             }
-            else{
-                $file = $file.'.js';
-            } 
             //add to local variable for merging
             $jsFiles[] = Output::i()->js($file, $app, $loc);
         }
@@ -90,11 +91,10 @@ class Head extends Singleton
         foreach ($files as $f) {
             $v = explode('_', $f);
             //determine if we need to change the $app
-            if(count($v) === 2){ 
-                [$loc, $file] = explode('_',$f);
-            }
-            else {
-                [$app, $loc, $file] =  explode('_',$f);
+            if (count($v) === 2) {
+                [$loc, $file] = explode('_', $f);
+            } else {
+                [$app, $loc, $file] =  explode('_', $f);
             }
 
             $file .= '.css';
@@ -116,15 +116,41 @@ class Head extends Singleton
         }
     }
 
-    public function insertAfterJs(){
+    public function insertAfterJs()
+    {
         $js = Output::i()->jsFiles;
         $newJs = [];
-        foreach ($js as $j){
+        foreach ($js as $j) {
             $newJs[] = $j;
-            if(str_contains($j, 'app.js')){
+            if (str_contains($j, 'app.js')) {
                 $newJs[] = Url::baseUrl(Url::PROTOCOL_RELATIVE) . 'applications/storm/interface/storm.js';
             }
         }
         Output::i()->jsFiles = $newJs;
+    }
+
+    public function ajaxFilters(): void
+    {
+        $defaults = Settings::i()->storm_profiler_filter_default;
+        $fragments = Settings::i()->storm_profiler_filter_url;
+        $combined = [];
+
+        foreach ($fragments as $fragment) {
+            $combined[] = $fragment;
+        }
+
+        foreach ($defaults as $default) {
+            if ($default === 'ips') {
+                foreach (IPS::$ipsApps as $app) {
+                    $combined[] = 'app=' . $app;
+                }
+            }
+
+            if ($default === 'instant') {
+                $combined[] = 'do=instantNotifications';
+            }
+        }
+        $jsVars = [ 'stormProfilerFilters' => $combined ];
+        $this->jsVars($jsVars);
     }
 }

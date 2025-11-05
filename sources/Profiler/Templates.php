@@ -303,8 +303,8 @@ class Templates extends Singleton
 
         $list = [];
         foreach ($js as $key => $val) {
-            if (!is_array($val) && empty($val) === false) {
-                $v = json_decode($val, true) ?? $val;
+            if (is_array($val) && empty($val) === false) {
+                $v = json_encode($val);
             } else {
                 $v = $val;
             }

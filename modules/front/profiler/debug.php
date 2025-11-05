@@ -6,9 +6,11 @@ use IPS\Db;
 use IPS\dinit;
 use IPS\Dispatcher;
 use IPS\Dispatcher\Controller;
+use IPS\Http\Url;
 use IPS\Member;
 use IPS\Output;
 use IPS\Request;
+use IPS\storm\Head;
 use IPS\storm\Tpl;
 use IPS\Theme;
 use Throwable;
@@ -18,6 +20,8 @@ use function defined;
 use function ini_get;
 use function json_encode;
 use function time;
+
+use const JSON_PRETTY_PRINT;
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -152,8 +156,56 @@ class debug extends Controller
 
     protected function popup(): void
     {
+        \IPS\Settings::i()->manifest_details = '{}';
+        $image = \IPS\Theme::i()->resource( 'bug.png', 'storm', 'global', false );
         Dispatcher\Front::i()->init();
-        $output = Tpl::get('global.core.front')->blankTemplate(\IPS\storm\Profiler\Debug::popup());
+        Head::i()->css(['global_popup']);
+        Head::i()->jsVars(['debugLogIcon' => (string) $image]);
+        $output = Tpl::get('popup.storm.global')->popup(\IPS\storm\Profiler\Debug::popup(), 'Storm Debug Logs', Url::internal('app=storm&module=profiler&controller=debug&do=manifest', 'front', 'stormManifest'), '#000000');
         Output::i()->sendOutput($output);
+    }
+
+    protected function manifest(): void
+    {
+        $image192 = (string)\IPS\Theme::i()->resource('bug192.png', 'storm', 'global', false);
+        $image512 = (string)\IPS\Theme::i()->resource('bug512.png', 'storm', 'global', false);
+
+        $image192 = str_replace(Url::baseUrl(), '', $image192);
+        $image512 = str_replace(Url::baseUrl(), '', $image512);
+        if (str_starts_with($image512, '/') === false) {
+            $image512 = '/' . $image512;
+        }
+
+        if (str_starts_with($image192, '/') === false) {
+            $image192 = '/' . $image192;
+        }
+        $manifest = [
+            'shortname' => 'SDL',
+            'name' => 'Storm Debug Logs',
+            'icons' => [
+                [
+                    'src' => $image192,
+                    'sizes' => '192x192',
+                    'type' => 'image/png'
+                ],
+                [
+                    'src' => $image512,
+                    'sizes' => '512x512',
+                    'type' => 'image/png'
+                ]
+            ],
+            'start_url' => (string) Url::internal('app=storm&module=profiler&controller=debug&do=popup', 'front'),
+            'display' => 'standalone',
+            'theme_color' => '#000000',
+            'background_color' => '#ffffff'
+        ];
+
+        Output::i()->sendOutput(
+            json_encode($manifest, JSON_PRETTY_PRINT),
+            200,
+            'application/manifest+json',
+            Output::i()->httpHeaders
+        );
+        //Output::i()->json($manifest);
     }
 }

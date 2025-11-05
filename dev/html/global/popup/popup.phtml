@@ -1,0 +1,22 @@
+<ips:template parameters="$html, $title=null, $manifest=null, $manifestColor=null" />
+<!DOCTYPE html>
+<html lang="{expression="\IPS\Member::loggedIn()->language()->bcp47()"}" dir="{{if member.language()->isrtl}}rtl{{else}}ltr{{endif}}" {template="htmlDataAttributes" app="core" group="global" location="front" params=""}>
+<head>
+    <title>{expression="output.getTitle( $title )"}</title>
+    {template="prefersColorSchemeLoad" app="core" group="global" location="front" params=""}
+    {template="loadGuestColorScheme" app="core" group="global" location="front" params=""}
+    {template="includeMeta" app="storm" group="popup" location="global" params=""}
+    {{if $manifest !== null}}
+    <link rel="manifest" href="{$manifest|raw}">
+        {{if $manifestColor !== null}}
+        <meta name="theme-color" content="{$manifestColor}">
+        {{endif}}
+    {{endif}}
+    {template="includeCSS" app="core" group="global" location="global" params=""}
+    {template="includeJS" app="core" group="global" location="global" params=""}
+</head>
+<body class='ipsApp ipsApp_front ipsLayout_noBackground {{foreach output.bodyClasses as $class}} {$class}{{endforeach}}' {{if output.globalControllers}}data-controller='{expression="implode( ',', output.globalControllers )"}'{{endif}} {{if isset( output.inlineMessage )}}data-message="{expression="output.inlineMessage"}"{{endif}}>
+{$html|raw}
+{expression="output.endBodyCode" raw="true"}
+</body>
+</html>
