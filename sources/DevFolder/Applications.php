@@ -17,16 +17,13 @@ use InvalidArgumentException;
 use IPS\Application;
 use IPS\IPS;
 use IPS\Member;
-use IPS\storm\Shared\Write;
 use IPS\storm\Writers\FileGenerator;
 use IPS\Xml\XMLReader;
 use OutOfRangeException;
 use RuntimeException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use ZipArchive;
 
-use function base64_decode;
 use function closedir;
 use function copy;
 use function count;
@@ -56,10 +53,10 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
+\IPS\storm\Application::initAutoloader();
 
-class _Applications
+class Applications
 {
-    use Write;
 
     protected const INDEX = 'index';
     /**
@@ -348,13 +345,13 @@ class _Applications
         }
 
         FileGenerator::i()
-            ->setFileName('lang.php')
+            ->setFileName('lang')
             ->setPath($this->dev)
             ->addBody('$lang=' . var_export($lang, true) . ";")
             ->save();
 
         FileGenerator::i()
-            ->setFileName('jslang.php')
+            ->setFileName('jslang')
             ->setPath($this->dev)
             ->addBody('$lang=' . var_export($langJs, true) . ";")
             ->save();

@@ -144,7 +144,9 @@ $lang = array(
     'storm_profiler_debug_catpure_ips_log_desc' => 'If enabled, will capture the IPS log and store it in the debug log.',
     'storm_profiler_debug_keep_ips_log' => 'Keep IPS Log',
     'storm_profiler_debug_keep_ips_log_desc' => 'If enabled, will save the IPS log to the IPS Database as well to the Storm Debug Log.',
-    'storm_profiler_debug_options_header' => 'Debug Log Options',
+    'storm_profiler_debug_options_header' => 'Debug Log Options','storm_devcenter_queue_title' => 'Generating Dev Files',
+    'storm_devcenter_completed' => 'Dev folder generated for %s',
+    'storm_devcenter_total_done' => 'Processing %s of %s',
 
 
 

@@ -11,8 +11,8 @@ use IPS\Member;
 use IPS\Output;
 use IPS\Request;
 use IPS\storm\Application;
+use IPS\storm\DevFolder\Applications;
 use IPS\storm\Form;
-use IPS\storm\modules\admin\generators\Applications;
 
 use function array_pop;
 use function defined;
@@ -61,10 +61,10 @@ class devfolder extends DeveloperController
      */
     protected function manage()
     {
-        $app = Request::i()->app;
+        $app = Request::i()->appKey;
 
-        if(in_array($app, IPS::$ipsApps, true)){
-            Output::i()->error("{$app} is an IPS app, DevFolder Generator will not generate IPS apps Dev Folder, get the SDK from IPS instead.");
+        if (in_array($app, IPS::$ipsApps, true)) {
+            Output::i()->error("{$app} is an IPS app, DevFolder Generator will not generate IPS apps Dev Folder, get the SDK from IPS instead.", '100foo');
         }
 
         /**
@@ -87,9 +87,9 @@ class devfolder extends DeveloperController
         $form->addHidden('appKey', $app);
         $form->addElement('overwrite', 'yn')
             ->validation($validate);
-
+        $url = Url::internal('app=storm&module=developer&controller=devfolder&do=queue&appKey=' . $app);
         if ($values = $form->values()) {
-            Output::i()->redirect($this->url->setQueryString(['do' => 'queue', 'appKey' => $values['app']]));
+            Output::i()->redirect($url->setQueryString(['do' => 'queue', 'appKey' => $values['appKey']]));
         }
 
 //        Output::i()->title = lang('storm_devfolder_title');
@@ -98,13 +98,13 @@ class devfolder extends DeveloperController
 
     protected function queue()
     {
-        Output::i()->title = lang('dtdevfolder_queue_title');
+        Output::i()->title = lang('storm_devcenter_queue_title');
 
         $app = Request::i()->appKey;
 
         Output::i()->output = new MultipleRedirect(
-            Url::internal('app=storm&module=generators&controller=devfolder&do=queue&appKey=' . $app),
-            static function ($data) use ($app){
+            Url::internal('app=storm&module=developer&controller=devfolder&do=queue&appKey=' . $app),
+            static function ($data) use ($app) {
                 $next = null;
                 $end = false;
                 $do = $data['next'] ?? 'language';
@@ -144,7 +144,7 @@ class devfolder extends DeveloperController
                     return null;
                 }
 
-                $language = Member::loggedIn()->language()->addToStack('dtdevfolder_total_done', false, [
+                $language = lang('storm_devcenter_total_done', false, [
                     'sprintf' => [
                         $done,
                         100,
@@ -155,9 +155,9 @@ class devfolder extends DeveloperController
             },
             static function () {
                 $app = Request::i()->appKey;
-                $app = Member::loggedIn()->language()->addToStack("__app_{$app}");
-                $msg = Member::loggedIn()->language()->addToStack('dtdevfolder_completed', false, ['sprintf' => [$app]]);
-                $url = Url::internal('app=storm&module=devfolder&controller=applications');
+                $app = lang("__app_{$app}");
+                $msg = lang('storm_devcenter_completed', false, ['sprintf' => [$app]]);
+                $url = Url::internal('app=storm&module=developer&controller=devfolder&appKey='.$app);
                 /* And redirect back to the overview screen */
                 Output::i()->redirect($url, $msg);
             }
