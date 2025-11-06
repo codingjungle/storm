@@ -115,9 +115,7 @@ class debug extends Controller
                     ];
                     Output::i()->json($send);
                 }
-            }
-            else
-            {
+            } else {
                 sleep(1);
                 continue;
             }
@@ -131,8 +129,7 @@ class debug extends Controller
         $error = 0;
         try {
             Db::i()->delete('storm_debug', ['debug_id=?', $id]);
-        }
-        catch( Throwable $e){
+        } catch (Throwable $e) {
             $error = 1;
             $msg = $e->getMessage();
         }
@@ -146,8 +143,7 @@ class debug extends Controller
         $error = 0;
         try {
             Db::i()->delete('storm_debug');
-        }
-        catch( Throwable $e){
+        } catch (Throwable $e) {
             $error = 1;
             $msg = $e->getMessage();
         }
@@ -157,7 +153,7 @@ class debug extends Controller
 
     protected function popup(): void
     {
-        $image = \IPS\Theme::i()->resource( 'bug.png', 'storm', 'global', false );
+        $image = \IPS\Theme::i()->resource('bug.png', 'storm', 'global', false);
         Dispatcher\Front::i()->init();
         Head::i()->css(['global_popup']);
         Head::i()->jsVars(['debugLogIcon' => (string) $image]);
@@ -212,7 +208,7 @@ class debug extends Controller
     protected function app(): void
     {
         $hide = (int) Request::i()->hide;
-        if($hide === 2){
+        if ($hide === 2) {
             $hide = 0;
         }
         Settings::i()->changeValues(['storm_profiler_show_app_button' => $hide]);

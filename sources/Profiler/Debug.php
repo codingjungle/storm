@@ -106,9 +106,12 @@ class Debug extends ActiveRecord
      * @param $key
      * @param $message
      */
-    public static function log(Exception|string $message, ?string $category = null, int $level = Debug::DEBUG): void
+    public static function log(Exception|string $message, ?string $category = null, ?int $level = null): void
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
+            if ($level === null) {
+                $level = static::INFO;
+            }
             $debug = new static();
             $debug->category = $category;
             $bt = [];
@@ -254,7 +257,11 @@ class Debug extends ActiveRecord
                 $url =  Editor::i()->replace($v['file'], $v['line']);
             }
             $class = $v['class'] ?? '';
-
+            $check = $class.'::'.$v['function'];
+            if(str_contains($check, 'storm\\Profiler\\Debug::log') || str_contains($check, 'IPS\\Log::log') || str_contains($check, 'IPS\\Log::debug'))
+            {
+                continue;
+            }
             $bt[$i] = [
                 'url' => $url,
                 'class' => $class,

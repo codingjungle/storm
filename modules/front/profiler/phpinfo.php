@@ -4,6 +4,7 @@ namespace IPS\storm\modules\front\profiler;
 
 use Exception;
 use IPS\Dispatcher\Controller;
+use IPS\Log;
 use IPS\Output;
 use IPS\Theme;
 use Throwable;
@@ -40,6 +41,7 @@ class phpinfo extends Controller
      */
     protected function manage(): void
     {
+        Log::debug('foo', 'test', 1);
         ob_start();
         phpinfo();
         $content = ob_get_clean();

@@ -9,6 +9,7 @@ use Barryvdh\Reflection\DocBlock\Tag;
 use Exception;
 use IPS\Application;
 use IPS\IPS;
+use IPS\Log;
 use IPS\Output;
 use IPS\Output\System;
 use IPS\Patterns\Singleton;
@@ -1111,7 +1112,7 @@ class Proxy extends Singleton
                     try {
                         $storedClasses[$checkClass] = $checkClass;
                     } catch (\Throwable $e) {
-                        _p($cc, $e);
+                        Log::debug($e, 'proxy', Debug::ERROR);
                     }
                     if (isset($bitOptions[0])) {
                         try {
@@ -1127,7 +1128,7 @@ class Proxy extends Singleton
                                 }
                             }
                         } catch (Throwable $e) {
-                            Debug::log($e);
+                            Log::debug($e, 'proxy', Debug::ERROR);
                         }
                     }
                 }
