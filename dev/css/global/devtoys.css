@@ -1,0 +1,44 @@
+.devToysMainContainer a,
+.devToysMainContainer a:hover{
+    color:#000;
+    display:block;
+}
+.devtoysName {
+    font-size:18px;
+}
+#elDevToysDiffs .ipsPos_right {
+    margin-bottom:5px;
+}
+
+#elDevToysDiffs textarea {
+    height:400px;
+}
+
+.devToysDiffsAdded {
+    background: #c1eab9;
+    color: #124d06;
+}
+
+.devToysDiffsRemoved {
+    background: #f2acac;
+    text-decoration: none;
+    color: #5c1414;
+}
+
+#elPrettyPrintJson{
+    height:150px;
+}
+#elDevToysDiffs textarea {
+    height:400px;
+}
+.devToysForms {
+    background:rgb( var(--theme-area_background_reset) );
+}
+
+.devToysForms button {
+    float:right;
+}
+
+.devToysForms img {
+    pointer-events: none;
+}

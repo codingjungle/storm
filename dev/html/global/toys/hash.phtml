@@ -1,0 +1,42 @@
+<ips:template parameters="$hash, $md5, $sha1, $sha256,$sha512" />
+
+{{if !\IPS\Request::i()->hash}}
+<div class="ipsPadding" data-ipsdevtoyshash>
+    <textarea id="hashbox">{$hash}</textarea>
+{{endif}}
+    <div class="ipsMargin_top" id="elHashContainer" >
+        <h3>md5</h3>
+        <div class="ipsClearfix ipsColumns">
+            <div class="ipsColumn ipsColumn_fluid">{$md5}</div>
+            <div class="ipsColumn ipsColumn_veryNarrow" data-copy="md5">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+            </div>
+        </div>
+
+        <h3>sha1</h3>
+        <div class="ipsClearfix ipsColumns">
+            <div class="ipsColumn ipsColumn_fluid">{$sha1}</div>
+            <div class="ipsColumn ipsColumn_veryNarrow" data-copy="sha1">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+            </div>
+        </div>
+
+        <h3>sha256</h3>
+        <div class="ipsClearfix ipsColumns">
+            <div class="ipsColumn ipsColumn_fluid">{$sha256}</div>
+            <div class="ipsColumn ipsColumn_veryNarrow" data-copy="sha256">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+            </div>
+        </div>
+
+        <h3>sha512</h3>
+        <div class="ipsClearfix ipsColumns">
+            <div class="ipsColumn ipsColumn_fluid">{$sha512}</div>
+            <div class="ipsColumn ipsColumn_veryNarrow" data-copy="sha512">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+            </div>
+        </div>
+    </div>
+{{if !\IPS\Request::i()->hash }}
+</div>
+{{endif}}

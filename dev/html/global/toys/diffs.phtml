@@ -1,0 +1,25 @@
+<ips:template parameters="" />
+
+<div id="elDevToysDiffs" class="ipsPadding ipsClearfix" data-ipsdevtoysdiffs>
+
+    <div class="ipsGrid">
+        <div class="ipsGrid_span6">
+            <h4>{lang="devtoys_diffs_source" sprintf="1"}</h4>
+            <textarea id="source1" class="text">Hello World!
+foobar!</textarea>
+            <div class="ipsClearfix ipsMargin_top">
+                <button class="ipsPos_right ipsButton ipsButton_primary" data-clear="#source1" title="{lang='devtoys_clear'}">X {lang='devtoys_clear'}</button>
+            </div>
+        </div>
+        <div class="ipsGrid_span6">
+            <h4>{lang="devtoys_diffs_source" sprintf="2"}</h4>
+            <textarea id="source2">Whatever World!
+foobar!</textarea>
+            <div class="ipsClearfix ipsMargin_top">
+                <button class="ipsPos_right ipsButton ipsButton_primary" data-clear="#source2" title="{lang='devtoys_clear'}">X {lang='devtoys_clear'}</button>
+            </div>
+        </div>
+    </div>
+    <h4>{lang="devtoys_diffs_diff"}</h4>
+    <div id="diffs"></div>
+</div>

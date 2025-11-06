@@ -1,0 +1,20 @@
+<ips:template parameters="$json,$pretty" />
+
+<div class="ipsPadding" data-ipsdevtoyspretty>
+    <label for="elPrettyPrintJson">{lang="devtoys_pretty_json"}</label>
+    <textarea id="elPrettyPrintJson">{$json}</textarea>
+    <div class="ipsClearfix ipsMargin_top">
+        <button class="ipsPos_right ipsButton ipsButton_primary" data-pretty>{lang='devtoys_pretty_make'}</button>
+    </div>
+    <div class="ipsMargin_top">
+        <label for="elPrettyPrintPretty">{lang="devtoys_pretty_pretty"}</label>
+        <pre id="elPrettyPrintPretty">{$pretty|raw}</pre>
+        <div class="ipsClearfix ipsMargin_top">
+            <button class="ipsPos_right ipsButton ipsButton_primary" data-clear>X {lang='devtoys_clear'}</button>
+            <button class="copy ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-copy="elPrettyPrintPretty">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+                {lang='devtoys_copy'}
+            </button>
+        </div>
+    </div>
+</div>

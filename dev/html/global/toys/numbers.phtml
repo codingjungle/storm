@@ -1,0 +1,36 @@
+<ips:template parameters="$output" />
+
+<div class="ipsPadding ipsClearfix" data-ipsdevtoysnumbers>
+    <div id="error" class="ipsMessage ipsMessage_error{{if !isset($output['error']) }} ipsHide{{endif}}">
+        {{$error = $output['error'] ?? '';}}
+        {$error|raw}
+    </div>
+    <h4>{lang='devtoys_numbers_decimal'}</h4>
+    <div class="ipsMargin_top">
+        {{$dec = $output['decimal'] ?? 0;}}
+        <label>
+            <input id="decimal" type="number" value="{$dec}" data-input="decimal">
+        </label>
+    </div>
+    <h4>{lang='devtoys_numbers_hexadecimal'}</h4>
+    <div class="ipsMargin_top">
+        {{$hexa = $output['hexa'] ?? 0;}}
+        <label>
+            <input id="hexa" type="text" value="{$hexa}" data-input="hexa">
+        </label>
+    </div>
+    <h4>{lang='devtoys_numbers_octal'}</h4>
+    <div class="ipsMargin_top">
+        <label>
+            {{$octal = $output['octal'] ?? 0;}}
+            <input id="octal" type="number" value="{$octal}" data-input="octal">
+        </label>
+    </div>
+    <h4>{lang='devtoys_numbers_binary'}</h4>
+    <div class="ipsMargin_top">
+        <label>
+            {{$binary = $output['binary'] ?? 0;}}
+            <input id="binary" type="text" value="{$binary}" data-input="binary">
+        </label>
+    </div>
+</div>

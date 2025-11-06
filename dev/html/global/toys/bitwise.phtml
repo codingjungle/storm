@@ -1,0 +1,34 @@
+<ips:template parameters="$pos,$bits,$class" />
+
+{{if \IPS\Request::i()->position === null}}
+<div class="ipsPadding ipsClearfix" data-ipsdevtoysbitwise>
+    <h4>Position</h4>
+    <div class="ipsMargin_top">
+        <label>
+            <input id="position" name="position" type="number" value="{$pos}" min="1">
+        </label>
+    </div>
+    {{if empty($class) === false}}
+    <h4>Class</h4>
+    <div class="ipsMargin_top">
+        <label>
+            <select name="dtClass" id="dtClass">
+                <option value="0">Select Class..</option>
+                {{foreach $class as $k => $c}}
+                <option value="{$k}">{$c}</option>
+                {{endforeach}}
+            </select>
+        </label>
+    </div>
+    {{endif}}
+{{endif}}
+    <div class="ipsPadding ipsClearfix" id="elBitWiseBox">
+        <div class="ipsPos_left ipsMargin_right">
+            {{foreach $bits as $bit}}
+            {$bit|raw}
+            {{endforeach}}
+        </div>
+    </div>
+{{if \IPS\Request::i()->position === null}}
+</div>
+{{endif}}

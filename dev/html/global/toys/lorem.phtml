@@ -1,0 +1,14 @@
+<ips:template parameters="$form,$lorem" />
+
+<div class="ipsPadding ipsClearfix" data-ipsdevtoyslorem>
+    {$form|raw}
+    <div class="ipsClearfix">
+    <button class="ipsPos_right ipsButton ipsButton_primary" data-copy>
+        <i class="fa fa-copy"></i>
+        {lang='devtoys_copy'}
+    </button>
+    <button class="ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-generate>{lang='devtoys_lorem_generate'}
+    </button>
+    </div>
+    <div class="ipsMargin_top" id="elLoremContainer">{$lorem|raw}</div>
+</div>

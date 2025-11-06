@@ -1,0 +1,12 @@
+<ips:template parameters="$form,$uuid" />
+
+<div class="ipsPadding ipsClearfix" data-ipsdevtoysuuid>
+    {$form|raw}
+    <div class="ipsClearfix ipsMargin">
+        <button class="ipsPos_right ipsButton ipsButton_primary" id="clearuuid">X {lang='devtoys_clear'}</button>
+        <button class="ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" id="generate">{lang="devtoys_uuid_generator"}</button>
+    </div>
+    <div class="ipsMargin_top" id="elUuidContainer">
+        {$uuid|raw}
+    </div>
+</div>
