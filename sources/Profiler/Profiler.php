@@ -264,9 +264,13 @@ class Profiler extends Singleton
             '" class="stormButtons stormButtons--small" data-ipsdialog data-ipsdialog-title="Proxy & Meta Data" data-ipsdialog-size="medium" data-ipsdialog-destructOnClose="true"><i class="fa-solid fa-file-half-dashed"></i> Proxy & Meta Data</a>';
 
         $clearCaches = '<a href="#" class="stormButtons stormButtons--small" data-ipsstormalert data-ipsstormalert-type="confirm" data-ipsstormalert-msg="This will clear the metadata caches that storm generates." data-ipsstormalert-url="' . (string) Url::internal('app=storm&module=other&controller=proxy&do=clearMetaData', 'front') . '" ><i class="fa-solid fa-trash-arrow-up"></i> Clear Storm Caches</a>';
-
-        $url = Url::internal('app=storm&module=profiler&controller=debug&do=popup', 'front');
-        $debug = "<a href='".(string) $url."' class='stormButtons stormButtons--small' target='_blank'><i class='fa fa-bug'></i> ".lang('storm_profiler_button_debug')."</a>";
+        $debug = '';
+        if (Settings::i()->storm_profiler_debug_enabled === true ) {
+            $url = Url::internal('app=storm&module=profiler&controller=debug&do=popup', 'front');
+            $debug = "<a href='" . (string)$url . "' class='stormButtons stormButtons--small' data-debug><i class='fa fa-bug'></i> " . lang(
+                    'storm_profiler_button_debug'
+                ) . "</a>";
+        }
         return [
             $debug,
             $generateMeta,

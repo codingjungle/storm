@@ -17,7 +17,6 @@
         };
         $(document).on('ajaxSend', (event, jqXHR, settings) => {
             let url = decodeURIComponent(settings.url);
-            console.log(filters(url));
             if(filters(url) === true) {
                 storageDataStorm[decodeURIComponent(settings.url)] = {'timeStamp': event.timeStamp};
             }

@@ -243,29 +243,55 @@ a,code.prettyprint a,pre.prettyprint a{text-decoration:none}code .str,pre .str{c
     padding:10px;
     font-size:18px;
 }
-
+.stormCategoryButton,
+.stormProfilerDebugLevel,
 .stormProfilerDebugTime {
-    padding:4px;
-    margin:2px;
-    background-color:#ff4500;
+    padding:4px 8px;
+    background-color: #297c59;
     color: #fff;
     font-size:16px;
     line-height:16px;
-    display: inline-flex;
-    align-items: center;
-    background-color: #ff4500;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #ff4500;;
+    text-align: center;
+    border:1px solid #297c59;
     border-radius: 10px;
-    box-shadow: #000;
+    margin-bottom:5px;
+    cursor: pointer;
+}
+
+.stormCategoryButton {
+    background-color: #3723b7;
+    border-color: #3723b7;
+}
+.stormProfilerDebugLevel.stormProfilerDebugLevelCritical{
+    background-color: #ff3f3f;
+    border-color: #650101;
+}
+
+.stormProfilerDebugLevel.stormProfilerDebugLevelError{
+    background-color: red;
+    border-color: red;
+}
+
+.stormProfilerDebugLevel.stormProfilerDebugLevelWarning{
+    background-color: #646401;
+    border-color: yellow;
+}
+
+.stormProfilerDebugLevel.stormProfilerDebugLevelInfo{
+    background-color: green;
+    border-color: #21e321;
+}
+
+.stormProfilerDebugLevel.stormProfilerDebugLevelDebug{
+    background-color: #a66b09;
+    border-color: orange;
 }
 .stormProfilerDebugDate{
     display: flex;
     justify-content: center;
-  align-items: center; 
-  gap:5px;
-  border-right:#000 2px solid;
+    align-items: center;
+    gap:5px;
+    border-right:#000 2px solid;
 }
 .stormCopyButton {
     --i-button--ba-co: #035e2d;
@@ -377,8 +403,28 @@ a,code.prettyprint a,pre.prettyprint a{text-decoration:none}code .str,pre .str{c
     width:100%;
 }
 
-.stormProfilerDebugContainer {
+.stormProfilerDebugContainer  {
     margin-bottom: 10px;
+}
+
+.stormProfilerDebugLevelCritical .stormProfilerListItem{
+    border: 2px solid #ff3f3f;
+}
+
+.stormProfilerDebugLevelError .stormProfilerListItem{
+    border: 2px solid red;
+}
+
+.stormProfilerDebugLevelWarning .stormProfilerListItem{
+    border: 2px solid yellow;
+}
+
+.stormProfilerDebugLevelInfo .stormProfilerListItem{
+    border: 2px solid #21e321;
+}
+
+.stormProfilerDebugLevelDebug .stormProfilerListItem{
+    border: 2px solid orange;
 }
 
 /*symfony css*/

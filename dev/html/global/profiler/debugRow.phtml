@@ -1,12 +1,23 @@
 <ips:template parameters="\IPS\storm\Profiler\Debug $logs, ?string $class = null" />
-<div class="ipsClearfix stormProfilerPadding stormColumns{{if $class !== null}} {$class}{{endif}}">
+<div class="ipsClearfix stormProfilerPadding stormColumns stormProfilerDebugLevel{$logs->level}{{if $class !== null}} {$class}{{endif}}">
     <div class="stormColumnLarge stormProfilerDebugDate stormProfilerListItem">
-        <div class="stormProfilerDebugTime">
+        <div>
+        <div class="stormProfilerDebugTime" title="Date" data-ipsTooltip>
         {$logs->time|raw}
+        </div>
+        <div class="stormProfilerDebugLevel stormProfilerDebugLevel{$logs->level}" title="Log Level" data-ipsTooltip>
+            {$logs->level}
+        </div>
+        {{if empty($logs->category) === false}}
+        <div class="stormCategoryButton" title="Category" data-ipsTooltip>
+                {$logs->category}
+        </div>
+        {{endif}}
         </div>
     </div>
     <div class="stormColumnFluid stormProfilerListItem">
-        <div>
+        <div class="ipsClearfix">
+
             {$logs->log|raw}
         </div>
         <div class="ipsClearfix">

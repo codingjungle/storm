@@ -17,18 +17,6 @@
                         "unsigned": true,
                         "auto_increment": true
                     },
-                    "debug_key": {
-                        "name": "debug_key",
-                        "type": "VARCHAR",
-                        "length": 255,
-                        "decimals": null,
-                        "values": null,
-                        "allow_null": true,
-                        "default": null,
-                        "comment": "",
-                        "unsigned": false,
-                        "auto_increment": false
-                    },
                     "debug_log": {
                         "name": "debug_log",
                         "type": "TEXT",
@@ -75,6 +63,18 @@
                         "default": null,
                         "comment": "",
                         "unsigned": true,
+                        "auto_increment": false
+                    },
+                    "debug_category": {
+                        "name": "debug_category",
+                        "type": "VARCHAR",
+                        "length": 255,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": true,
+                        "default": null,
+                        "comment": "",
+                        "unsigned": false,
                         "auto_increment": false
                     }
                 },

@@ -11,6 +11,7 @@ use IPS\Member;
 use IPS\Output;
 use IPS\Request;
 use IPS\storm\Head;
+use IPS\storm\Settings;
 use IPS\storm\Tpl;
 use IPS\Theme;
 use Throwable;
@@ -156,12 +157,11 @@ class debug extends Controller
 
     protected function popup(): void
     {
-        \IPS\Settings::i()->manifest_details = '{}';
         $image = \IPS\Theme::i()->resource( 'bug.png', 'storm', 'global', false );
         Dispatcher\Front::i()->init();
         Head::i()->css(['global_popup']);
         Head::i()->jsVars(['debugLogIcon' => (string) $image]);
-        $output = Tpl::get('popup.storm.global')->popup(\IPS\storm\Profiler\Debug::popup(), 'Storm Debug Logs', Url::internal('app=storm&module=profiler&controller=debug&do=manifest', 'front', 'stormManifest'), '#000000');
+        $output = Tpl::get('popup.storm.global')->popup(\IPS\storm\Profiler\Debug::popup(), 'Storm Debug Logs');
         Output::i()->sendOutput($output);
     }
 
@@ -207,5 +207,14 @@ class debug extends Controller
             Output::i()->httpHeaders
         );
         //Output::i()->json($manifest);
+    }
+
+    protected function app(): void
+    {
+        $hide = (int) Request::i()->hide;
+        if($hide === 2){
+            $hide = 0;
+        }
+        Settings::i()->changeValues(['storm_profiler_show_app_button' => $hide]);
     }
 }

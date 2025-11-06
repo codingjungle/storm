@@ -1,4 +1,5 @@
 <ips:template parameters="$entry" />
+{{if empty($entry) === false}}
 <a href='#' data-ipsdialog data-ipsdialog-content='#slowestQuery' data-ipsdialog-title='SQL Query'>{$entry['time']} ms
 </a>
 <div id='slowestQuery' class='ipsHide'>
@@ -31,3 +32,4 @@
         </div>
     </div>
 </div>
+{{endif}}

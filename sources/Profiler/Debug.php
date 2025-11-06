@@ -58,6 +58,19 @@ class Debug extends ActiveRecord
 {
     use \IPS\storm\Shared\ActiveRecord;
 
+    const CRITICAL = 5;
+    const ERROR = 4;
+    const WARNING = 3;
+    const INFO = 2;
+    const DEBUG = 1;
+
+    public static array $logLevels = [
+        1 => 'debug',
+        2 => 'info',
+        3 => 'warning',
+        4 => 'error',
+        5 => 'critical',
+    ];
     /**
      * @brief    [ActiveRecord] Database Prefix
      */
@@ -93,11 +106,11 @@ class Debug extends ActiveRecord
      * @param $key
      * @param $message
      */
-    public static function log($message, $key = null): void
+    public static function log(Exception|string $message, ?string $category = null, int $level = Debug::DEBUG): void
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
             $debug = new static();
-            $debug->key = $key;
+            $debug->category = $category;
             $bt = [];
 
             if ($message instanceof Exception) {
@@ -300,6 +313,12 @@ class Debug extends ActiveRecord
 
     public function get_time()
     {
-        return DateTime::ts($this->date)->format('m/d/y-h:ia');
+        return DateTime::ts($this->date)->format('m/d/y - h:ia');
     }
+
+    public function get_level(): string
+    {
+        return mb_ucfirst(static::$logLevels[$this->_data['level']]);
+    }
+
 }

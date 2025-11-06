@@ -49,7 +49,7 @@
     },
     {
         "key": "storm_profiler_filter_url",
-        "default": "{'js.php?src=core/front/controllers/widgets/ips.widgets.block.js','applications/core/interface/static/pagebuilder/manifest.json'}"
+        "default": "{'js.php?src=core\/front\/controllers\/widgets\/ips.widgets.block.js','applications\/core\/interface\/static\/pagebuilder\/manifest.json'}"
     },
     {
         "key": "storm_profiler_js_enabled",
@@ -62,6 +62,10 @@
     {
         "key": "storm_profiler_memory_tab_enabled",
         "default": "1"
+    },
+    {
+        "key": "storm_profiler_show_app_button",
+        "default": "0"
     },
     {
         "key": "storm_profiler_templates_enabled",

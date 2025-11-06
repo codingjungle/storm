@@ -26,17 +26,12 @@
             url =
                 ips.getSetting("baseURL") +
                 "?app=storm&module=profiler&controller=debug",
-            panel = '#storm_profiler_debug_panel',
             init = function () {
-                //el.on("click", _check);
-                //   $(document).on('stormProfilerPanelOpen', function(e,data){
-                //       if(data.panel === 'storm_profiler_debug_panel'){
-                //           _check(data.button);
-                //       }
-                //   });
                 el.on('click', '[data-delete]', _delete);
                 el.on('click', '[data-delete-all]', _deleteAll);
-                _logs();
+                setTimeout(() => {
+                    _logs(false);
+                },10000);
             },
             _deleteAll = e => {
                 e.preventDefault();
@@ -114,7 +109,7 @@
 
                 ips.ui.alert.show(config);
             },
-            _logs = function () {
+            _logs = function (notifications) {
                 ajax({
                     type: "GET",
                     url: url,
@@ -126,6 +121,7 @@
                         let error = parseInt(data.error),
                             logs = data.logs,
                             last = parseInt(data.last),
+                            time = 50,
                             count = 0;
                         if (error !== 1) {
                             count = Object.keys(logs).length;
@@ -133,12 +129,13 @@
                             $.each(logs, (i, l) => {
                                 let log = $(l);
                                 log.css('opacity', 0);
-                                el.find('.stormDebugPanelChild').prepend(log);
-                                log.fadeIn().promise().done(() => {
+                                setTimeout(() => {
+                                    el.find('.stormDebugPanelChild').prepend(log);
                                     log.animate({opacity: 1});
-                                });
+                                },time);
+                                time += 800;
                             });
-                            if( ips.utils.notification.hasPermission() ){
+                            if( notifications === true && ips.utils.notification.hasPermission() ){
                                 ips.utils.notification.create({
                                     title: ips.pluralize( ips.getString('storm_profiler_debug_notifications'), [ count ] ),
                                     body: ips.getString('storm_profiler_debug_notifications_body'),
@@ -153,7 +150,7 @@
                         }
                     },
                     complete: function () {
-                        _logs();
+                        _logs(true);
                     },
                     error: function (data) {
                     },

@@ -3,89 +3,102 @@
         "name": "storm_debug",
         "columns": {
             "debug_id": {
+                "allow_null": false,
+                "auto_increment": true,
+                "comment": "ID Number",
+                "decimals": null,
+                "default": null,
+                "length": 20,
                 "name": "debug_id",
                 "type": "BIGINT",
-                "length": "20",
-                "decimals": null,
-                "values": null,
-                "allow_null": false,
-                "default": 0,
-                "comment": "ID Number",
                 "unsigned": true,
-                "auto_increment": true
+                "values": []
             },
-            "debug_key": {
-                "name": "debug_key",
-                "type": "VARCHAR",
-                "length": 255,
-                "decimals": null,
-                "values": null,
+            "debug_category": {
                 "allow_null": true,
-                "default": null,
+                "auto_increment": false,
                 "comment": "",
+                "decimals": null,
+                "default": null,
+                "length": 255,
+                "name": "debug_category",
+                "type": "VARCHAR",
                 "unsigned": false,
-                "auto_increment": false
+                "values": []
             },
             "debug_log": {
+                "allow_null": true,
+                "auto_increment": false,
+                "comment": "",
+                "decimals": null,
+                "default": null,
+                "length": 0,
                 "name": "debug_log",
                 "type": "TEXT",
-                "length": null,
-                "decimals": null,
-                "values": null,
-                "allow_null": true,
-                "default": null,
-                "comment": "",
                 "unsigned": false,
-                "auto_increment": false
+                "values": []
             },
             "debug_bt": {
+                "allow_null": true,
+                "auto_increment": false,
+                "comment": "",
+                "decimals": null,
+                "default": null,
+                "length": 0,
                 "name": "debug_bt",
                 "type": "TEXT",
-                "length": null,
-                "decimals": null,
-                "values": null,
-                "allow_null": true,
-                "default": null,
-                "comment": "",
                 "unsigned": false,
-                "auto_increment": false
+                "values": []
             },
             "debug_type": {
+                "allow_null": true,
+                "auto_increment": false,
+                "comment": "",
+                "decimals": null,
+                "default": null,
+                "length": 255,
                 "name": "debug_type",
                 "type": "VARCHAR",
-                "length": 255,
-                "decimals": null,
-                "values": null,
-                "allow_null": true,
-                "default": null,
-                "comment": "",
                 "unsigned": false,
-                "auto_increment": false
+                "values": []
             },
             "debug_date": {
+                "allow_null": true,
+                "auto_increment": false,
+                "comment": "",
+                "decimals": null,
+                "default": null,
+                "length": 10,
                 "name": "debug_date",
                 "type": "INT",
-                "length": null,
-                "decimals": null,
-                "values": null,
-                "allow_null": true,
-                "default": null,
-                "comment": "",
                 "unsigned": true,
-                "auto_increment": false
+                "values": []
+            },
+            "debug_level": {
+                "allow_null": true,
+                "auto_increment": false,
+                "comment": "",
+                "decimals": null,
+                "default": "2",
+                "length": 10,
+                "name": "debug_level",
+                "type": "INT",
+                "unsigned": true,
+                "values": []
             }
         },
         "indexes": {
             "PRIMARY": {
                 "type": "primary",
                 "name": "PRIMARY",
-                "columns": [
-                    "debug_id"
-                ],
                 "length": [
                     null
+                ],
+                "columns": [
+                    "debug_id"
                 ]
             }
-        }
+        },
+        "collation": "utf8mb4_unicode_ci"
     }
 }

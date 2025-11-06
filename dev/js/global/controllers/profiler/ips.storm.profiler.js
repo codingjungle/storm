@@ -43,6 +43,11 @@
                 bar.css('zIndex', zd);
                 zd = ips.ui.zIndex();
                 el.on('click', '[data-button]', _open);
+                el.on('click', '[data-debug]', e => {
+                    e.preventDefault();
+                    let win = window.open($(e.currentTarget).attr('href'), 'Storm Debug Log', 'width=1000,height=600' );
+                    win.focus();
+                });
                 $(document).on('click', (e) => {
                     let target = $(e.target);
                     if(target.length !== 0) {

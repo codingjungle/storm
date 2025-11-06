@@ -1,7 +1,7 @@
 <ips:template parameters="array $info, array $buttons, array $panels" />
 <div id="ElstormProfilerShim" class="stormProfilerShim"></div>
-<div id="ElstormProfilerBar" class="stormProfilerBar" >
-    <div class="stormProfilerBarButtons ipsClearfix" data-ipsstormprofiler>
+<div id="ElstormProfilerBar" class="stormProfilerBar" data-ipsstormprofiler>
+    <div class="stormProfilerBarButtons ipsClearfix">
         {{foreach $buttons['panelButtons'] as $button}}
             {$button|raw}
         {{endforeach}}
