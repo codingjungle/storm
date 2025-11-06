@@ -45,7 +45,11 @@
                 el.on('click', '[data-button]', _open);
                 el.on('click', '[data-debug]', e => {
                     e.preventDefault();
-                    let win = window.open($(e.currentTarget).attr('href'), 'Storm Debug Log', 'width=1000,height=600' );
+                    let win = window.open(
+                        $(e.currentTarget).attr('href'),
+                        'Storm Debug Log',
+                        'width=1000,height=600'
+                    );
                     win.focus();
                 });
                 $(document).on('click', (e) => {
@@ -72,50 +76,9 @@
                     $('#elStormProfilerPanelsContainer').css('bottom', h+'px');
 
                 });
-                _setTimers();
-                $(document).on('stormProfilerClearTimers', () =>{
-                    _clearTimers();
-                });
-                $(document).on('stormProfilerSetTimers', () => {
-                    _setTimers();
-                });
                 $(document).on('stormProfilerClosePanel', () => {
                     _close();
                 })
-            },
-            _setTimers = () =>{
-                if ($('#storm_profiler_debug').length !== 0 && parseInt(ips.getSetting('debugAjax')) === 1) {
-                   checker = setInterval( function(){_updateCount()}, 10000);
-                }
-            },
-            _clearTimers = function(){
-                if($('#storm_profiler_debug').length !== 0){
-                    clearInterval(checker);
-                }
-            },
-            _updateCount = function () {
-                let target = $('#storm_profiler_debug'),
-                    currentCount = parseInt(target.find('.stormProfilerCount').text());
-                ajax({
-                    type: "GET",
-                    url: url,
-                    data: {do: 'check', date: target.attr('data-date')},
-                    dataType: "json",
-                    bypassRedirect: true,
-                    showLoading: false,
-                    success: function (data) {
-                        let newCount = data.count;
-                        if(newCount !== 0) {
-                            currentCount = parseInt(target.find('.stormProfilerCount').html()) + newCount;
-                            target.attr('data-date', data.date).addClass('stormProfilerFlash').find('.stormProfilerCount').text(currentCount);
-                        }
-                    },
-                    complete: function () {
-                    },
-                    error: function (data) {
-                        console.log(data);
-                    },
-                });
             },
             _close = function() {
                 let panel = $(document).find('.stormProfilerPanelActive'),
@@ -149,7 +112,6 @@
                         target.removeClass('stormProfilerDim');
                     });
                 } else {
-
                     panel.data('active', 0).fadeOut().promise().done(function(){
                         target.removeClass('stormProfilerButtonActive').removeClass('stormProfilerFlash');
                         panel.removeClass('stormProfilerPanelActive');

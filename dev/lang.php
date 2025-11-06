@@ -60,9 +60,7 @@ $lang = array(
     'storm_proxy_meta_toolbox_desc' => 'Build meta data for the phpstorm plugin Toolbox',
     'menu__storm_developer_sources' => 'Sources',
     'menu__storm_developer' => 'DevCenter Plus',
-    'storm_profiler_debug_ajax_enable' => 'Debug Ajax',
-    'storm_profiler_debug_ajax_enable_desc' => 'Enable debug log update check via ajax. if disabled, then opening up the debug log will still load new results, but the count will not update on its own.',
-    'storm_menu_title_standard' => 'Standard',
+     'storm_menu_title_standard' => 'Standard',
     'storm_menu_title_cinterface' => 'Interface',
     'storm_menu_title_traits' => 'Traits',
     'storm_menu_title_singleton' => 'Singleton',
@@ -142,7 +140,11 @@ $lang = array(
     'storm_profiler_ajax_options_header' => 'Ajax Panel Options',
     'storm_profiler_filter_url' => 'Url Fragments Filters',
     'storm_profiler_filter_default' => 'Common Filters',
-
+    'storm_profiler_debug_catpure_ips_log' => 'Capture IPS Log',
+    'storm_profiler_debug_catpure_ips_log_desc' => 'If enabled, will capture the IPS log and store it in the debug log.',
+    'storm_profiler_debug_keep_ips_log' => 'Keep IPS Log',
+    'storm_profiler_debug_keep_ips_log_desc' => 'If enabled, will save the IPS log to the IPS Database as well to the Storm Debug Log.',
+    'storm_profiler_debug_options_header' => 'Debug Log Options',
 
 
 

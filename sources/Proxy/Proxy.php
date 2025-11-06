@@ -1112,7 +1112,7 @@ class Proxy extends Singleton
                     try {
                         $storedClasses[$checkClass] = $checkClass;
                     } catch (\Throwable $e) {
-                        Log::debug($e, 'proxy', Debug::ERROR);
+                        Log::debug($e, 'proxy', Debug::WARNING);
                     }
                     if (isset($bitOptions[0])) {
                         try {
@@ -1128,7 +1128,7 @@ class Proxy extends Singleton
                                 }
                             }
                         } catch (Throwable $e) {
-                            Log::debug($e, 'proxy', Debug::ERROR);
+                            Log::debug($e, 'proxy', Debug::WARNING);
                         }
                     }
                 }

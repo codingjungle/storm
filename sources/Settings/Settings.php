@@ -61,7 +61,9 @@ class Settings extends \IPS\Settings
         'storm_proxy_write_mixin' => 1,
         'storm_proxy_alt_templates' => 1,
         'storm_profiler_ajax_enabled' => 1,
-        'storm_profiler_show_app_button' => 1
+        'storm_profiler_show_app_button' => 1,
+        'storm_profiler_debug_keep_ips_log' => 1,
+        'storm_profiler_debug_catpure_ips_log' => 1
     ];
 
     protected const INTEGERS = [

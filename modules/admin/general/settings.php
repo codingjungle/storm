@@ -57,11 +57,16 @@ class settings extends Controller
                     'storm_profiler_js_vars_enabled',
                     'storm_profiler_css_enabled',
                     'storm_profiler_debug_enabled',
-                    'storm_profiler_debug_ajax_enable',
-                    'storm_profiler_admin_enabled'
+                    'storm_profiler_admin_enabled',
+                    'storm_profiler_debug_catpure_ips_log',
+                    'storm_profiler_debug_keep_ips_log',
+                    'storm_profiler_filter_default',
+                    'storm_profiler_filter_url',
+                    'storm_profiler_ajax_enabled'
                 ]
             );
         $form->addElement('storm_profiler_admin_enabled', 'yn');
+
         $form->addHeader('storm_profiler_tabs');
         $form->addElement('storm_profiler_execution_times_enabled', 'yn');
         $form->addElement('storm_profiler_memory_tab_enabled', 'yn');
@@ -72,17 +77,23 @@ class settings extends Controller
         $form->addElement('storm_profiler_js_enabled', 'yn');
         $form->addElement('storm_profiler_js_vars_enabled', 'yn');
         $form->addElement('storm_profiler_css_enabled', 'yn');
-        $form->addElement('storm_profiler_debug_enabled', 'yn')->toggles(['storm_profiler_debug_ajax_enable']);
-        $form->addElement('storm_profiler_debug_ajax_enable', 'yn');
-        $form->addElement('storm_profiler_ajax_enabled', 'yn');
+
+        $form->addHeader('storm_profiler_debug_options');
+
+        $form->addElement('storm_profiler_debug_enabled', 'yn')
+            ->toggles(['storm_profiler_debug_catpure_ips_log', 'storm_profiler_debug_keep_ips_log']);
+        $form->addElement('storm_profiler_debug_catpure_ips_log', 'yn')
+            ->toggles(['storm_profiler_debug_keep_ips_log']);
+        $form->addElement('storm_profiler_debug_keep_ips_log', 'yn');
 
         $form->addHeader('storm_profiler_ajax_options');
 
+        $form->addElement('storm_profiler_ajax_enabled', 'yn')
+            ->toggles(['storm_profiler_filter_default','storm_profiler_filter_url']);;
         $options = [
             'ips' => 'IPS Apps',
             'instant' => 'Instant Notifications',
         ];
-
         $form->addElement('storm_profiler_filter_default', 'cbs')->options(['options' => $options]);
         $form->addElement('storm_profiler_filter_url', 'stack');
 

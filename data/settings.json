@@ -20,11 +20,15 @@
         "default": "1"
     },
     {
-        "key": "storm_profiler_debug_ajax_enable",
+        "key": "storm_profiler_debug_catpure_ips_log",
         "default": "1"
     },
     {
         "key": "storm_profiler_debug_enabled",
+        "default": "1"
+    },
+    {
+        "key": "storm_profiler_debug_keep_ips_log",
         "default": "1"
     },
     {
