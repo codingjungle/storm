@@ -4,6 +4,7 @@ return <<<eof
 \\IPS\\storm\\Head::i()->css(['global_storm']);
 
 if (\\IPS\\storm\\Settings::i()->storm_profiler_enabled === true && \\IPS\\QUERY_LOG && !\\IPS\\Request::i()->isAjax()) {
+    \\IPS\\storm\\Head::i()->css(['global_devtoys']);
     \\IPS\\storm\\Head::i()->css(['global_profiler','global_modal']);
     \$css = \\IPS\\Output::i()->cssFiles;
     \$caching = \\IPS\\Theme::i()->css('styles/caching_log.css', 'core', 'front');

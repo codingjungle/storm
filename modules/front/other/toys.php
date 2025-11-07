@@ -1,6 +1,5 @@
 <?php
 
-
 namespace IPS\storm\modules\front\other;
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -26,17 +25,22 @@ use BaconQrCode\Writer;
 use Intervention\Image\ImageManager;
 use InvalidArgumentException;
 use IPS\calendar\Date;
-use IPS\devtoys\Application;
-use IPS\devtoys\Dates;
-use IPS\devtoys\Form;
-use IPS\devtoys\Lorem;
-use IPS\devtoys\Numbers;
-use IPS\devtoys\Uuid;
+use IPS\IPS;
+use IPS\Log;
+use IPS\storm\Application;
+use IPS\storm\DevToys\Dates;
+use IPS\storm\Form;
+use IPS\storm\DevToys\Lorem;
+use IPS\storm\DevToys\Numbers;
+use IPS\storm\Profiler\Debug;
+use IPS\storm\Tpl;
+use IPS\storm\DevToys\Uuid;
 use IPS\Dispatcher\Controller;
 use IPS\File;
 use IPS\Output;
 use IPS\Request;
 use IPS\Settings;
+use IPS\storm\Head;
 use IPS\Theme;
 use NumberFormatter;
 use Zxing\QrReader;
@@ -71,28 +75,34 @@ use const JSON_PRETTY_PRINT;
 use const null;
 use const true;
 
-
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header((isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
+
+\IPS\storm\Application::initAutoloader();
 
 /**
  * toys
  */
 class toys extends Controller
 {
+    public function execute(): void
+    {
+        Head::i()->js(['global_copy']);
+        parent::execute();
+    }
 
     public function dates()
     {
-        Application::addJs(['front_dates']);
+        Head::i()->js(['global_dates']);
         $time = Request::i()->time ?? Date::create()->getTimestamp();
         $type = Request::i()->type ?? 'unix';
         $dates = Dates::i()->{$type}($time);
         if (isset(Request::i()->time)) {
             Output::i()->json($dates);
         } else {
-            Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->dates($dates);
+            Output::i()->output = Tpl::get('toys.storm.global')->dates($dates);
         }
     }
 
@@ -108,25 +118,26 @@ class toys extends Controller
 
     protected function diffs(): void
     {
-        Application::addJs(['front_diffs']);
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->diffs();
+
+        Head::i()->js(['global_diffs']);
+        Output::i()->output = Tpl::get('toys.storm.global')->diffs();
     }
 
     protected function lorem(): void
     {
-        Application::addJs(['front_lorem']);
+        Head::i()->js(['global_lorem']);
 
-        $form = Form::create()->setPrefix('devtoys_lorem_')->submitLang(null);
+        $form = Form::create()->setPrefix('storm_devtoys_lorem_')->submitLang(null);
         $form->addElement('amount', 'number')->value(4)->options(['min' => 1]);
         $form->addElement('type', 'radio')->value(3)->options(
-                [
+            [
                     'options' => [
                         1 => 'Words',
                         2 => 'Sentences',
                         3 => 'Paragraphs',
                     ],
                 ]
-            )->required();
+        )->required();
 
         if ($values = $form->values()) {
             $return = '';
@@ -146,7 +157,7 @@ class toys extends Controller
             Output::i()->json(['html' => $return, 'type' => 'toolboxClipBoard']);
         }
         $form->dialogForm();
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->lorem(
+        Output::i()->output = Tpl::get('toys.storm.global')->lorem(
             $form,
             Lorem::i()->paragraphs(4, ['p'])
         );
@@ -154,17 +165,20 @@ class toys extends Controller
 
     protected function bitwiseValues()
     {
-        Application::addJs(['front_bitwise']);
+        Head::i()->js(['global_bitwise']);
 
         $position = Request::i()->position ?? 15;
         $bits = [];
         $pos = 15;
-        $class = [];
         for ($i = 1; $i <= $position; $i++) {
             $start = pow(2, $i - 1);
-            if (($i - 1) % 15 === 0) {
-                $bits[] = '</div><div class="ipsPos_left ipsMargin_right">';
+            if ($i === 1) {
+                $bits[] = '<div>';
             }
+            if (( $i - 1 ) % 15 === 0) {
+                $bits[] = '</div><div>';
+            }
+
             $nn = $i;
             if (class_exists('NumberFormatter')) {
                 $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
@@ -174,11 +188,9 @@ class toys extends Controller
             }
             $bits [] = '<div>\'' . $nn . '\' => ' . $start . ',</div>';
         }
-
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->bitwise(
+        Output::i()->output = Tpl::get('toys.storm.global')->bitwise(
             $pos,
-            $bits,
-            $class
+            $bits
         );
     }
 
@@ -256,7 +268,7 @@ class toys extends Controller
                 $singles = (int)($num_levels[$i] % 10);
                 $singles = ' ' . $list1[$singles] . ' ';
             }
-            $words[] = $hundreds . $tens . $singles . (($levels && ( int )($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
+            $words[] = $hundreds . $tens . $singles . (($levels && (int)($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
         } //end for loop
         $commas = count($words);
         if ($commas > 1) {
@@ -267,13 +279,13 @@ class toys extends Controller
 
     protected function hash()
     {
-        Application::addJs(['front_hash']);
+        Head::i()->js(['global_hash']);
         $hash = Request::i()->hash ?? 'Hello World';
         $md5 = md5($hash);
         $sha1 = sha1($hash);
         $sha256 = hash('sha256', $hash);
         $sha512 = hash('sha512', $hash);
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->hash(
+        Output::i()->output = Tpl::get('toys.storm.global')->hash(
             $hash,
             $md5,
             $sha1,
@@ -284,13 +296,13 @@ class toys extends Controller
 
     protected function uuid()
     {
-        Application::addJs(['front_uuid']);
+        Head::i()->js(['global_uuid']);
         $count = Request::i()->count ?? 3;
         $hyphens = Request::i()->hyphens ?? true;
         $lowercase = Request::i()->lowercase ?? false;
         $html = [];
 
-        $form = Form::create()->setPrefix('devtoys_uuid_')->submitLang(null);
+        $form = Form::create()->setPrefix('storm_devtoys_uuid_')->submitLang(null);
         $form->addElement('count', 'number')->value(3)->options(['min' => 1]);
         $form->addElement('hyphens', 'yn')->value(1);
         $form->addElement('lowercase', 'yn');
@@ -315,7 +327,7 @@ class toys extends Controller
         }
 
         if ($form instanceof Form) {
-            Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->uuid(
+            Output::i()->output = Tpl::get('toys.storm.global')->uuid(
                 $form,
                 implode('<br>', $html)
             );
@@ -326,20 +338,20 @@ class toys extends Controller
 
     protected function html()
     {
-        Application::addJs(['front_html']);
+        Head::i()->js(['global_html']);
         $encoded = $decoded = '<a href="#foo">link</a>';
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->html($decoded, $encoded);
+        Output::i()->output = Tpl::get('toys.storm.global')->html($decoded, $encoded);
     }
 
     protected function base()
     {
-        Application::addJs(['front_base']);
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->base();
+        Head::i()->js(['global_base']);
+        Output::i()->output = Tpl::get('toys.storm.global')->base();
     }
 
     protected function numbers()
     {
-        Application::addJs(['front_numbers']);
+        Head::i()->js(['global_numbers']);
         $number = Request::i()->number ?? 3456;
         $type = Request::i()->type ?? 'decimal';
         try {
@@ -353,70 +365,72 @@ class toys extends Controller
         if (isset(Request::i()->type)) {
             Output::i()->json($output);
         } else {
-            Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->numbers($output);
+            Output::i()->output = Tpl::get('toys.storm.global')->numbers($output);
         }
     }
 
     protected function images()
     {
-        Application::addJs(['front_images']);
-        $form = Form::create()->setPrefix('devtoys_images_')->submitLang(null);
+        Head::i()->js(['global_images']);
+        $form = Form::create()->setPrefix('storm_devtoys_images_')->submitLang(null);
         $options = [
-            'storageExtension' => 'devtoys_ImageConverter',
+            'storageExtension' => 'storm_ImageConverter',
             'storageContainer' => 'devToysImageConverter',
             'allowedFileTypes' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'],
         ];
-        $form->addElement('images', 'upload')->options($options)->required();
+        $form->addElement('images', 'upload')->options($options);
         $options = [
-            'jpg' => 'jpg',
-            'png' => 'png',
-            'gif' => 'gif',
-            'tif' => 'tif',
-            'bmp' => 'bmp',
-            'ico' => 'ico',
-            'psd' => 'psd',
-            'webp' => 'webp'
+            'Jpeg' => 'jpg',
+            'Png' => 'png',
+            'Gif' => 'gif',
+            'Tiff' => 'tif',
+            'Bmp' => 'bmp',
+            'Webp' => 'webp'
         ];
         ksort($options);
-        $form->addElement('to', 'select')->options(['options' => $options])->value('png');
+        $form->addElement('to', 'select')->options(['options' => $options])->value('Webp');
 
         if ($values = $form->values()) {
-            Application::loadAutoLoader();
-            $config = [
-                'driver' => Settings::i()->image_suite == 'imagemagick' && class_exists( 'Imagick', false ) ? 'imagick' : 'gd'
-            ];
-            $manager = new ImageManager($config);
-            /** @var File $file */
-            $file = $values['images'];
-            $img = (string)$manager->make($file->url)->encode($values['to']);
-
-            $newFile = File::create(
-                'devtoys_ImageConverter',
-                'imageConverted-' . $values['to'] . '-' . uniqid() . '.' . $values['to'],
-                $img,
-                'devToysImageConverter',
-                true
-            );
-            $file->delete();
-            $newFile->save();
-            Output::i()->json(['path' => (string)$newFile, 'url' => $newFile->url]);
+                $driver = Settings::i()->image_suite === 'imagemagick' &&
+                class_exists(
+                    'Imagick',
+                    false
+                ) ? \Intervention\Image\Drivers\Imagick\Driver::class : \Intervention\Image\Drivers\Gd\Driver::class;
+                $manager = new ImageManager($driver);
+                /** @var File $ogfile */
+                $ogfile = $values['images'];
+                $file = \IPS\ROOT_PATH . '/Uploads/';
+                $file .= (string) $values['images'];
+                $class = '\\Intervention\\Image\\Encoders\\' . $values['to'] . 'Encoder';
+                $img = (string)$manager->read($file)->encode(new $class());
+                $ext = mb_strtolower($values['to']);
+                $newFile = File::create(
+                    'storm_ImageConverter',
+                    'imageConverted-' . $ext . '-' . uniqid() . '.' . $ext,
+                    $img,
+                    'devToysImageConverter',
+                    true
+                );
+                $ogfile->delete();
+                $newFile->save();
+                Output::i()->json(['path' => (string)$newFile, 'url' => $newFile->url]);
         }
 
         $form->dialogForm();
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->images($form);
+        Output::i()->output = Tpl::get('toys.storm.global')->images($form);
     }
 
     protected function delete()
     {
         $path = Request::i()->path;
         $info = pathinfo($path);
-        $file = File::get('devtoys_ImageConverter', $path);
+        $file = File::get('storm_devtoys_ImageConverter', $path);
         $file->delete();
     }
 
     protected function pretty()
     {
-        Application::addJs(['front_pretty']);
+        Head::i()->js(['global_pretty']);
         $arr = [
             1 => 'One',
             2 => 'Two',
@@ -444,7 +458,7 @@ class toys extends Controller
         $json = json_encode($arr);
         $pretty = json_encode($arr2, JSON_PRETTY_PRINT);
 
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->pretty($json, $pretty);
+        Output::i()->output = Tpl::get('toys.storm.global')->pretty($json, $pretty);
     }
 
     protected function download()
@@ -452,12 +466,15 @@ class toys extends Controller
         $path = (string) Request::i()->path;
         $t = (string) Request::i()->t;
         $info = pathinfo($path);
-        $file = File::get($t === 'qr' ? 'devtoys_Qrcode' : 'devtoys_ImageConverter', $path);
+        $file = File::get($t === 'qr' ? 'storm_Qrcode' : 'storm_ImageConverter', $path);
         $contents = $file->contents(true);
         $name = $file->originalFilename;
         $file->delete();
         Output::i()->sendOutput(
-            $contents, 200, 'image/' . $info['extension'], [
+            $contents,
+            200,
+            'image/' . $info['extension'],
+            [
                 'Content-Disposition' => Output::getContentDisposition(
                     'attachment',
                     $name
@@ -471,11 +488,12 @@ class toys extends Controller
         require_once Application::getRootPath() . '/system/3rd_party/AES/AES.php';
 
         if (Request::i()->ec === null) {
-            Application::addJs(['front_aes']);
+            Head::i()->js(['global_aes']);
             $decodedContent = 'Oh Hello Mark!';
             $encodedKey = $decodedKey = '8ad39920ad88';
             $encodedContent = AesCtr::encrypt($decodedContent, $decodedKey, 256);
-            Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->aes(
+
+            Output::i()->output = Tpl::get('toys.storm.global')->aes(
                 $decodedContent,
                 $decodedKey,
                 $encodedContent,
@@ -531,7 +549,7 @@ class toys extends Controller
         $path = null;
         $formCreate = Form::create(null, 'formCreate');
         $formCreate->ajaxOutput = true;
-        $formCreate->setPrefix('devtoys_qr_create_')->submitLang('devtoys_qr_create_generate');
+        $formCreate->setPrefix('storm_devtoys_qr_create_')->submitLang('storm_devtoys_qr_create_generate');
         $formCreate->addTab('general');
         $formCreate->addElement('dataType', 'select')->options([
                 'options' => [
@@ -569,26 +587,26 @@ class toys extends Controller
         $formCreate->addElement('url2', 'url')
             ->options(['placeholder' => 'https://example.com'])
             ->appearRequired()
-            ->validation(static function($value){
-            if(Request::i()->devtoys_qr_create_dataType === 'url' && \mb_strlen($value) < 1){
-                throw new \InvalidArgumentException('form_required');
-            }
-        });
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'url' && \mb_strlen($value) < 1) {
+                    throw new \InvalidArgumentException('form_required');
+                }
+            });
 
         //text
         $formCreate->addElement('text', 'textarea')
             ->options(['maxLength' => 800])
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'text' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'text' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
 
         //call
         $formCreate->addElement('phone2', 'tel')->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'call' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'call' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
@@ -610,15 +628,15 @@ class toys extends Controller
             ]);
         $formCreate->addElement('ssid')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'wifi' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'wifi' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
         $formCreate->addElement('pass')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'wifi' && Request::i()->devtoys_qr_create_wifi !== 'nopass' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'wifi' && Request::i()->storm_devtoys_qr_create_wifi !== 'nopass' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
@@ -627,15 +645,15 @@ class toys extends Controller
         //contact
         $formCreate->addElement('name')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
         $formCreate->addElement('surname')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
@@ -643,8 +661,8 @@ class toys extends Controller
         $formCreate->addElement('title');
         $formCreate->addElement('telw', 'tel')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'contact' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
@@ -655,23 +673,23 @@ class toys extends Controller
         $formCreate->addElement('email', 'email');
         $formCreate->addElement('email2', 'email')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
         $formCreate->addElement('subject')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
         $formCreate->addElement('body2', 'textarea')
             ->options(['maxLength' => 800])
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'email' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
@@ -682,23 +700,23 @@ class toys extends Controller
         //sms call
         $formCreate->addElement('phone', 'tel')
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'sms' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'sms' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
         $formCreate->addElement('body', 'textarea')
             ->options(['maxLength' => 800])
             ->appearRequired()
-            ->validation(static function($value){
-                if(Request::i()->devtoys_qr_create_dataType === 'sms' && \mb_strlen($value) < 1){
+            ->validation(static function ($value) {
+                if (Request::i()->storm_devtoys_qr_create_dataType === 'sms' && \mb_strlen($value) < 1) {
                     throw new \InvalidArgumentException('form_required');
                 }
             });
 
         $formCreate->addTab('fg_bg_color');
         $formCreate->addMessage('color_warning', 'ipsMessage ipsMessage_error');
-        if( Settings::i()->image_suite == 'imagemagick' && class_exists( 'Imagick', false ) ){
+        if (Settings::i()->image_suite == 'imagemagick' && class_exists('Imagick', false)) {
             $formCreate->addElement('fileType', 'select')
                 ->options([
                     'options' => [
@@ -721,7 +739,7 @@ class toys extends Controller
             ])
             ->empty(4);
 
-        if( Settings::i()->image_suite == 'imagemagick' && class_exists( 'Imagick', false ) ){
+        if (Settings::i()->image_suite == 'imagemagick' && class_exists('Imagick', false)) {
             $formCreate->addElement('module', 'select')->options([
                 'options' => [
                     1 => 'square',
@@ -760,7 +778,7 @@ class toys extends Controller
         $formCreate->addTab('eye_color');
 
         $formCreate->addMessage('color_warning2', 'ipsMessage ipsMessage_error');
-        if( Settings::i()->image_suite == 'imagemagick' && class_exists( 'Imagick', false ) ){
+        if (Settings::i()->image_suite == 'imagemagick' && class_exists('Imagick', false)) {
             $formCreate->addElement('eye', 'select')->options([
                 'options' => [
                     1 => 'square',
@@ -800,13 +818,16 @@ class toys extends Controller
             ->empty('#000000');
 
         if ($values = $formCreate->values()) {
-            Application::loadAutoLoader();
-            if(isset(Request::i()->previousQR)){
+            IPS::$PSR0Namespaces['BaconQrCode'] = \IPS\ROOT_PATH . '/system/3rd_party/BaconQrCode/src';
+            IPS::$PSR0Namespaces['DASPRiD'] = \IPS\ROOT_PATH . '/system/3rd_party/DASPRiD';
+
+            if (isset(Request::i()->previousQR)) {
                 try {
                     //devToysForms
-                    $file = File::get('devtoys_Qrcode', (string) Request::i()->previousQR);
+                    $file = File::get('storm_Qrcode', (string) Request::i()->previousQR);
                     $file->delete();
-                }catch(\Throwable $e){}
+                } catch (\Throwable) {
+                }
             }
             $size = (int)$values['size'];
             $margin = (int)$values['margin'];
@@ -817,15 +838,14 @@ class toys extends Controller
             if ((bool)$values['eyeSeparateColors'] === false) {
                 [$r, $g, $b] = sscanf($values['eyeUniform'], "#%02x%02x%02x");
                 $topLeft = $topRight = $bottomLeft = new EyeFill(new Rgb($r, $g, $b), new Rgb($r, $g, $b));
-            }
-            else {
+            } else {
                 [$r, $g, $b] = sscanf($values['topLeft'], "#%02x%02x%02x");
                 $outer = $inner = new Rgb($r, $g, $b);
                 if ((bool)$values['eyeSeparateColorsInner']) {
                     [$r, $g, $b] = sscanf($values['topLeftInner'], "#%02x%02x%02x");
                     $inner = new Rgb($r, $g, $b);
                 }
-                $topLeft = new EyeFill($outer,$inner);
+                $topLeft = new EyeFill($outer, $inner);
 
                 [$r, $g, $b] = sscanf($values['topRight'], "#%02x%02x%02x");
                 $outer = $inner = new Rgb($r, $g, $b);
@@ -833,7 +853,7 @@ class toys extends Controller
                     [$r, $g, $b] = sscanf($values['topRightInner'], "#%02x%02x%02x");
                     $inner = new Rgb($r, $g, $b);
                 }
-                $topRight = new EyeFill($outer,$inner);
+                $topRight = new EyeFill($outer, $inner);
 
                 [$r, $g, $b] = sscanf($values['bottomLeft'], "#%02x%02x%02x");
                 $outer = $inner = new Rgb($r, $g, $b);
@@ -841,12 +861,12 @@ class toys extends Controller
                     [$r, $g, $b] = sscanf($values['bottomLeftInner'], "#%02x%02x%02x");
                     $inner = new Rgb($r, $g, $b);
                 }
-                $bottomLeft = new EyeFill($outer,$inner);
+                $bottomLeft = new EyeFill($outer, $inner);
             }
 
             $fill = Fill::withForegroundColor($bg, $fg, $topLeft, $topRight, $bottomLeft);
 
-            if( Settings::i()->image_suite == 'imagemagick' && class_exists( 'Imagick', false ) ){
+            if (Settings::i()->image_suite == 'imagemagick' && class_exists('Imagick', false)) {
                 switch ((int)$values['fileType']) {
                     default:
                     case 1:
@@ -858,7 +878,7 @@ class toys extends Controller
                         break;
                 }
 
-                switch ( (int)$values['module']) {
+                switch ((int)$values['module']) {
                     default:
                     case 1:
                         $module = SquareModule::instance();
@@ -916,18 +936,27 @@ class toys extends Controller
 
                 $renderer = new ImageRenderer(
                     new RendererStyle(
-                        $size, $margin, $module, $eye, $fill
-                    ), $backend
+                        $size,
+                        $margin,
+                        $module,
+                        $eye,
+                        $fill
+                    ),
+                    $backend
                 );
             } else {
                 $renderer = new GDLibRenderer(
-                    $size, $margin, 'png', 9, Fill::withForegroundColor(
-                    $fg,
-                    $bg,
-                    $topLeft,
-                    $topRight,
-                    $bottomLeft
-                )
+                    $size,
+                    $margin,
+                    'png',
+                    9,
+                    Fill::withForegroundColor(
+                        $fg,
+                        $bg,
+                        $topLeft,
+                        $topRight,
+                        $bottomLeft
+                    )
                 );
             }
 
@@ -945,8 +974,8 @@ class toys extends Controller
                 case 'email':
                     $body = strip_tags($values['body2']);
                     $data = 'MATMSG:TO:' . $cleanse($values['email2']) . ';SUB:' . $cleanse(
-                            $values['subject']
-                        ) . ';BODY:' . $cleanse($body);
+                        $values['subject']
+                    ) . ';BODY:' . $cleanse($body);
                     break;
                 case 'contact':
                     $data = "BEGIN:VCARD\nVERSION:4.0\n";
@@ -987,7 +1016,7 @@ class toys extends Controller
                     if ($values['address']) {
                         $addy = $values['address'];
                         $ct = $addy->country === 'US' ? 'USA' : $addy->country;
-                        $addy1 = implode(' ', $addy->addressLines).';'. $addy->city.';'.$addy->region.';'.$addy->postalCode.';'.$ct;
+                        $addy1 = implode(' ', $addy->addressLines) . ';' . $addy->city . ';' . $addy->region . ';' . $addy->postalCode . ';' . $ct;
                         $data .= "ADR;TYPE=work:;;{$addy1}\n";
                     }
 
@@ -1037,43 +1066,43 @@ class toys extends Controller
             $content = $writer->writeString($data);
             $randomFileName = sha1(time() . microtime());
             File::$safeFileExtensions = array_merge(['svg'], File::$safeFileExtensions);
-            $file = File::create('devtoys_Qrcode', $randomFileName . '.' . $ext, $content, 'devToysQrCodes', true);
+            $file = File::create('storm_Qrcode', $randomFileName . '.' . $ext, $content, 'devToysQrCodes', true);
             $before = 'data:image/svg+xml;utf8,';
             $cont = $file->contents();
-            if($ext === 'png'){
+            if ($ext === 'png') {
                 $before = 'data:image/jpeg;base64,';
                 $cont = base64_encode($cont);
-            }
-            else{
+            } else {
                 $cont = rawurlencode($cont);
             }
-            $image = $before.$cont;
+            $image = $before . $cont;
             $path = (string) $file;
         }
 
-        if($image !== null){
+        if ($image !== null) {
             $formCreate->addHidden('previousQR', $path);
         }
 
-
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->qr($formCreate,$image,$path);
+        Output::i()->output = Tpl::get('toys.storm.global')->qr($formCreate, $image, $path);
     }
 
-    public function qrdecode(){
+    public function qrdecode()
+    {
         $decoded = null;
         $formDecode = Form::create(null, 'formDecode');
         $formDecode->ajaxOutput = true;
-        $formDecode->setPrefix('devtoys_qr_decode_')->submitLang('devtoys_qr_decode_decode');
+        $formDecode->setPrefix('storm_devtoys_qr_decode_')->submitLang('storm_devtoys_qr_decode_decode');
         $options = [
-            'storageExtension' => 'devtoys_Qrcode',
-            'storageContainer' => 'devToysQrCodes',
+            'storageExtension' => 'storm_Qrcode',
+            'storageContainer' => 'StormDevToysQrCodes',
             'allowedFileTypes' => ['png','jpg','jpeg','gif'],
         ];
 
         $formDecode->addElement('decodeQr', 'upload')->options($options);
-        if($values = $formDecode->values()){
+        if ($values = $formDecode->values()) {
             try {
-                Application::loadAutoLoader();
+                IPS::$PSR0Namespaces['BaconQrCode'] = \IPS\ROOT_PATH . '/system/3rd_party/BaconQrCode/src';
+                IPS::$PSR0Namespaces['DASPRiD'] = \IPS\ROOT_PATH . '/system/3rd_party/DASPRiD';
                 /** @var File $file */
                 $file = $values['decodeQr'];
                 $contents = $file->contents();
@@ -1083,13 +1112,10 @@ class toys extends Controller
                     Settings::i()->image_suite == 'imagemagick' && class_exists('Imagick', false)
                 );
                 $decoded = $qrcode->text();
+            } catch (\Throwable $e) {
             }
-            catch(\Throwable $e){}
         }
 
-        Output::i()->output = Theme::i()->getTemplate('toys', 'devtoys', 'front')->qrdecode($formDecode, $decoded);
-
+        Output::i()->output = Tpl::get('toys.storm.global')->qrdecode($formDecode, $decoded);
     }
-
-
 }

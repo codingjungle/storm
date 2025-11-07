@@ -1,29 +1,16 @@
-<ips:template parameters="$pos,$bits,$class" />
+<ips:template parameters="$pos,$bits" />
 
 {{if \IPS\Request::i()->position === null}}
-<div class="ipsPadding ipsClearfix" data-ipsdevtoysbitwise>
-    <h4>Position</h4>
-    <div class="ipsMargin_top">
+<div class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysbitwise>
+    <h4 class="ipsTitle ipsTitle--h4">Position</h4>
+    <div class="i-margin-top_2">
         <label>
-            <input id="position" name="position" type="number" value="{$pos}" min="1">
+            <input class="ipsInput ipsInput--text" id="position" name="position" type="number" value="{$pos}" min="1">
         </label>
     </div>
-    {{if empty($class) === false}}
-    <h4>Class</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <select name="dtClass" id="dtClass">
-                <option value="0">Select Class..</option>
-                {{foreach $class as $k => $c}}
-                <option value="{$k}">{$c}</option>
-                {{endforeach}}
-            </select>
-        </label>
-    </div>
-    {{endif}}
 {{endif}}
-    <div class="ipsPadding ipsClearfix" id="elBitWiseBox">
-        <div class="ipsPos_left ipsMargin_right">
+    <div class="i-padding_1" id="elBitWiseBox">
+        <div class="i-flex i-gap_2">
             {{foreach $bits as $bit}}
             {$bit|raw}
             {{endforeach}}

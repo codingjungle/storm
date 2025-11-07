@@ -1,36 +1,67 @@
 <ips:template parameters="$output" />
 
-<div class="ipsPadding ipsClearfix" data-ipsdevtoysnumbers>
-    <div id="error" class="ipsMessage ipsMessage_error{{if !isset($output['error']) }} ipsHide{{endif}}">
+<div class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysnumbers>
+    <div id="error" class="ipsMessage ipsMessage--error{{if !isset($output['error']) }} ipsHide{{endif}}">
         {{$error = $output['error'] ?? '';}}
         {$error|raw}
     </div>
-    <h4>{lang='devtoys_numbers_decimal'}</h4>
-    <div class="ipsMargin_top">
-        {{$dec = $output['decimal'] ?? 0;}}
-        <label>
-            <input id="decimal" type="number" value="{$dec}" data-input="decimal">
-        </label>
+    <div class="i-margin-top_2">
+        <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_numbers_decimal'}</h4>
+        <div class="i-margin-top_1">
+            {{$dec = $output['decimal'] ?? 0;}}
+            <div class="ipsColumns">
+                <div class="ipsColumns__secondary" data-copy="decimal" data-target-type="{lang='storm_devtoys_numbers_decimal'}">
+                    <i class="fa fa-copy i-cursor_pointer"></i>
+                </div>
+                <div class="ipsColumns__primary">
+                    <input id="decimal" type="number" value="{$dec}" data-input="decimal" class="ipsInput ipsInput--text ipsInput--auto">
+                </div>
+            </div>
+        </div>
     </div>
-    <h4>{lang='devtoys_numbers_hexadecimal'}</h4>
-    <div class="ipsMargin_top">
-        {{$hexa = $output['hexa'] ?? 0;}}
-        <label>
-            <input id="hexa" type="text" value="{$hexa}" data-input="hexa">
-        </label>
+
+    <div class="i-margin-top_2">
+        <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_numbers_hexadecimal'}</h4>
+        <div class="i-margin-top_1">
+            {{$hexa = $output['hexa'] ?? 0;}}
+            <div class="ipsColumns">
+                <div class="ipsColumns__secondary" data-copy="hexa" data-target-type="{lang='storm_devtoys_numbers_hexadecimal'}">
+                    <i class="fa fa-copy i-cursor_pointer"></i>
+                </div>
+                <div class="ipsColumns__primary">
+                    <input id="hexa" type="text" value="{$hexa}" data-input="hexa" class="ipsInput ipsInput--text ipsInput--auto">
+                </div>
+            </div>
+        </div>
     </div>
-    <h4>{lang='devtoys_numbers_octal'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            {{$octal = $output['octal'] ?? 0;}}
-            <input id="octal" type="number" value="{$octal}" data-input="octal">
-        </label>
+
+    <div class="i-margin-top_2">
+        <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_numbers_octal'}</h4>
+        <div class="i-margin-top_1">
+            <div class="ipsColumns">
+                <div class="ipsColumns__secondary" data-copy="octal" data-target-type="{lang='storm_devtoys_numbers_octal'}">
+                    <i class="fa fa-copy i-cursor_pointer"></i>
+                </div>
+                <div class="ipsColumns__primary">
+                {{$octal = $output['octal'] ?? 0;}}
+                    <input id="octal" type="number" value="{$octal}" data-input="octal" class="ipsInput ipsInput--text ipsInput--auto">
+                </div>
+            </div>
+        </div>
     </div>
-    <h4>{lang='devtoys_numbers_binary'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            {{$binary = $output['binary'] ?? 0;}}
-            <input id="binary" type="text" value="{$binary}" data-input="binary">
-        </label>
+
+    <div class="i-margin-top_2">
+        <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_numbers_binary'}</h4>
+        <div class="i-margin-top_1">
+            <div class="ipsColumns">
+                <div class="ipsColumns__secondary" data-copy="binary" data-target-type="{lang='storm_devtoys_numbers_binary'}">
+                    <i class="fa fa-copy i-cursor_pointer"></i>
+                </div>
+                <div class="ipsColumns__primary">
+                    {{$binary = $output['binary'] ?? 0;}}
+                    <input id="binary" type="text" value="{$binary}" data-input="binary" class="ipsInput ipsInput--text ipsInput--auto">
+                </div>
+            </div>
+        </div>
     </div>
 </div>

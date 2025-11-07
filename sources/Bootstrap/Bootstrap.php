@@ -17,7 +17,7 @@ class Bootstrap extends \IPS\IPS
 
     public static function init()
     {
-        $vendor = ROOT_PATH . '/applications/storm/sources/vendor/autoload.php';
+        $vendor = ROOT_PATH . '/applications/storm/sources/Vendor/autoload.php';
         require $vendor;
         \spl_autoload_register(array('\Bootstrap', 'autoloader' ), true, true);
         \set_exception_handler(array('\Bootstrap', 'exceptionHandler' ));

@@ -1,94 +1,108 @@
 <ips:template parameters="$decodedContent,$decodedKey,$encodedContent,$encodedKey" />
 
-<div id="elDevToysAES" class="ipsPadding ipsClearfix" data-ipsdevtoysaes>
-    <div class="ipsMargin_top ipsForm_horizontal">
-        <ul class="ipsForm ipsForm_horizontal">
-            <li>
-                <h2 class="ipsFieldRow_section">{lang='devtoys_decoded'}</h2>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title">
-                    <label for="elDecodedKey" class="ipsFieldRow_label">{lang="devtoys_aes_decoded_key"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <textarea id="elDecodedKey">{$decodedKey}</textarea>
-                </div>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title ">
-                    <label for="elDecodedBits" class="ipsFieldRow_label">{lang="devtoys_aes_decoded_bits"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <select id="elDecodedBits">
-                        <option value="128">128</option>
-                        <option value="192">192</option>
-                        <option value="256" selected>256</option>
-                    </select>
-                </div>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title">
-                   <label for="elDecodedAesContainer" class="ipsFieldRow_label">{lang="devtoys_aes_decoded_content"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <textarea id="elDecodedAesContainer">{$decodedContent}</textarea>
-                </div>
-                <div class="ipsClearfix ipsMargin_top">
-                    <button class="copy ipsPos_right ipsButton ipsButton_primary" data-clear="decode">X {lang='devtoys_clear'}</button>
-                    <button class="ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-copy="elDecodedAesContainer">
-                        <i class="fa fa-copy ipsCursor_pointer"></i>
-                        {lang='devtoys_copy'}
-                    </button>
-                    <button class="copy ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-encode>
-                        {lang='devtoys_aes_encode'}
-                    </button>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="ipsMargin_top ipsForm_horizontal">
-        <ul class="ipsForm ipsForm_horizontal">
-            <li>
-                <h2 class="ipsFieldRow_section">{lang='devtoys_encoded'}</h2>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title">
-                    <label for="elEncodeddKey" class="ipsFieldRow_label">{lang="devtoys_aes_encoded_key"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <textarea id="elEncodeddKey">{$encodedKey}</textarea>
-                </div>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title">
-                    <label for="elEncodedBits" class="ipsFieldRow_label">{lang="devtoys_aes_encoded_bits"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <select id="elEncodedBits">
-                        <option value="128">128</option>
-                        <option value="192">192</option>
-                        <option value="256" selected>256</option>
-                    </select>
-                </div>
-            </li>
-            <li class="ipsFieldRow ipsClearfix">
-                <div class="ipsFieldRow_title">
-                    <label for="elEncodedAesContainer" class="ipsFieldRow_label">{lang="devtoys_aes_encoded_content"}</label>
-                </div>
-                <div class="ipsFieldRow_content ipsClearfix">
-                    <textarea id="elEncodedAesContainer">{$encodedContent}</textarea>
-                </div>
-                <div class="ipsClearfix ipsMargin_top">
-                    <button class="ipsPos_right ipsButton ipsButton_primary" data-clear="encode">X {lang='devtoys_clear'}</button>
-                    <button class="copy ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-copy="elEncodedAesContainer">
-                        <i class="fa fa-copy ipsCursor_pointer"></i>
-                        {lang='devtoys_copy'}
-                    </button>
-                    <button class="copy ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-decode>
-                        {lang='devtoys_aes_decode'}
-                    </button>
-                </div>
-            </li>
-        </ul>
-    </div>
+<div id="elDevToysAES" class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysaes>
+    <ul class="ipsForm ipsForm--vertical">
+        <li class="ipsFieldRow__section">
+            <h2>{lang='storm_devtoys_decoded'}</h2>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elDecodedKey">{lang="storm_devtoys_aes_decoded_key"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <input type="text" id="elDecodedKey" class="ipsInput ipsInput--text ipsInput--auto" value="{$decodedKey}">
+            </div>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elDecodedBits">{lang="storm_devtoys_aes_decoded_bits"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <select id="elDecodedBits" class="ipsInput ipsInput--select ">
+                    <option value="128">128</option>
+                    <option value="192">192</option>
+                    <option value="256" selected>256</option>
+                </select>
+            </div>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elDecodedAesContainer">{lang="storm_devtoys_aes_decoded_content"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <textarea id="elDecodedAesContainer" class="ipsInput ipsInput--text ipsInput--wide ">{$decodedContent}</textarea>
+            </div>
+        </li>
+    </ul>
+    <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small"   data-clear="decode">
+                <i class="fa fa-eraser ipsCursor_pointer"></i>
+                {lang='storm_devtoys_clear'}
+            </button>
+        </li>
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small"    data-copy="elDecodedAesContainer">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+                {lang='storm_devtoys_copy'}
+            </button>
+        </li>
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small" data-encode>
+                {lang='storm_devtoys_aes_encode'}
+            </button>
+        </li>
+    </ul>
+    <ul class="ipsForm ipsForm--vertical">
+        <li class="ipsFieldRow__section">
+            <h2>{lang='storm_devtoys_encoded'}</h2>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elEncodeddKey">{lang="storm_devtoys_aes_encoded_key"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <input type="text" id="elEncodeddKey" class="ipsInput ipsInput--text ipsInput--auto" value="{$encodedKey}">
+            </div>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elEncodedBits">{lang="storm_devtoys_aes_encoded_bits"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <select id="elEncodedBits" class="ipsInput ipsInput--select ">
+                    <option value="128">128</option>
+                    <option value="192">192</option>
+                    <option value="256" selected>256</option>
+                </select>
+            </div>
+        </li>
+        <li class="ipsFieldRow" id="form_new_category_name">
+            <div class="ipsFieldRow__label ">
+                <label for="elEncodedAesContainer">{lang="storm_devtoys_aes_encoded_content"}</label>
+            </div>
+            <div class="ipsFieldRow__content">
+                <textarea id="elEncodedAesContainer" class="ipsInput ipsInput--text ipsInput--wide">{$encodedContent}</textarea>
+            </div>
+        </li>
+    </ul>
+    <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small"   data-clear="encode">
+                <i class="fa fa-eraser ipsCursor_pointer"></i>
+                {lang='storm_devtoys_clear'}
+            </button>
+        </li>
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small"    data-copy="elEncodedAesContainer">
+                <i class="fa fa-copy ipsCursor_pointer"></i>
+                {lang='storm_devtoys_copy'}
+            </button>
+        </li>
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small" data-decode>
+                {lang='storm_devtoys_aes_decode'}
+            </button>
+        </li>
+    </ul>
 </div>

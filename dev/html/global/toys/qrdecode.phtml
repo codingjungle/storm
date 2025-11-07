@@ -1,15 +1,15 @@
 <ips:template parameters="$formDecode,$decoded" />
 
-<div id="elDevToysQRDecode" class="ipsPadding ipsClearfix">
+<div id="elDevToysQRDecode" class="i-padding-top_0 i-padding_4">
     <div class="devToysForms">
-        <div class="ipsPadding ipsClearfix ipsForm_horizontal}">
             {$formDecode|raw}
             {{if $decoded !== null}}
-            <div class="ipsPadding ipsMargin_top">
-                <h2>{lang="devtoys_decoded_decoded_qr"}</h2>
+            <div class="i-margin-top_2 ipsMargin_top">
+                <h4 class="ipsTitle ipsTitle--h4">
+                    {lang="storm_devtoys_decoded_decoded_qr"}
+                </h4>
                 {$decoded}
             </div>
             {{endif}}
-        </div>
     </div>
 </div>

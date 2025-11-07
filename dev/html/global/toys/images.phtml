@@ -1,12 +1,20 @@
 <ips:template parameters="$form" />
 
-<div id="elDevToysDiffs" class="ipsPadding ipsClearfix" data-ipsdevtoysimages>
-    <h2>{lang="devtoys_images_image"}</h2>
+<div id="elDevToysDiffs" class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysimages>
+    <h4 class="ipsTitle ipsTitle--h4">
+        {lang="storm_devtoys_images_image"}
+    </h4>
     {$form|raw}
-    <button class="ipsButton ipsButton_primary ipsPos_right ipsMargin_bottom:half" data-convert>{lang="devtoys_images_convert"}</button>
-    <div id="dl" class="ipsHide ipsType_center">
+    <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small" data-convert>
+                {lang="storm_devtoys_images_convert"}
+            </button>
+        </li>
+    </ul>
+    <div id="dl" class="ipsHide i-text-align_center">
         <div>
-            <a class="ipsButton ipsButton_primary ipsMargin_bottom:half">{lang="devtoys_images_download"}</a>
+            <a class="ipsButton ipsButton--primary ipsButton--small i-margin-bottom_2">{lang="storm_devtoys_images_download"}</a>
         </div>
         <img class="ipsImage ipsImage_thumb">
     </div>

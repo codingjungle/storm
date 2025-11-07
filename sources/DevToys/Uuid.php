@@ -10,7 +10,7 @@
  * @version     -storm_version-
  */
 
-namespace IPS\devtoys;
+namespace IPS\storm\DevToys;
 
 use Exception;
 

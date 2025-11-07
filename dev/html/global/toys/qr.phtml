@@ -1,15 +1,15 @@
 <ips:template parameters="$formCreate,$image,$path" />
 
-<div id="elDevToysQR" class="ipsPadding ipsClearfix">
+<div id="elDevToysQR" class="i-padding-top_0 i-padding_4">
     <div class="devToysForms">
         <div class="ipsMargin_top ipsForm_horizontal">
             {$formCreate|raw}
             {{if $image !== null}}
-            <div class="ipsType_center">
-                <div>
-                <a href="{url='app=devtoys&module=general&controller=toys&do=download&path={$path}&t=qr'}" class="ipsButton ipsButton_important">{lang="devtoys_images_download"}</a>
+            <div class="i-margin-top_2 i-padding_2 ipsType_center">
+                <div class="i-padding_2">
+                <a href="{url='app=storm&module=other&controller=toys&do=download&path={$path}&t=qr'}" class="ipsButton ipsButton_important">{lang="storm_devtoys_images_download"}</a>
                 </div>
-                <img class="ipsImage ipsImage_thumb" src='{$image|raw}'>
+                <img class="ipsImage ipsImage_thumb i-margin-top_2" src='{$image|raw}'>
             </div>
             {{endif}}
         </div>

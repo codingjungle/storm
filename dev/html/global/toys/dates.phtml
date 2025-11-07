@@ -1,92 +1,131 @@
-<ips:template parameters="$dates" />
-
-<div class="ipsPadding ipsClearfix" data-ipsdevtoysdates>
-
-    <h4>{lang='devtoys_dates_date'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="dates" type="datetime-local" value="{$dates['dates']}" data-input="dates">
-        </label>
+<ips:template parameters="$dates"/>
+<div class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysdates>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date'}</h4>
+        <input class="ipsInput ipsInput--auto" id="dates" type="datetime-local" value="{$dates['dates']}" data-input="dates">
     </div>
-
-    <h4>{lang='devtoys_dates_unix'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="unix" type="number" value="{$dates['unix']}" data-input="unix">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_unix'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="unix" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--auto" id="unix" type="number" value="{$dates['unix']}" data-input="unix">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_iso_8601'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="iso" type="text" value="{$dates['iso']}" data-input="iso">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_iso_8601'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="iso" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+            <input class="ipsInput ipsInput--wide" id="iso" type="text" value="{$dates['iso']}" data-input="iso">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_atom'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="atom" type="text" value="{$dates['atom']}" data-input="atom">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_atom'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="atom" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="atom" type="text" value="{$dates['atom']}" data-input="atom">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_cookie'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="cookie" type="text" value="{$dates['cookie']}" data-input="cookie">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_cookie'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="cookie" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="cookie" type="text" value="{$dates['cookie']}" ata-input="cookie">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_rfc'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="rfc" type="text" value="{$dates['rfc']}" data-input="rfc">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_rfc'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="rfc" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="rfc" type="text" value="{$dates['rfc']}" data-input="rfc">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_rfc3339'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="rfc3339" type="text" value="{$dates['rfc3339']}" data-input="rfc3339">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_rfc3339'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="rfc3339" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="rfc3339" type="text" value="{$dates['rfc3339']}" data-input="rfc3339">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_rfc3339e'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="rfc3339e" type="text" value="{$dates['rfc3339e']}" data-input="rfc3339e">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_rfc3339e'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="rfc3339e" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="rfc3339e" type="text" value="{$dates['rfc3339e']}" data-input="rfc3339e">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_rfc7231'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="rfc7231" type="text" value="{$dates['rfc7231']}" data-input="rfc7231">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_rfc7231'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="rfc7231" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="rfc7231" type="text" value="{$dates['rfc7231']}" data-input="rfc7231">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_rss'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="rss" type="text" value="{$dates['rss']}" data-input="rss">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_rss'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="rss" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="rss" type="text" value="{$dates['rss']}" data-input="rss">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_sql'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="sql" type="text" value="{$dates['sql']}" data-input="sql">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_sql'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="sql" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+                <input class="ipsInput ipsInput--wide" id="sql" type="text" value="{$dates['sql']}" data-input="sql">
+            </div>
+        </div>
     </div>
-
-    <h4>{lang='devtoys_dates_date_w3c'}</h4>
-    <div class="ipsMargin_top">
-        <label>
-            <input id="w3c" type="text" value="{$dates['w3c']}" data-input="w3c">
-        </label>
+    <div class="i-margin-top_2">
+        <h4>{lang='storm_devtoys_dates_date_w3c'}</h4>
+        <div class="ipsColumns">
+            <div class="ipsColumns__secondary" data-copy="w3c" title="Copy" data-ipsTooltip>
+                <i class="fa fa-copy i-cursor_pointer"></i>
+            </div>
+            <div class="ipsColumns__primary">
+            <input class="ipsInput ipsInput--wide" id="w3c" type="text" value="{$dates['w3c']}" data-input="w3c">
+            </div>
+        </div>
     </div>
-
-    <div class="ipsMessage ipsMessage_info ipsMargin_top:half">
-        {lang='devtoys_dates_utc_times'}
+    <div class="ipsMessage ipsMessage--info i-margin-top_2">
+        {lang='storm_devtoys_dates_utc_times'}
     </div>
 </div>

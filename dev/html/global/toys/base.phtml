@@ -1,28 +1,42 @@
 <ips:template parameters="" />
 
-<div class="ipsPadding ipsClearfix" data-ipsdevtoysbase>
+<div class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysbase>
+    <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_decoded'}</h4>
+    <div class="i-margin-top_2">
+        <textarea id="elDecodedContainer" class="ipsInput ipsInput--text ipsInput--wide ">Hello World!!!!!</textarea>
 
-    <h4>{lang='devtoys_decoded'}</h4>
-    <div class="ipsMargin_top">
-        <textarea id="elDecodedContainer">Hello World!!!!!</textarea>
-        <div class="ipsClearfix ipsMargin_top">
-            <button class="copy ipsPos_right ipsButton ipsButton_primary" data-clear="elDecodedContainer">X {lang='devtoys_clear'}</button>
-            <button class="ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-copy="elDecodedContainer">
-                <i class="fa fa-copy ipsCursor_pointer"></i>
-                {lang='devtoys_copy'}
-            </button>
-        </div>
+        <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+            <li>
+                <button class="ipsButton ipsButton--primary ipsButton--small"   data-clear="elDecodedContainer">
+                    <i class="fa fa-eraser ipsCursor_pointer"></i>
+                    {lang='storm_devtoys_clear'}
+                </button>
+            </li>
+            <li>
+                <button class="ipsButton ipsButton--primary ipsButton--small" data-copy="elDecodedContainer" data-target-type="{lang='storm_devtoys_decoded'}">
+                    <i class="fa fa-copy ipsCursor_pointer"></i>
+                    {lang='storm_devtoys_copy'}
+                </button>
+            </li>
+        </ul>
     </div>
+    <h4 class="ipsTitle ipsTitle--h4">{lang='storm_devtoys_encoded'}</h4>
+    <div class="i-margin-top_2">
+        <textarea id="elEncodedContainer" class="ipsInput ipsInput--text ipsInput--wide">SGVsbG8gV29ybGQhISEhIQ==</textarea>
 
-    <h4>{lang='devtoys_encoded'}</h4>
-    <div class="ipsMargin_top">
-        <textarea id="elEncodedContainer">SGVsbG8gV29ybGQhISEhIQ==</textarea>
-        <div class="ipsClearfix ipsMargin_top">
-            <button class="ipsPos_right ipsButton ipsButton_primary" data-clear="elEncodedContainer">X {lang='devtoys_clear'}</button>
-            <button class="copy ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" data-copy="elEncodedContainer">
-                <i class="fa fa-copy ipsCursor_pointer"></i>
-                {lang='devtoys_copy'}
-            </button>
-        </div>
+        <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+            <li>
+                <button class="ipsButton ipsButton--primary ipsButton--small" data-clear="elEncodedContainer">
+                    <i class="fa fa-eraser ipsCursor_pointer"></i>
+                    {lang='storm_devtoys_clear'}
+                </button>
+            </li>
+            <li>
+                <button class="ipsButton ipsButton--primary ipsButton--small" data-copy="elEncodedContainer" data-target-type="{lang='storm_devtoys_encoded'}">
+                    <i class="fa fa-copy ipsCursor_pointer"></i>
+                    {lang='storm_devtoys_copy'}
+                </button>
+            </li>
+        </ul>
     </div>
 </div>

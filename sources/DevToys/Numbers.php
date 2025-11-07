@@ -10,7 +10,7 @@
 * @version    -storm_version-
 */
 
-namespace IPS\devtoys;
+namespace IPS\storm\DevToys;
 
 use InvalidArgumentException;
 use IPS\Patterns\Singleton;
@@ -42,7 +42,7 @@ class Numbers extends Singleton
     * @note This needs to be declared in any child class
     * @var static
     */
-    public static ?Singleton $instance;
+    public static ?Singleton $instance = null;
 
 
     public function decimal(int|float $number): array

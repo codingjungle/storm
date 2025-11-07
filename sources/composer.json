@@ -1,25 +1,24 @@
 {
-    "require": {
-        "php": ">=8.2", 
-        "symfony/filesystem": "^7.2",
-        "symfony/finder": "^7.2",
-        "symfony/var-dumper": "^7.2",
-        "squizlabs/php_codesniffer": "^3.12",
-        "wa72/htmlpagedom":	"^3.0",
-        "laminas/laminas-code": "^4.16",
-        "laminas/laminas-stdlib": "^3.21",
-        "barryvdh/reflection-docblock": "^2.4"
-    },
-    "config": {
-        "vendor-dir": "vendor",
-        "allow-plugins": {
-        }
-    },
-    "minimum-stability": "stable",
-    "scripts": {
-        "phpcs": "phpcs --standard=PSR12"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.88"
-    }
+  "require": {
+    "php": ">=8.1",
+    "symfony/filesystem": "^7.2",
+    "symfony/finder": "^7.2",
+    "symfony/var-dumper": "^7.2",
+    "squizlabs/php_codesniffer": "^3.12",
+    "wa72/htmlpagedom": "^3.0",
+    "barryvdh/reflection-docblock": "^2.4",
+    "intervention/image": "^3.11",
+    "khanamiryan/qrcode-detector-decoder": "^2.0"
+  },
+  "config": {
+    "vendor-dir": "Vendor",
+    "allow-plugins": {}
+  },
+  "minimum-stability": "stable",
+  "scripts": {
+    "phpcs": "phpcs --standard=PSR12"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.88"
+  }
 }

@@ -106,7 +106,7 @@ class Debug extends ActiveRecord
      * @param $key
      * @param $message
      */
-    public static function log(Exception|string $message, ?string $category = null, ?int $level = null): void
+    public static function log(Exception|string|array $message, ?string $category = null, ?int $level = null): void
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
             if ($level === null) {
@@ -289,7 +289,9 @@ class Debug extends ActiveRecord
             }
             $function = $bt['function'] ?? '';
             $return .= $i . ': ' . $class . $type . $function . "()\n";
-            $return .= $bt['file'] . '::' . $bt['line'] . "\n\n";
+            $file = $bt['file'] ?? null;
+            $line = $bt['line'] ?? 0;
+            $return .= $file . '::' . $line . "\n\n";
 
             $i++;
         }

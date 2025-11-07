@@ -700,12 +700,8 @@ class Filesystem
 
         $dir = \dirname($filename);
 
-        try {
-            if (!is_dir($dir)) {
-                $this->mkdir($dir);
-            }
-        }catch(\Throwable){
-            _p($dir, $filename);
+        if (!is_dir($dir)) {
+            $this->mkdir($dir);
         }
 
         if (false === self::box('file_put_contents', $filename, $content, \FILE_APPEND | ($lock ? \LOCK_EX : 0))) {

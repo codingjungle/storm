@@ -32,8 +32,7 @@ class Application extends SystemApplication
     {
         if (static::$loaded === false) {
             static::$loaded = true;
-            require \IPS\Application::getRootPath('storm') . '/applications/storm/sources/vendor/autoload.php';
-            IPS::$PSR0Namespaces['Generator'] = \IPS\Application::getRootPath() . '/applications/storm/sources/Generator/';
+            require \IPS\Application::getRootPath('storm') . '/applications/storm/sources/Vendor/autoload.php';
         }
     }
 

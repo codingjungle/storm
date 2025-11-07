@@ -10,7 +10,7 @@
  * @version     -storm_version-
  */
 
-namespace IPS\devtoys;
+namespace IPS\storm\DevToys;
 
 use IPS\Patterns\Singleton;
 
@@ -41,9 +41,9 @@ use const true;
  * @package IPS\toolbox\Shared
  * @mixin Lorem
  */
-class _Lorem extends Singleton
+class Lorem extends Singleton
 {
-    protected static ?Singleton $instance;
+    protected static ?Singleton $instance = null;
 
     /**
      * Words
@@ -285,7 +285,7 @@ class _Lorem extends Singleton
      *
      * @return mixed   string or array of generated lorem ipsum words
      */
-    public function words(int $count = 1, array|string $tags = '', bool $array = false)
+    public function words(int|float $count = 1, array|string $tags = '', bool $array = false)
     {
         $count = round($count);
         $words = [];
@@ -421,7 +421,7 @@ class _Lorem extends Singleton
      *
      * @return mixed   string or array of generated lorem ipsum sentences
      */
-    public function sentences(int $count = 1, array|string $tags = '', bool $array = false)
+    public function sentences(int|float $count = 1, array|string $tags = '', bool $array = false)
     {
         $sentences = [];
 
@@ -446,7 +446,7 @@ class _Lorem extends Singleton
      *
      * @return array   generated lorem ipsum words
      */
-    public function wordsArray(int $count = 1, array|string $tags = ''): array
+    public function wordsArray(int|float $count = 1, array|string $tags = ''): array
     {
         return $this->words($count, $tags, true);
     }
@@ -522,7 +522,7 @@ class _Lorem extends Singleton
      *
      * @return array   generated lorem ipsum sentences
      */
-    public function sentencesArray(int $count = 1, array|string $tags = ''): array|string
+    public function sentencesArray(int|float $count = 1, array|string $tags = ''): array|string
     {
         return $this->sentences($count, $tags, true);
     }
@@ -556,7 +556,7 @@ class _Lorem extends Singleton
      *
      * @return mixed   string or array of generated lorem ipsum paragraphs
      */
-    public function paragraphs(int $count = 1, array|string $tags = '', bool $array = false): mixed
+    public function paragraphs(int|float $count = 1, array|string $tags = '', bool $array = false): mixed
     {
         $paragraphs = [];
 
@@ -579,7 +579,7 @@ class _Lorem extends Singleton
      *
      * @return array   generated lorem ipsum paragraphs
      */
-    public function paragraphsArray(int $count = 1, array|string $tags = ''): array
+    public function paragraphsArray(int|float $count = 1, array|string $tags = ''): array
     {
         return $this->paragraphs($count, $tags, true);
     }

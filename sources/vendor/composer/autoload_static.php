@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
+class ComposerStaticInit34e3709887710f52087a3856c9222df3
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -17,10 +17,15 @@ class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
         '9d2b9fc6db0f153a0a149fefb182415e' => __DIR__ . '/..' . '/symfony/polyfill-php84/bootstrap.php',
+        'a9ed0d27b5a698798a89181429f162c5' => __DIR__ . '/..' . '/khanamiryan/qrcode-detector-decoder/lib/Common/customFunctions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'Zxing\\' => 6,
+        ),
         'W' => 
         array (
             'Wa72\\HtmlPageDom\\' => 17,
@@ -74,6 +79,11 @@ class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\Code\\' => 13,
         ),
+        'I' => 
+        array (
+            'Intervention\\Image\\' => 19,
+            'Intervention\\Gif\\' => 17,
+        ),
         'F' => 
         array (
             'Fidry\\CpuCoreCounter\\' => 21,
@@ -92,6 +102,10 @@ class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
     );
 
     public static $prefixDirsPsr4 = array (
+        'Zxing\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/khanamiryan/qrcode-detector-decoder/lib',
+        ),
         'Wa72\\HtmlPageDom\\' => 
         array (
             0 => __DIR__ . '/..' . '/wa72/htmlpagedom/src',
@@ -232,6 +246,14 @@ class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-code/src',
         ),
+        'Intervention\\Image\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/intervention/image/src',
+        ),
+        'Intervention\\Gif\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/intervention/gif/src',
+        ),
         'Fidry\\CpuCoreCounter\\' => 
         array (
             0 => __DIR__ . '/..' . '/fidry/cpu-core-counter/src',
@@ -301,10 +323,10 @@ class ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit5bf77961c0f3fe28a1c7e6dc580fdb9d::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit34e3709887710f52087a3856c9222df3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit34e3709887710f52087a3856c9222df3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit34e3709887710f52087a3856c9222df3::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit34e3709887710f52087a3856c9222df3::$classMap;
 
         }, null, ClassLoader::class);
     }

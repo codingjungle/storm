@@ -1,4 +1,10 @@
 {
+    "core": {
+        "FileStorage": {
+            "ImageConverter": "IPS\\storm\\extensions\\core\\FileStorage\\ImageConverter",
+            "Qrcode": "IPS\\storm\\extensions\\core\\FileStorage\\Qrcode"
+        }
+    },
     "storm": {
         "MetaData": {
             "Other": "IPS\\storm\\extensions\\storm\\MetaData\\Other"

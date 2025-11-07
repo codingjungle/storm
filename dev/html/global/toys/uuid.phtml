@@ -1,12 +1,21 @@
 <ips:template parameters="$form,$uuid" />
 
-<div class="ipsPadding ipsClearfix" data-ipsdevtoysuuid>
+<div class="i-padding-top_0 i-padding_4" data-ipsstormdevtoysuuid>
     {$form|raw}
-    <div class="ipsClearfix ipsMargin">
-        <button class="ipsPos_right ipsButton ipsButton_primary" id="clearuuid">X {lang='devtoys_clear'}</button>
-        <button class="ipsPos_right ipsButton ipsButton_primary ipsMargin_right:half" id="generate">{lang="devtoys_uuid_generator"}</button>
-    </div>
-    <div class="ipsMargin_top" id="elUuidContainer">
+
+    <ul class="ipsButtons ipsButtons--main i-margin-block_block">
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small" id="clearuuid">
+                <i class="fa fa-eraser"></i>{lang='storm_devtoys_clear'}
+            </button>
+        </li>
+        <li>
+            <button class="ipsButton ipsButton--primary ipsButton--small" id="generate">
+                {lang="storm_devtoys_uuid_generator"}
+            </button>
+        </li>
+    </ul>
+    <div class="i-margin-top_2" id="elUuidContainer">
         {$uuid|raw}
     </div>
 </div>

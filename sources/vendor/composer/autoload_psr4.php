@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Zxing\\' => array($vendorDir . '/khanamiryan/qrcode-detector-decoder/lib'),
     'Wa72\\HtmlPageDom\\' => array($vendorDir . '/wa72/htmlpagedom/src'),
     'Symfony\\Polyfill\\Php84\\' => array($vendorDir . '/symfony/polyfill-php84'),
     'Symfony\\Polyfill\\Php81\\' => array($vendorDir . '/symfony/polyfill-php81'),
@@ -41,6 +42,8 @@ return array(
     'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
     'Laminas\\Stdlib\\' => array($vendorDir . '/laminas/laminas-stdlib/src'),
     'Laminas\\Code\\' => array($vendorDir . '/laminas/laminas-code/src'),
+    'Intervention\\Image\\' => array($vendorDir . '/intervention/image/src'),
+    'Intervention\\Gif\\' => array($vendorDir . '/intervention/gif/src'),
     'Fidry\\CpuCoreCounter\\' => array($vendorDir . '/fidry/cpu-core-counter/src'),
     'Evenement\\' => array($vendorDir . '/evenement/evenement/src'),
     'Composer\\XdebugHandler\\' => array($vendorDir . '/composer/xdebug-handler/src'),

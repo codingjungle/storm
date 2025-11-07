@@ -1,0 +1,156 @@
+<ips:template parameters=""/>
+<button type='button' popovertarget='elToyBox_menu' style='--_anchor: --elToyBox_menu;'
+        class='stormButtons stormButtons--small' aria-expanded='false'>
+    <i class='fa-regular fa-face-grin'></i> Toybox
+</button>
+<i-dropdown popover id="elToyBox_menu" style="--_anchor: --elToyBox_menu;" data-menu-width="auto">
+    <div class="iDropdownSwipe"></div>
+    <button class="iDropdownDismiss" type="button" popovertarget="elToyBox_menu" popovertargetaction="hide"
+            aria-label="Close" tabindex="-1">
+    </button>
+    <div class="iDropdown">
+        <ul class="iDropdown__items">
+            <li class="iDropdown__title">ToyBox</li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=diffs' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true" data-ipsdialog-title="{lang='storm_devtoys_general_compare'}"
+                   title="{lang='storm_devtoys_general_compare'}" data-ipstooltip>
+                    <i class="fa fa-compass"></i>
+                    {lang="storm_devtoys_general_diffs"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=pretty' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true" data-ipsdialog-title="{lang='storm_devtoys_general_titlt_pretty'}"
+                   title="{lang='storm_devtoys_general_titlt_pretty'}" data-ipstooltip>
+                    <i class="fa">{;}</i>
+                    {lang="storm_devtoys_general_pretty"}
+                </a>
+            </li>
+            <li class="iDropdown__hr">
+                <hr>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=lorem' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_genaratore_lorem'}"
+                   title="{lang='storm_devtoys_general_genaratore_lorem'}" data-ipstooltip>
+                    <i class="fa fa-language"></i>
+                    {lang="storm_devtoys_general_lorem_ipsum"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=bitwiseValues' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_genaratore_bitwise'}"
+                   title="{lang='storm_devtoys_general_genaratore_bitwise'}" data-ipstooltip>
+                    <i class="fa fa-infinity"></i>
+                    {lang="storm_devtoys_general_bitwise"}
+                </a>
+            </li>
+            <li class="iDropdown__hr">
+                <hr>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=html' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_html'}"
+                   title="{lang='storm_devtoys_general_title_html'}" data-ipstooltip>
+                    <i class="fa-brands fa-html5"></i>
+                    {lang="storm_devtoys_general_html"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=base' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_base64'}"
+                   title="{lang='storm_devtoys_general_title_base64'}" data-ipstooltip>
+                    <i class="fa-solid fa-barcode"></i>
+                    {lang="storm_devtoys_general_base64"}
+                </a>
+            </li>
+            <li class="iDropdown__hr">
+                <hr>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=aes' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_aes'}"
+                   title="{lang='storm_devtoys_general_title_aes'}" data-ipstooltip>
+                    <i class="fa-solid fa-lock"></i>
+                    {lang="storm_devtoys_general_aes"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=hash' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_genaratore_hash'}"
+                   title="{lang='storm_devtoys_general_genaratore_hash'}" data-ipstooltip>
+                    <i class="fa fa-hashtag"></i>
+                    {lang="storm_devtoys_general_hash"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=uuid' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_genaratore_uuid'}"
+                   title="{lang='storm_devtoys_general_genaratore_uuid'}" data-ipstooltip>
+                    <i class="fa fa-asterisk"></i>
+                    {lang="storm_devtoys_general_uuid"}
+                </a>
+            </li>
+            <li class="iDropdown__hr">
+                <hr>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=qr' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_qr'}"
+                   title="{lang='storm_devtoys_general_title_qr'}" data-ipstooltip>
+                    <i class="fa fa-qrcode"></i>
+                    {lang="storm_devtoys_general_qr"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=qrdecode' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_qr_decode'}"
+                   title="{lang='storm_devtoys_general_title_qr_decode'}" data-ipstooltip>
+                    <i class="fa fa-qrcode"></i>
+                    {lang="storm_devtoys_general_qr_decode"}
+                </a>
+            </li>
+            <li class="iDropdown__hr">
+                <hr>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=numbers' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_nums'}"
+                   title="{lang='storm_devtoys_general_title_nums'}" data-ipstooltip>
+                    <i class="fa fa-calculator"></i>
+                    {lang="storm_devtoys_general_nums"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=dates' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_dates'}"
+                   title="{lang='storm_devtoys_general_title_dates'}" data-ipstooltip>
+                    <i class="fa fa-calendar"></i>
+                    {lang="storm_devtoys_general_dates"}
+                </a>
+            </li>
+            <li class="i-padding-start_1">
+                <a href="{url='app=storm&module=other&controller=toys&do=images' base='front'}" data-ipsDialog
+                   data-ipsDialog-forceReload="true"
+                   data-ipsdialog-title="{lang='storm_devtoys_general_title_images'}"
+                   data-ipsdialog-extraClass="devtoysImages" title="{lang='storm_devtoys_general_title_images'}"
+                   data-ipstooltip>
+                    <i class="fa fa-image"></i>
+                    {lang="storm_devtoys_general_images"}
+                </a>
+            </li>
+        </ul>
+    </div>
+</i-dropdown>
