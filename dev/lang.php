@@ -288,7 +288,11 @@ $lang = array(
     'storm_devtoys_decoded_decoded_qr' => 'Decoded QR Code',
     'storm_devtoys_general_qr_decode' => 'QR Decode',
     'storm_devtoys_general_title_qr_decode' => 'QR Code Decoder',
-
+    'storm_devcenter_caches' => 'Caches',
+    'storm_devcenter_caches_desc' => 'will add the caches property to your class.',
+    'storm_devcenter_caches_enabled' => 'Load From Cache',
+    'storm_devcenter_caches_enabled_desc' => 'If yes, will set the static property $loadFromCache to true.',
+    'storm_devcenter_caches_names' => 'Cache Names',
 
 
 

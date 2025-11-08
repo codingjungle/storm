@@ -79,36 +79,31 @@ class Node extends GeneratorAbstract
             'seoTitle',
         ];
 
-        $doc = [
-            '@brief Application',
-            '@var string',
-        ];
         $this->generator->addProperty(
             'application',
             $this->app,
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'string'
             ]
         );
 
-        $doc = [
-            '@brief Module',
-            '@var string',
-        ];
         $this->generator->addProperty(
         'module',
         $this->classname_lower,
         [
             'visibility' => T_PUBLIC,
             'static'     => true,
-            'document'   => $doc,
+            'document'   => ['@inheritdoc'],
+            'hint' => 'string'
         ]
     );
         $this->databaseColumnParent();
         $this->databaseColumnParentRootValue();
         $this->databaseColumnOrder();
+        $this->automaticPositionDetermination();
         $this->databaseColumnEnabledDisabled();
         $this->seoTitleColumn();
         $this->nodeTitle();
@@ -122,7 +117,15 @@ class Node extends GeneratorAbstract
             '@var int'
         ];
 
-        $this->generator->addProperty('maxFormHelperResults', 10, ['static' => true, 'document' => $doc]);
+        $this->generator->addProperty(
+            'maxFormHelperResults',
+            null,
+            [
+                'static' => true,
+                'document' => $doc,
+                'hint' => '?int'
+            ]
+        );
 
         if ($this->content_item_class !== null) {
             $this->nodeItemClass();
@@ -214,10 +217,6 @@ eof;
 
     protected function databaseColumnParent()
     {
-        $doc = [
-            '@brief [Node] Parent ID Database Column',
-            '@var string',
-        ];
 
         $this->generator->addProperty(
             'databaseColumnParent',
@@ -225,98 +224,92 @@ eof;
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
             ]
         );
     }
 
     protected function databaseColumnParentRootValue()
     {
-        $doc = [
-            '@brief [Node] Parent ID Root Value',
-            '@note This normally doesn\'t need changing, though some legacy areas use -1 indicate a root node',
-            '@var int',
-        ];
-
         $this->generator->addProperty(
             'databaseColumnParentRootValue',
             0,
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'int'
             ]
         );
     }
 
     protected function databaseColumnOrder()
     {
-        $doc = [
-            '@brief [Node] Order Database Column',
-            '@var string',
-        ];
-
         $this->generator->addProperty(
             'databaseColumnOrder',
             'order',
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
+            ]
+        );
+    }
+
+    protected function automaticPositionDetermination()
+    {
+        $this->generator->addProperty(
+            'automaticPositionDetermination',
+            'true',
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'bool'
             ]
         );
     }
 
     protected function databaseColumnEnabledDisabled()
     {
-        $doc = [
-            '@brief [Node] Enabled/Disabled Column',
-            '@var string',
-        ];
-
         $this->generator->addProperty(
             'databaseColumnEnabledDisabled',
             'enabled',
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
-            ]
-        );
-    }
-
-    protected function nodeTitle()
-    {
-        $doc = [
-            '@brief [Node] Node Title',
-            '@var string',
-        ];
-
-        $this->generator->addProperty(
-            'nodeTitle',
-            $this->app . '_' . $this->classname_lower . '_node',
-            [
-                'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
             ]
         );
     }
 
     protected function nodeSortable()
     {
-        $doc = [
-            '@brief [Node] Sortable?',
-            '@var bool',
-        ];
-
         $this->generator->addProperty(
-            'nodeSortable',
-            false,
+            'databaseColumnEnabledDisabled',
+            'true',
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'bool'
+            ]
+        );
+    }
+
+    protected function nodeTitle()
+    {
+        $this->generator->addProperty(
+            'nodeTitle',
+            $this->app . '_' . $this->classname_lower . '_node',
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'string'
             ]
         );
     }
@@ -331,34 +324,26 @@ eof;
         $this->generator->addImport($contentItemClass);
         $contentItemClass = $this->content_item_class . '::class';
 
-        $doc = [
-            '@brief Content Item Class',
-            '@var ' . $contentItemClass,
-        ];
-
         $this->generator->addProperty(
             'contentItemClass',
             $contentItemClass,
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
             ]
         );
 
         //moderator permissions
-        $doc = [
-            '@brief [Node] Moderator Permission',
-            '@var string',
-        ];
-
         $this->generator->addProperty(
             'modPerm',
             $this->app . '_' . $this->classname_lower,
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'string'
             ]
         );
     }
@@ -368,10 +353,6 @@ eof;
         try {
             if (in_array(Permissions::class, $this->implements, true)) {
                 //index
-                $doc = [
-                    '@brief [Node] App for permission index',
-                    '@var string',
-                ];
 
                 $this->generator->addProperty(
                     'permApp',
@@ -379,15 +360,11 @@ eof;
                     [
                         'visibility' => T_PUBLIC,
                         'static'     => true,
-                        'document'   => $doc,
+                        'document'   => ['@inheritdoc'],
                     ]
                 );
 
                 //type
-                $doc = [
-                    '@brief [Node] Type for permission index',
-                    '@var string',
-                ];
 
                 $this->generator->addProperty(
                     'permType',
@@ -395,7 +372,7 @@ eof;
                     [
                         'visibility' => T_PUBLIC,
                         'static'     => true,
-                        'document'   => $doc,
+                        'document'   => ['@inheritdoc'],
                     ]
                 );
 
@@ -409,18 +386,13 @@ eof;
                     'review' => 6,
                 ];
 
-                $doc = [
-                    '@brief The map of permission columns',
-                    '@var array',
-                ];
-
                 $this->generator->addProperty(
                     'permissionMap',
                     $map,
                     [
                         'visibility' => T_PUBLIC,
                         'static'     => true,
-                        'document'   => $doc,
+                        'document'   => ['@inheritdoc'],
                     ]
                 );
 

@@ -85,12 +85,12 @@
                     pid;
                 if(panel.length !== 0) {
                     pid = panel.attr('id');
-                    panel.hide().removeClass('stormProfilerPanelActive').data('active', 0);
-                    if(pid === 'storm_profiler_debug_panel'){
-                        _setTimers();
-                    }
+                    panel.slideUp().removeClass('stormProfilerPanelActive').data('active', 0);
                 }
-                $('.stormProfilerButton').removeClass('stormProfilerDim');
+                $('.stormProfilerButton')
+                    .removeClass('stormProfilerDim')
+                    .find('.fa-chevron-up')
+                    .removeClass('fa-rotate-180');;
             },
             _open = function (e) {
                 e.preventDefault();
@@ -102,22 +102,34 @@
                     let h = $('#ElstormProfilerBar').outerHeight();
                     $('#elStormProfilerPanelsContainer').css('bottom', h+'px');
                     $('[data-panels]').data('active', 0).hide().promise().done(function (e) {
-                        $('.stormProfilerButton').removeClass('stormProfilerButtonActive');
-                        panel.fadeIn().css('zIndex', zd).data('active', 1).addClass('stormProfilerPanelActive');
-                        target.addClass('stormProfilerButtonActive').removeClass('stormProfilerFlash');
-                        $(document).trigger('stormProfilerPanelOpen', {panel: target.data('panel'), button: target});
-                        if(target.attr('data-panel') === 'storm_profiler_debug_panel') {
-                            _clearTimers();
-                        }
-                        target.removeClass('stormProfilerDim');
+                        $('.stormProfilerButton')
+                            .removeClass('stormProfilerButtonActive')
+                            .find('.fa-chevron-up')
+                            .removeClass('fa-rotate-180');;
+                        panel
+                            .slideDown()
+                            .css('zIndex', zd)
+                            .data('active', 1)
+                            .addClass('stormProfilerPanelActive');
+                        target
+                            .addClass('stormProfilerButtonActive')
+                            .removeClass('stormProfilerFlash')
+                            .removeClass('stormProfilerDim');
+                        target
+                            .find('.fa-chevron-up')
+                            .addClass('fa-rotate-180');
+                        $(document)
+                            .trigger('stormProfilerPanelOpen', {panel: target.data('panel'), button: target});
                     });
                 } else {
-                    panel.data('active', 0).fadeOut().promise().done(function(){
-                        target.removeClass('stormProfilerButtonActive').removeClass('stormProfilerFlash');
+                    panel.data('active', 0).slideUp().promise().done(function(){
+                        target
+                            .removeClass('stormProfilerButtonActive')
+                            .removeClass('stormProfilerFlash');
+                        target
+                            .find('.fa-chevron-up')
+                            .removeClass('fa-rotate-180');
                         panel.removeClass('stormProfilerPanelActive');
-                        if(target.attr('data-panel') === 'storm_profiler_debug_panel') {
-                            _setTimers();
-                        }
                         $('.stormProfilerButton').removeClass('stormProfilerDim');
                     });
 

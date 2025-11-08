@@ -23,6 +23,7 @@ use IPS\storm\Shared\Magic;
 use IPS\storm\DevCenter\Traits\ModuleBuilder;
 use IPS\storm\DevCenter\Traits\SchemaBuilder;
 use IPS\storm\Writers\ClassGenerator;
+use IPS\storm\Writers\FileGenerator;
 use IPS\storm\Writers\InterfaceGenerator;
 use IPS\storm\Writers\TraitGenerator;
 use RuntimeException;
@@ -46,6 +47,7 @@ use function mb_ucfirst;
 use function str_replace;
 use function trim;
 
+use const JSON_PRETTY_PRINT;
 use const T_PROTECTED;
 use const T_PUBLIC;
 
@@ -81,6 +83,9 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @property ?array $ips_traits
  * @property ?array $ips_implements
  * @property ?bool $scaffolding_create
+ * @property ?bool $caches
+ * @property array $caches_names
+ * @property ?bool $caches_enabled
  */
 #[\AllowDynamicProperties]
 abstract class GeneratorAbstract
@@ -187,7 +192,6 @@ abstract class GeneratorAbstract
             $this->classname = 'Forms';
         }
 
-
         if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
             $this->classname = mb_ucfirst($this->classname);
         }
@@ -218,14 +222,18 @@ abstract class GeneratorAbstract
                 $this->database = $this->app . '_' . $this->database;
             }
 
-            $this->database = mb_strtolower($this->database);
+            if ($this->prefix !== null) {
+                $this->prefix .= '_';
+            }
+
+            if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+                if ($this->prefix !== null) {
+                    $this->prefix = mb_strtolower($this->prefix);
+                }
+                $this->database = mb_strtolower($this->database);
+            }
             $this->db = new Database($this->database, $this->prefix);
         }
-
-        if ($this->prefix !== null) {
-            $this->prefix .= '_';
-        }
-
 
         if (!in_array($this->type, ['Traits', 'Interfacing'], true)) {
             $this->generator = new ClassGenerator();
@@ -250,7 +258,7 @@ abstract class GeneratorAbstract
             $this->namespace = 'IPS\\' . $this->app;
         } else {
             if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
-                $this->namespace = mb_ucfirst($this->namespace);
+                $this->namespace = $this->namespace ? mb_ucfirst($this->namespace) : null;
             }
 
             $this->namespace = $this->namespace !== null ?
@@ -351,7 +359,7 @@ abstract class GeneratorAbstract
         try {
             $this->generator->save();
             if ((bool) $this->scaffolding_create === true && in_array($this->type, static::$arDescendent, false)) {
-                $this->createRelation($file, $dir, $this->database);
+                $this->createRelation();
                 if (is_array($this->scaffolding_type) && in_array('db', $this->scaffolding_type, false)) {
                     try {
                         if ($this->classname_lower !== 'member') {
@@ -359,7 +367,7 @@ abstract class GeneratorAbstract
                         }
                         $this->db->createTable()->buildSchemaFile($this->database, $this->application);
                     } catch (Exception $e) {
-                        Log::log($e, 'Devplus database');
+                        Debug::log($e, 'Devplus database');
                     }
                 }
 
@@ -411,82 +419,72 @@ abstract class GeneratorAbstract
      */
     protected function arDescendantProps(): void
     {
+        $this->generator->addClassComments('@mixin _' . $this->classname);
+
         //multitons
-        $document = [
-            '@brief [ActiveRecord] multitons Store',
-            '@var  array',
-        ];
 
         $this->generator->addProperty(
             'multitons',
             [],
             [
                 'visibility' => T_PROTECTED,
-                'document'   => $document,
+                'document'   => ['@inheritdocs'],
                 'static'     => true,
+                'hint' => 'array',
             ]
         );
-        $document = [
-            '@brief	[ActiveRecord] Multiton Map',
-            '@var  array',
-        ];
         $this->generator->addProperty(
             'multitonMap',
             [],
             [
                 'visibility' => T_PROTECTED,
-                'document'   => $document,
+                'document'   => ['@inheritdocs'],
                 'static'     => true,
+                'hint' => 'array',
             ]
         );
-        //prefix
-        if ($this->prefix && $this->classname_lower !== 'member') {
-            $this->prefix = mb_strtolower($this->prefix);
-            $document = [
-                '@brief [ActiveRecord] Database Prefix',
-                '@var string',
-            ];
+        //databaseTable
 
+        $this->generator->addProperty(
+            'databaseTable',
+            $this->database,
+            [
+                'visibility' => T_PUBLIC,
+                'document'   => ['@inheritdocs'],
+                'static'     => true,
+                'hint' => '?string'
+            ]
+        );
+
+        $this->generator->addProperty('databaseIdFields', [], [
+            'visibility' => T_PROTECTED,
+            'document' => ['@inheritdoc'],
+            'static' => true,
+            'hint' => 'array'
+        ]);
+
+        //prefix
+        if ($this->prefix) {
             $this->generator->addProperty(
                 'databasePrefix',
                 $this->prefix,
                 [
                     'visibility' => T_PUBLIC,
-                    'document'   => $document,
+                    'document'   => ['@inheritdocs'],
                     'static'     => true,
+                    'hint' => 'string'
                 ]
             );
         }
 
-        if ($this->classname_lower !== 'member') {
-            //databaseTable
-            $document = [
-                '@brief [ActiveRecord] Database table',
-                '@var string',
-            ];
-
-            $this->generator->addProperty(
-                'databaseTable',
-                $this->database,
-                [
-                    'visibility' => T_PUBLIC,
-                    'document'   => $document,
-                    'static'     => true,
-                ]
-            );
-
             //bitoptions
-            $document = [
-                '@brief [ActiveRecord] Bitwise Keys',
-                '@var array',
-            ];
 
             $value = <<<EOF
 [
-    'bitwise' => [
-        'bitwise' => []
+        'bitOptions' => [
+            'bitOptions' => []
+        ]
     ]
-]
 EOF;
 
             $this->generator->addProperty(
@@ -494,11 +492,37 @@ EOF;
                 $value,
                 [
                     'visibility' => T_PUBLIC,
-                    'document'   => $document,
+                    'document'   => ['@inheritdocs'],
                     'static'     => true,
                     'type'       => 'array',
+                    'hint' => 'array'
                 ]
             );
+
+        if ((bool) $this->caches === true) {
+            $caches = '[' . PHP_EOL;
+            foreach ($this->caches_names as $cache) {
+                $caches .= '        "' . $cache . '",' . PHP_EOL;
+            }
+            $caches .= '    ]';
+            $this->generator->addProperty('caches', $caches, [
+                'visibility' => T_PROTECTED,
+                'document' => ['@inheritdoc'],
+                'hint' => 'array',
+                'type' => 'array'
+            ]);
+
+                $this->generator->addProperty(
+                    'loadFromCache',
+                    (bool) $this->caches_enabled === true ? 'true' : 'false',
+                    [
+                    'visibility' => T_PROTECTED,
+                    'document' => ['@inheritdoc'],
+                    'hint' => 'bool',
+                    'static' => true,
+                    'type' => 'bool'
+                    ]
+                );
         }
     }
 
@@ -530,33 +554,60 @@ EOF;
      * @param string $dir
      * @param string $database
      */
-    protected function createRelation(string $file, string $dir, string $database): void
+    protected function createRelation(): void
     {
-        $relationFile = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/';
+        $path = \IPS\Application::getRootPath()
+            . '/applications/'
+            . $this->application->directory
+            . '/data/';
         $relations = [];
-        if (file_exists($relationFile . '/arRelations.json')) {
-            $relations = json_decode(file_get_contents($relationFile . '/arRelations.json'), true);
+        if (file_exists($path . '/arRelations.json')) {
+            $relations = json_decode(
+                file_get_contents(
+                    $path
+                    . '/arRelations.json'
+                ),
+                true
+            );
         }
-        $relations[$database] = str_replace(\IPS\Application::getRootPath() . '/', '', $dir) . '/' . $file;
-        $this->_writeFile('arRelations.json', json_encode($relations, JSON_PRETTY_PRINT), $relationFile, false);
-    }
+        $relations[$this->database] = $this->namespace . '\\' . $this->classname;
 
+        FileGenerator::i()
+            ->addClassComments('arRelations')
+            ->setExtension('json')
+            ->setPath($path)
+            ->addBody(
+                json_encode(
+                    $relations,
+                    JSON_PRETTY_PRINT
+                )
+            )
+            ->save();
+    }
+    protected function onwerTypes(): void
+    {
+        $this->generator->addProperty(
+            'seoTitleColumn',
+            'null',
+            [
+                'visibility' => T_PUBLIC,
+                'document'   => ['@inheritdocs'],
+                'static'     => true,
+                'hint' => '?array'
+            ]
+        );
+    }
     /**
      * adds the seoTitleColumn property
      */
     protected function seoTitleColumn(): void
     {
-        $doc = [
-            '@brief SEO Title Column',
-            '@var string',
-        ];
-
         $this->generator->addProperty(
             'seoTitleColumn',
             'seoTitle',
             [
                 'visibility' => T_PUBLIC,
-                'document'   => $doc,
+                'document'   => ['@inheritdocs'],
                 'static'     => true,
             ]
         );
@@ -567,16 +618,12 @@ EOF;
      */
     protected function url(): void
     {
-        $doc = [
-            '@brief Cached URL',
-            '@var array',
-        ];
         $this->generator->addProperty(
             '_url',
             null,
             [
                 'visibility' => T_PROTECTED,
-                'document'   => $doc,
+                'document'   => ['@inheritdocs'],
             ]
         );
     }
@@ -593,16 +640,12 @@ EOF;
         }
 
         $this->addFurl($value, $this->baseurl);
-        $doc = [
-            '@brief URL Furl Template',
-            '@var string',
-        ];
         $this->generator->addProperty(
             'urlTemplate',
             $value,
             [
                 'visibility' => T_PUBLIC,
-                'document'   => $doc,
+                'document'   => ['@inheritdocs'],
                 'static'     => true,
             ]
         );
@@ -615,10 +658,6 @@ EOF;
     {
         $base = 'app=' . $this->app . '&module=' . $this->classname_lower . '&controller=' . $this->classname_lower;
         $this->baseurl = $base;
-        $doc = [
-            '@brief URL base',
-            '@var string',
-        ];
 
         $this->generator->addProperty(
             'urlBase',
@@ -626,7 +665,7 @@ EOF;
             [
                 'visibility' => T_PUBLIC,
                 'static'     => true,
-                'document'   => $doc,
+                'document'   => ['@inheritdocs'],
             ]
         );
     }

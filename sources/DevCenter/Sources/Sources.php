@@ -648,6 +648,31 @@ class Sources
             ->form
             ->addElement('strict_types', 'yn')->value(1);
     }
+    //
+//'caches',
+//'caches_enabled',
+    protected function elCaches(): void
+    {
+        $this
+            ->form
+            ->addElement('caches', 'yn')->value(1)->toggles(['caches_enabled', 'caches_names']);
+    }
+
+    protected function elCachesName(): void
+    {
+        $this
+            ->form
+            ->addElement('caches_names', 'stack')
+        ->required();
+    }
+
+    protected function elCachesEnabled(): void
+    {
+        $this
+            ->form
+            ->addElement('caches_enabled', 'yn')->value(1);
+    }
+
     /**
      * classname element
      */

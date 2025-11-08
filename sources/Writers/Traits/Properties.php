@@ -36,15 +36,16 @@ trait Properties
      *
      * @return $this
      */
-    public function addProperty(string $name, $value, array $extra = []): static
+    public function addProperty(string $name, mixed $value = null, array $extra = []): static
     {
         $this->properties[$name] = [
             'name'       => $name,
-            'value'      => empty($value) !== true ? trim(ClassGenerator::convertValue($value)) : null,
+            'value'      => $value,
             'document'   => $extra['document'] ?? null,
             'static'     => $extra['static'] ?? false,
             'visibility' => $extra['visibility'] ?? T_PUBLIC,
             'type'       => $extra['type'] ?? 'string',
+            'hint'       => $extra['hint'] ?? null,
         ];
         return $this;
     }
@@ -158,14 +159,17 @@ trait Properties
                 }
 
                 $this->output('$' . $property['name']);
-
-                if (isset($property['value']) && ($property['value'] !== null && $property['value'] !== 'null')) {
+                $value = $property['value'] ?? null;
+                if (!is_array($value) && $value !== 'array' && $value !== null && $value !== 'null') {
+                    $value = trim(ClassGenerator::convertValue($value));
                     $pType = $property['type'];
-                    if ($pType !== 'string') {
-                        $this->output(' = ' . $property['value']);
-                    } else {
-                        $this->output(' = ' . trim(ClassGenerator::convertValue($property['value'])));
-                    }
+                    $this->output(' = ' . $value);
+                } elseif (is_array($value) || $value === 'array') {
+                    $this->output(
+                        ' = []'
+                    );
+                } elseif ($value === 'null') {
+                    $this->output(' = null');
                 }
                 $this->output(";\n");
             }

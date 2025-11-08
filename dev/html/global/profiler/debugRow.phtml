@@ -10,13 +10,13 @@
         </div>
         {{if empty($logs->category) === false}}
         <div class="stormCategoryButton" title="Category" data-ipsTooltip>
-                {$logs->category}
+                {lang="{$logs->category}"}
         </div>
         {{endif}}
         </div>
     </div>
     <div class="stormColumnFluid stormProfilerListItem">
-        <div class="ipsClearfix">
+        <div class="ipsClearfix" data-ipstruncate>
             {$logs->log|raw}
         </div>
         <div class="ipsClearfix">

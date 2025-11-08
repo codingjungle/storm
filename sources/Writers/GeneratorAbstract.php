@@ -16,6 +16,7 @@ use a;
 use Exception;
 use IPS\Patterns\Singleton;
 use IPS\storm\Application;
+use IPS\storm\Writers\Traits\Imports;
 use ReflectionNamedType;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -275,7 +276,10 @@ abstract class GeneratorAbstract
         $this->writeBody();
         $this->writeExtra();
         //$this->toWrite = trim($this->toWrite);
-        $this->wrapUp();
+        if (\IPS\IPS::classUsesTrait($this, 'IPS\storm\Writers\Traits\Imports')) {
+            $this->wrapUp();
+        }
+        $this->wrapUp2();
 
         if ($this->delete === true) {
             $this->filesystem->remove($this->saveFileName());
@@ -285,6 +289,8 @@ abstract class GeneratorAbstract
 //            $this->filesystem->
 //        }
 
+
+        $this->toWrite = str_replace('#generator_token_imports#', '', $this->toWrite);
         $this->filesystem->appendToFile($this->saveFileName(), $this->toWrite);
     }
 
@@ -384,7 +390,7 @@ EOF;
         }
     }
 
-    protected function wrapUp(): void
+    protected function wrapUp2(): void
     {
         if ($this->extension === 'php') {
             $replacement = '';
@@ -420,8 +426,6 @@ EOF;
             }
 
             $this->toWrite = str_replace('#generator_token_includes#', $replacement, $this->toWrite);
-
-            $this->toWrite = str_replace('#generator_token_imports#', '', $this->toWrite);
         }
     }
 

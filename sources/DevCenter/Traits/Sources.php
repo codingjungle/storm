@@ -14,20 +14,19 @@ namespace IPS\storm\DevCenter\Traits;
 
 use IPS\Output;
 use IPS\Request;
+use IPS\storm\Form\Element;
+use IPS\storm\Proxy\Generator\Cache;
 use IPS\storm\Proxy\Generator\Store;
 use IPS\storm\Template;
 use IPS\Theme;
-use IPS\storm\Form\Element;
-use IPS\storm\Proxy\Generator\Cache;
 
-use function ksort;
 use function array_shift;
 use function explode;
 use function implode;
+use function ksort;
 use function ltrim;
 use function preg_grep;
 use function preg_quote;
-use function property_exists;
 use function str_replace;
 
 trait Sources
@@ -48,19 +47,6 @@ trait Sources
         ];
 
         $this->doOutput($config, 'standard', 'Standard Class');
-    }
-
-    protected function oauthApi()
-    {
-        $config = [
-            'Namespace',
-            'ClassName',
-            'StrictTypes',
-            'Traits',
-            'Interfaces',
-            (new Element('oauth_message', 'message'))->extra(['css' => 'ipsMessage ipsMessage_error'])
-        ];
-        $this->doOutput($config, 'oauthApi', 'OAUTH API');
     }
 
     protected function doOutput($config, $type, $title)
@@ -84,14 +70,22 @@ trait Sources
             if (Request::i()->isAjax()) {
                 Output::i()->json(['msg' => $return, 'type' => 'dtsources']);
             } else {
-                Output::i()->redirect(Request::i()->url(), $return);
+                Output::i()->redirect(Request::i()->url()->stripQueryString(['do']), $return);
             }
         }
     }
 
-    protected function doDone($msg)
+    protected function oauthApi()
     {
-        Output::i()->output = '<div class="ipsMessage ipsMessage_info">' . $msg . '</div>';
+        $config = [
+            'Namespace',
+            'ClassName',
+            'StrictTypes',
+            'Traits',
+            'Interfaces',
+            (new Element('oauth_message', 'message'))->extra(['css' => 'ipsMessage ipsMessage_error'])
+        ];
+        $this->doOutput($config, 'oauthApi', 'OAUTH API');
     }
 
     protected function debug()
@@ -114,6 +108,11 @@ trait Sources
     {
         $this->elements->type = 'Orm';
         $this->doDone($this->elements->generate());
+    }
+
+    protected function doDone($msg)
+    {
+        Output::i()->output = '<div class="ipsMessage ipsMessage_info">' . $msg . '</div>';
     }
 
     protected function member()
@@ -169,6 +168,9 @@ trait Sources
             'Imports',
             'Database',
             'prefix',
+            'Caches',
+            'CachesName',
+            'CachesEnabled',
             'scaffolding',
             'Interfaces',
             'Traits',
@@ -186,6 +188,9 @@ trait Sources
             'Imports',
             'Database',
             'prefix',
+            'Caches',
+            'CachesName',
+            'CachesEnabled',
             'Scaffolding',
             'SubNode',
             'ItemClass',
@@ -204,6 +209,10 @@ trait Sources
             'Imports',
             'Database',
             'prefix',
+            'Caches',
+            'CachesName',
+
+            'CachesEnabled',
             'Scaffolding',
             'ItemNodeClass',
             'ItemCommentClass',
@@ -223,6 +232,9 @@ trait Sources
             'Imports',
             'Database',
             'prefix',
+            'Caches',
+            'CachesName',
+            'CachesEnabled',
             'Scaffolding',
             'ContentItemClass',
             'CommentInterfaces',
@@ -240,6 +252,9 @@ trait Sources
             'Imports',
             'Database',
             'prefix',
+            'Caches',
+            'CachesName',
+            'CachesEnabled',
             'Scaffolding',
             'ContentItemClass',
             'CommentInterfaces',
@@ -290,7 +305,7 @@ trait Sources
             foreach ($foo as $f) {
                 $return[] = [
                     'value' => str_replace('IPS\\' . Request::i()->appKey . '\\', '', $f),
-                    'html'  => '\\' . $f,
+                    'html' => '\\' . $f,
                 ];
             }
             Output::i()->json($return);
@@ -308,7 +323,7 @@ trait Sources
             foreach ($foo as $f) {
                 $return[] = [
                     'value' => str_replace('IPS\\' . Request::i()->appKey . '\\', '', $f),
-                    'html'  => '\\' . $f,
+                    'html' => '\\' . $f,
                 ];
             }
             Output::i()->json($return);
@@ -327,7 +342,7 @@ trait Sources
             foreach ($foo as $f) {
                 $return[] = [
                     'value' => str_replace('IPS\\' . Request::i()->appKey . '\\', '', $f),
-                    'html'  => '\\' . $f,
+                    'html' => '\\' . $f,
                 ];
             }
             Output::i()->json($return);
@@ -350,7 +365,7 @@ trait Sources
                 $f = implode('\\', $ogClass);
                 $return[$f] = [
                     'value' => $f,
-                    'html'  => '\\IPS\\' . $f,
+                    'html' => '\\IPS\\' . $f,
                 ];
             }
             ksort($return);

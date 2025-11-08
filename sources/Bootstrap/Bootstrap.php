@@ -15,12 +15,22 @@ class Bootstrap extends \IPS\IPS
         'IPS\\Log' => ['ips' => 'system/Log/Log.php', 'hook' => 'Log.php']
     ];
 
+    public static array $constants = [
+        'STORM_MY_APPS' => [],
+    ];
+
     public static function init()
     {
         $vendor = ROOT_PATH . '/applications/storm/sources/Vendor/autoload.php';
         require $vendor;
         \spl_autoload_register(array('\Bootstrap', 'autoloader' ), true, true);
-        \set_exception_handler(array('\Bootstrap', 'exceptionHandler' ));
+//        \set_exception_handler(array('\Bootstrap', 'exceptionHandler' ));
+
+        foreach (static::$constants as $key => $value) {
+            if (!defined($key)) {
+                define($key, $value);
+            }
+        }
     }
 
     /**

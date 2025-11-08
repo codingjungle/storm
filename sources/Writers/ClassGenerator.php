@@ -101,7 +101,7 @@ class ClassGenerator extends GeneratorAbstract
                     $i++;
                 }
             } else {
-                $return = 'array()';
+                $return = '[]';
             }
 
             return $return;

@@ -194,7 +194,6 @@ trait Imports
 
     public function wrapUp(): void
     {
-        parent::wrapUp();
         $replacement = '';
         if (empty($this->imports) !== true) {
             foreach ($this->imports as $import) {

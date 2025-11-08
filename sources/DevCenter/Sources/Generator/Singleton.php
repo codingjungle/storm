@@ -37,14 +37,11 @@ class Singleton extends GeneratorAbstract
         $this->extends = 'Singleton';
         $this->generator->addImport(IPSSingleton::class);
         $extra = [
-            'document' => [
-                '@brief Singleton Instance',
-                '@note This needs to be declared in any child class',
-                '@var static',
-            ],
+            'document' => ['@inheritdocs'],
             'static'   => true,
+            'hint' => '?Singleton'
         ];
 
-        $this->generator->addProperty('instance', null, $extra);
+        $this->generator->addProperty('instance', 'null', $extra);
     }
 }
