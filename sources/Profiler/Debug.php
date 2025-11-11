@@ -258,10 +258,10 @@ class Debug extends ActiveRecord
             }
             $class = $v['class'] ?? '';
             $check = $class.'::'.$v['function'];
-            if(str_contains($check, 'storm\\Profiler\\Debug::log') || str_contains($check, 'IPS\\Log::log') || str_contains($check, 'IPS\\Log::debug'))
-            {
-                continue;
-            }
+//            if(str_contains($check, 'storm\\Profiler\\Debug::log') || str_contains($check, 'IPS\\Log::log') || str_contains($check, 'IPS\\Log::debug'))
+//            {
+//                continue;
+//            }
             $bt[$i] = [
                 'url' => $url,
                 'class' => $class,

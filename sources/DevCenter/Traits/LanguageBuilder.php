@@ -40,7 +40,7 @@ trait LanguageBuilder
      * @param             $value
      * @param Application $application
      */
-    protected function _addToLangs($key, $value, Application $application)
+    protected function addToLangs($key, $value, Application $application)
     {
         $lang = [];
         $dir = \IPS\Application::getRootPath() . "/applications/{$application->directory}/dev/";
@@ -59,12 +59,15 @@ trait LanguageBuilder
             }
 
             $lang[$key] = $value;
-            $body = "<?php\n\n";
-            $body .= "\$lang = " . var_export($lang, true) . ";\n\n";
+            $body = "\$lang = " . var_export($lang, true) . ";\n\n";
 
-            FileGenerator::i()->setFileName('lang')->setPath($dir)->addBody($body)->save();
+            FileGenerator::i()
+                ->setFileName('lang')
+                ->setPath($dir)
+                ->addBody($body)
+                ->save();
         } catch (Exception $e) {
-            Debug::add('Languages Creationg', $e, true);
+            Debug::log($e,'Languages Creationg');
         }
     }
 }

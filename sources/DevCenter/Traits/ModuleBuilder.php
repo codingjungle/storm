@@ -87,10 +87,9 @@ trait ModuleBuilder
             $lang = $application->directory;
         }
 
-        $this->_addToLangs('menutab__' . $application->directory, $lang, $application);
+        $this->addToLangs('menutab__' . $application->directory, $lang, $application);
         $methods = [];
-        $classGenerator = new ClassGenerator();
-        $classGenerator->setClassName($classLower);
+        $classGenerator =  ClassGenerator::i()->setClassName($classLower)->setFileName($classLower);
         if ($type === 'node') {
             $config = [
                 'document' => [
@@ -126,11 +125,13 @@ trait ModuleBuilder
         }
 
         $classGenerator->setExtends($extends);
-        $classGenerator->addUse($extends);
+        $classGenerator->addImport($extends);
 
         $ns = 'IPS\\' . $application->directory . '\\modules\\' . $location . '\\' . $classLower;
         $classGenerator->setNameSpace($ns);
-        $modules = $this->_getModules($application);
+        $path = \IPS\ROOT_PATH . '/applications/' . $application->directory . '/modules/' . $location . '/' . $classLower;
+        $classGenerator->setPath($path);
+        $modules = $this->getModules($application);
         $key = $classLower;
 
         try {
@@ -150,8 +151,8 @@ trait ModuleBuilder
             'protected'          => $module->protected,
         ];
 
-        $this->_addToLangs('menu__' . $application->directory . '_' . $module->key, $module->key, $application);
-        $this->_writeModules($modules, $application);
+        $this->addToLangs('menu__' . $application->directory . '_' . $module->key, $module->key, $application);
+        $this->writeModules($modules, $application);
         $targetDir = \IPS\Application::getRootPath() .
             "/applications/{$application->directory}/modules/{$location}/{$module->key}/";
         $fs = new Filesystem();
@@ -225,7 +226,7 @@ trait ModuleBuilder
         $classGenerator->addClassComments($classLower . ' Class');
         $classGenerator->save();
 
-        $this->_addToLangs(
+        $this->addToLangs(
             'menu__' . $application->directory . '_' . $module->key . '_' . $module->key,
             $module->key,
             $application

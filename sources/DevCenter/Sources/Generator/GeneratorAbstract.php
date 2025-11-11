@@ -86,6 +86,9 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @property ?bool $caches
  * @property array $caches_names
  * @property ?bool $caches_enabled
+ * @property ?string $subnode_class
+ * @property string $icon_storage
+ * @property string $apiType
  */
 #[\AllowDynamicProperties]
 abstract class GeneratorAbstract
@@ -232,7 +235,7 @@ abstract class GeneratorAbstract
                 }
                 $this->database = mb_strtolower($this->database);
             }
-            $this->db = new Database($this->database, $this->prefix);
+            $this->db = new Database($this->database, $this->prefix, $this->application);
         }
 
         if (!in_array($this->type, ['Traits', 'Interfacing'], true)) {
@@ -284,11 +287,6 @@ abstract class GeneratorAbstract
 
         if (in_array($this->type, static::$arDescendent, true)) {
             $this->arDescendantProps();
-
-            if (!in_array($this->type, ['Traits', 'Interfacing'], true)) {
-                $this->mixin = $this->namespace . '\\_' . $this->classname;
-                $this->generator->addMixin($this->mixin);
-            }
         }
 
         $this->bodyGenerator();
@@ -365,7 +363,7 @@ abstract class GeneratorAbstract
                         if ($this->classname_lower !== 'member') {
                             $this->db->add('bitwise');
                         }
-                        $this->db->createTable()->buildSchemaFile($this->database, $this->application);
+                        $this->db->createTable()->buildSchemaFile();
                     } catch (Exception $e) {
                         Debug::log($e, 'Devplus database');
                     }
@@ -421,7 +419,6 @@ abstract class GeneratorAbstract
     {
         $this->generator->addClassComments('@mixin _' . $this->classname);
 
-        //multitons
 
         $this->generator->addProperty(
             'multitons',
@@ -571,9 +568,8 @@ EOF;
             );
         }
         $relations[$this->database] = $this->namespace . '\\' . $this->classname;
-
         FileGenerator::i()
-            ->addClassComments('arRelations')
+            ->setFileName('arRelations')
             ->setExtension('json')
             ->setPath($path)
             ->addBody(
@@ -609,6 +605,7 @@ EOF;
                 'visibility' => T_PUBLIC,
                 'document'   => ['@inheritdocs'],
                 'static'     => true,
+                'hint' => 'string'
             ]
         );
     }
@@ -624,6 +621,7 @@ EOF;
             [
                 'visibility' => T_PROTECTED,
                 'document'   => ['@inheritdocs'],
+                'hint' => 'mixed'
             ]
         );
     }
@@ -647,6 +645,7 @@ EOF;
                 'visibility' => T_PUBLIC,
                 'document'   => ['@inheritdocs'],
                 'static'     => true,
+                'hint' => 'string'
             ]
         );
     }
@@ -666,6 +665,7 @@ EOF;
                 'visibility' => T_PUBLIC,
                 'static'     => true,
                 'document'   => ['@inheritdocs'],
+                'hint' => 'string'
             ]
         );
     }

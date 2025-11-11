@@ -83,7 +83,7 @@ class ClassGenerator extends GeneratorAbstract
 
     protected bool $isAbstract = false;
 
-    public static function convertValue($value): string|int|float
+    public static function convertValue($value): mixed
     {
         if (is_array($value)) {
             $return = var_export($value, true);
@@ -106,7 +106,7 @@ class ClassGenerator extends GeneratorAbstract
 
             return $return;
         } else {
-            $value = trim($value);
+            $value = empty($value) === false ? trim($value) : $value;
         }
 
         if ((int)$value || is_numeric($value)) {
@@ -125,10 +125,11 @@ class ClassGenerator extends GeneratorAbstract
         }
 
         if (
-            mb_strpos($value, '"') === 0 || mb_strpos($value, "'") === 0 || mb_strpos($value, '[') === 0 || mb_strpos(
-                $value,
-                'array'
-            ) === 0 || mb_strpos($value, '::') !== false
+            mb_strpos($value, '"') === 0 ||
+            mb_strpos($value, "'") === 0 ||
+            mb_strpos($value, '[') === 0 ||
+            mb_strpos($value, 'array') === 0 ||
+            mb_strpos($value, '::') !== false
         ) {
             return $value;
         }

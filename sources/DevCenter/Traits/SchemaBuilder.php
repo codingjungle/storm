@@ -16,6 +16,7 @@ use Exception;
 use IPS\Application;
 use IPS\Db;
 use IPS\storm\Profiler\Debug;
+use IPS\storm\Writers\FileGenerator;
 use RuntimeException;
 
 use function array_values;
@@ -32,6 +33,7 @@ use function sprintf;
 use function time;
 
 use const IPS\IPS_FOLDER_PERMISSION;
+use const JSON_PRETTY_PRINT;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -46,13 +48,12 @@ trait SchemaBuilder
     /**
      * builds the database schema from the database after table is created.
      *
-     * @param             $table
-     * @param Application $application
-     *
      * @throws RuntimeException|Db\Exception
      */
-    public function buildSchemaFile($table, Application $application)
+    public function buildSchemaFile(): void
     {
+        $table = $this->table;
+        $application = $this->application;
         try {
             $directory = $application->directory;
             $path = \IPS\Application::getRootPath() . "/applications/{$directory}/";
@@ -72,17 +73,17 @@ trait SchemaBuilder
             }
 
             $file = $path . 'setup/upg_working/queries.json';
-            $queriesJson = [];
-            if (file_exists($file)) {
-                $queriesJson = json_decode(file_get_contents($file), true);
-            }
-
-            $queriesJson = $this->_addQueryToJson($queriesJson, [
+            $queriesJson = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+            $queriesJson = $this->addQueryToJson($queriesJson, [
                 'method' => 'createTable',
                 'params' => [$definition],
             ]);
             $write = array_values($queriesJson);
-            Application::writeJson($path . 'setup/upg_working/queries.json', $write);
+            FileGenerator::i()
+                ->setFileName('queries')
+                ->setExtension('json')
+                ->setPath($path . 'setup/upg_working/')
+                ->addBody(json_encode($write, JSON_PRETTY_PRINT));
 
             Db::i()->update('core_dev', [
                 'last_sync' => time(),
@@ -91,15 +92,17 @@ trait SchemaBuilder
 
             /* Add to schema.json */
             $file = $path . 'data/schema.json';
-            $schema = [];
-            if (file_exists($file)) {
-                $schema = json_decode(file_get_contents($file), true);
-            }
+            $schema = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
             $schema[$definition['name']] = $definition;
 
-            Application::writeJson($path . 'data/schema.json', $schema);
+            FileGenerator::i()
+                ->setFileName('schema')
+                ->setExtension('json')
+                ->setPath($path . 'data/')
+                ->addBody(json_encode($schema, JSON_PRETTY_PRINT))
+                ->save();
         } catch (Exception $e) {
-            Debug::log('Schema Builder', $e);
+            Debug::log($e, 'Schema Builder');
         }
     }
 
@@ -109,7 +112,7 @@ trait SchemaBuilder
      *
      * @return array
      */
-    protected function _addQueryToJson(array $queriesJson, array $query): array
+    protected function addQueryToJson(array $queriesJson, array $query): array
     {
         $added = false;
         $tableName = null;

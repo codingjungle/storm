@@ -164,11 +164,11 @@ trait ClassMethods
             'name'       => $name,
             'abstract'   => $extra['abstract'] ?? false,
             'static'     => $extra['static'] ?? false,
-            'visibility' => $extra['visibility'] ?? 'public',
+            'visibility' => $extra['visibility'] ?? T_PUBLIC,
             'final'      => $extra['final'] ?? false,
-            'document'   => $extra['document'] ?? null,
+            'document'   => $extra['document'] ?? '@inheritdoc',
             'params'     => $params,
-            'returnType' => $extra['returnType'] ?? '',
+            'returnType' => $extra['returnType'] ?? 'void',
             'body'       => $body,
         ];
     }

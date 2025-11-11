@@ -16,10 +16,12 @@ use Exception;
 use IPS\Content\ClubContainer;
 use IPS\Helpers\Form;
 use IPS\Node\Colorize;
+use IPS\Node\DelayedCount;
 use IPS\Node\Icon;
 use IPS\Node\Model;
 use IPS\Node\Permissions;
 use IPS\Node\Ratings;
+use IPS\Node\Statistics;
 
 use function defined;
 use function file_exists;
@@ -33,8 +35,8 @@ use function json_decode;
 use function json_encode;
 
 use const JSON_PRETTY_PRINT;
+use const T_PROTECTED;
 use const T_PUBLIC;
-
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -43,7 +45,6 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 
 class Node extends GeneratorAbstract
 {
-
     protected function addFurl($value, $url)
     {
         $furlFile = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/furl.json';
@@ -80,6 +81,78 @@ class Node extends GeneratorAbstract
         ];
 
         $this->generator->addProperty(
+            'acpController',
+            null,
+            [
+                'visibility' => T_PROTECTED,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
+            ]
+        );
+
+        $this->generator->addProperty(
+            'actionColumnMap',
+            [],
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'array'
+            ]
+        );
+
+        $this->generator->addProperty(
+            'canBeExtended',
+            false,
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'bool'
+            ]
+        );
+        $this->generator->addProperty(
+            'titleLangPrefix',
+            null,
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
+            ]
+        );
+        $this->generator->addProperty(
+            'descriptionLangSuffix',
+            null,
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => '?string'
+            ]
+        );
+        $this->generator->addProperty(
+            'modalForms',
+            false,
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => true,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'bool'
+            ]
+        );
+        $this->generator->addProperty(
+            'noCopyButton',
+            false,
+            [
+                'visibility' => T_PUBLIC,
+                'static'     => false,
+                'document'   => ['@inheritdoc'],
+                'hint' => 'bool'
+            ]
+        );
+        $this->generator->addProperty(
             'application',
             $this->app,
             [
@@ -91,15 +164,25 @@ class Node extends GeneratorAbstract
         );
 
         $this->generator->addProperty(
-        'module',
-        $this->classname_lower,
-        [
+            'ownerTypes',
+            null,
+            [
+                'visibility' => T_PUBLIC,
+                'static' => true,
+                'hint' => '?array'
+            ]
+        );
+
+        $this->generator->addProperty(
+            'module',
+            $this->classname_lower,
+            [
             'visibility' => T_PUBLIC,
             'static'     => true,
             'document'   => ['@inheritdoc'],
             'hint' => 'string'
-        ]
-    );
+            ]
+        );
         $this->databaseColumnParent();
         $this->databaseColumnParentRootValue();
         $this->databaseColumnOrder();
@@ -127,6 +210,18 @@ class Node extends GeneratorAbstract
             ]
         );
 
+        if ($this->subnode_class) {
+            $this->generator->addProperty(
+                'subnodeClass',
+                null,
+                [
+                    'static' => true,
+                    'visibility' => T_PUBLIC,
+                    'hint' => '?string'
+                ]
+            );
+        }
+
         if ($this->content_item_class !== null) {
             $this->nodeItemClass();
         }
@@ -140,80 +235,77 @@ class Node extends GeneratorAbstract
             $this->colorize($dbColumns);
             $this->clubs($dbColumns);
             $this->icon($dbColumns);
+            if (in_array(DelayedCount::class, $this->traits, true)) {
+                $this->generator->addMethod(
+                    'recount',
+                    '//you will need to implement the body of this method',
+                    [],
+                    [
+                        'visibility' => T_PROTECTED,
+                    ]
+                );
+            }
         }
-
-        $doc = [
-            '[Node] Add/Edit Form',
-            '@param \\' . Form::class . ' $form',
-            '@return void',
-        ];
-
-        $params = [
-            ['name' => 'form', 'reference' => true],
-        ];
-        $body = '';
-        $formatValues = 'return $values;';
-        $formClass = '\\IPS\\'.$this->application->directory.'\\Form';
-        if(class_exists($formClass)) {
-            $this->generator->addImport($formClass);
-            $body = '$form = Form::create($form)->setObject($this);';
-
-
-            //lang prefix
-            $doc = [
-                '@brief [Node] Prefix string that is automatically prepended to permission matrix language strings',
-                '@var string',
-            ];
-
-            $this->generator->addProperty(
-                'formPrefix',
-                $this->app . '_' . $this->classname_lower . '_form_',
-                [
-                    'visibility' => T_PUBLIC,
-                    'static'     => true,
-                    'document'   => $doc,
-                ]
-            );
-        }
-
-        $this->generator->addMethod('form', $body, $params, ['document' => $doc]);
-
-        //formatValues
-        $doc = [
-            '[Node] Format form values from add/edit form for save',
-            '@param array $values',
-            '@return array',
-        ];
-
-        $params = [
-            ['name' => 'values'],
-        ];
-        $traitInUse = '\\IPS\\' . $this->application->directory . '\\Traits\\Orm';
-        if (is_array($this->traits) && count($this->traits) && \in_array($traitInUse, $this->traits)) {
-            $formatValues = <<<eof
-        \$this->processBitwise(\$values);
-        return \$values;
-eof;
-        }
-
-        $this->generator->addMethod('formatFormValues', $formatValues, $params, ['document' => $doc]);
         $this->db->addBulk($dbColumns);
-        $this->_addToLangs($this->app . '_' . $this->classname_lower . '_node', $this->classname, $this->application);
+        $this->addToLangs($this->app . '_' . $this->classname_lower . '_node', $this->classname, $this->application);
     }
 
     protected function colorize(&$dbColumns): void
     {
-        if(in_array(Colorize::class, $this->traits, true)){
+        if (in_array(Colorize::class, $this->traits, true)) {
+            $this->generator->addProperty(
+                'featureColumnName',
+                'feature_color',
+                [
+                    'static' => true,
+                    'visibility' => T_PUBLIC,
+                    'hint' => 'string'
+                ]
+            );
             $dbColumns[] = 'feature_color';
         }
     }
 
     protected function icon(&$dbColumns): void
     {
-        if(in_array(Icon::class, $this->traits, true)){
+        if (in_array(Icon::class, $this->traits, true)) {
+            $this->generator->addProperty(
+                'iconColumn',
+                'icon',
+                [
+                    'visibility' => T_PUBLIC,
+                    'static'     => true,
+                    'document'   => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
+            $this->generator->addProperty(
+                'iconFormPrefix',
+                $this->classname_lower . '_icon_',
+                [
+                    'visibility' => T_PUBLIC,
+                    'static'     => false,
+                    'document'   => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
+            $this->generator->addProperty(
+                'iconStorageExtension',
+                $this->icon_storage,
+                [
+                    'visibility' => T_PUBLIC,
+                    'static'     => true,
+                    'document'   => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
             $dbColumns[] = 'icon';
         }
     }
+
 
     protected function databaseColumnParent()
     {
@@ -289,7 +381,7 @@ eof;
     protected function nodeSortable()
     {
         $this->generator->addProperty(
-            'databaseColumnEnabledDisabled',
+            'nodeSortable',
             'true',
             [
                 'visibility' => T_PUBLIC,
@@ -361,6 +453,7 @@ eof;
                         'visibility' => T_PUBLIC,
                         'static'     => true,
                         'document'   => ['@inheritdoc'],
+                        'hint' => '?string'
                     ]
                 );
 
@@ -373,6 +466,7 @@ eof;
                         'visibility' => T_PUBLIC,
                         'static'     => true,
                         'document'   => ['@inheritdoc'],
+                        'hint' => '?string'
                     ]
                 );
 
@@ -393,6 +487,7 @@ eof;
                         'visibility' => T_PUBLIC,
                         'static'     => true,
                         'document'   => ['@inheritdoc'],
+                        'hint' => 'array'
                     ]
                 );
 
@@ -409,6 +504,7 @@ eof;
                         'visibility' => T_PUBLIC,
                         'static'     => true,
                         'document'   => $doc,
+                        'hint' => 'string'
                     ]
                 );
             }
@@ -449,11 +545,6 @@ eof;
     protected function clubs(&$dbColumns)
     {
         if (in_array(ClubContainer::class, $this->traits, false)) {
-            $doc = [
-                'Get the database column which stores the club ID',
-                '@return string',
-            ];
-
             $this->generator->addMethod(
                 'clubIdColumn',
                 'return \'club_id\';',
@@ -461,7 +552,8 @@ eof;
                 [
                     'static'     => true,
                     'visibility' => T_PUBLIC,
-                    'document'   => $doc,
+                    'document'   => '@inheritdoc',
+                    'returnType' => 'string',
                 ]
             );
         }

@@ -160,17 +160,8 @@ trait Properties
 
                 $this->output('$' . $property['name']);
                 $value = $property['value'] ?? null;
-                if (!is_array($value) && $value !== 'array' && $value !== null && $value !== 'null') {
                     $value = trim(ClassGenerator::convertValue($value));
-                    $pType = $property['type'];
                     $this->output(' = ' . $value);
-                } elseif (is_array($value) || $value === 'array') {
-                    $this->output(
-                        ' = []'
-                    );
-                } elseif ($value === 'null') {
-                    $this->output(' = null');
-                }
                 $this->output(";\n");
             }
         }

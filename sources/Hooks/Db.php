@@ -36,7 +36,7 @@ class Db extends \IPS\_Db
         $return = parent::createTable($data);
 
         if (class_exists(\IPS\storm\Proxy::i()::class, true)) {
-            \IPS\storm\Proxy::i()->adjustModel($table);
+           // \IPS\storm\Proxy::i()->adjustModel($table);
         }
 
         return $return;

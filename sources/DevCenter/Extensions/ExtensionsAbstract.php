@@ -24,6 +24,8 @@ use IPS\storm\Shared\Read;
 use IPS\storm\Shared\Replace;
 use IPS\storm\Shared\Write;
 
+use IPS\storm\Writers\FileGenerator;
+
 use function array_pop;
 use function array_values;
 use function count;
@@ -33,10 +35,13 @@ use function explode;
 use function file_exists;
 use function header;
 use function is_array;
+use function json_encode;
 use function mb_strlen;
 use function mb_substr;
 use function str_replace;
 use function uniqid;
+
+use const JSON_PRETTY_PRINT;
 
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -177,9 +182,9 @@ abstract class ExtensionsAbstract
         ];
 
         $replace = [
-            ($this->application->directory !== 'core') ? (" * @subpackage\t" . Member::loggedIn()->language()->get(
-                    "__app_{$this->application->directory}"
-                )) : '',
+            $this->application->directory !== 'core' ?
+                " * @subpackage\t" . lang("__app_{$this->application->directory}") :
+                '',
             date('d M Y'),
             $this->application->directory,
             $this->class,
@@ -194,8 +199,14 @@ abstract class ExtensionsAbstract
 
         $this->content = trim($this->_replace($find, $replace, $content));
         $this->_writeFile($file, $this->content, $dir, false);
-        Application::writeJson(\IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/extensions.json',
-            $this->application->buildExtensionsJson());
+
+
+        FileGenerator::i()
+            ->setFileName('extensions')
+            ->setExtension('json')
+            ->setPath(\IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/')
+            ->addBody(json_encode($this->application->buildExtensionsJson(), JSON_PRETTY_PRINT));
+
     }
 
     /**

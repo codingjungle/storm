@@ -18,13 +18,11 @@ use IPS\Content\Helpful;
 use IPS\Content\IntersectionViewTracking;
 use IPS\Content\Taggable;
 use IPS\Content\ViewUpdates;
-use IPS\core\CustomBadge;
+use IPS\Node\CustomBadge;
 use IPS\Node\DelayedCount;
 use IPS\Node\Grouping;
 use IPS\Node\Icon;
-use IPS\storm\Template;
 use IPS\Theme;
-use IPS\storm\Proxy\Proxyclass;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 use IPS\Member;
@@ -63,12 +61,10 @@ use UnexpectedValueException;
 use IPS\Content\ClubContainer;
 use IPS\storm\ReservedWords;
 use IPS\Content\FuturePublishing;
-use IPS\storm\DevCenter\Sources\Generator\Elements;
 use IPS\storm\DevCenter\Sources\SourcesFormAbstract;
 use IPS\storm\DevCenter\Sources\SourceBuilderException;
 use IPS\storm\DevCenter\Sources\Generator\GeneratorAbstract;
 
-use function _p;
 use function count;
 use function header;
 use function defined;
@@ -80,7 +76,6 @@ use function array_search;
 use function class_exists;
 use function trait_exists;
 use function mb_strtolower;
-use function property_exists;
 use function interface_exists;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -414,7 +409,7 @@ class Sources
         $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
         $ns = Request::i()->{$ns};
         $class = $data;
-        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+        if ($ns && \IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
             $ns = mb_ucfirst($ns);
             $class = mb_ucfirst($class);
         }
@@ -871,7 +866,10 @@ class Sources
             ->label('ips_traits_node')
             ->options(['options' => $traitsNode])
             ->toggles([Icon::class => ['icon_storage']]);
-        $this->form->addElement('icon_storage')->required();
+        $this
+            ->form
+            ->addElement('icon_storage')
+            ->required();
         $this->elTraits();
     }
 

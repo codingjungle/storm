@@ -22,11 +22,11 @@ use IPS\storm\DevCenter\Traits\SchemaBuilder;
 use IPS\storm\Profiler\Debug;
 use IPS\storm\ReservedWords;
 
+use function _p;
 use function array_shift;
 use function count;
 use function defined;
 use function explode;
-use function func_get_args;
 use function header;
 use function is_array;
 use function mb_strtolower;
@@ -76,16 +76,19 @@ class Database
         'indexes' => [],
     ];
 
+    protected ?\IPS\Application $application = null;
+
     /**
      * _Database constructor.
      *
      * @param $table
      * @param $prefixƒ
      */
-    public function __construct(string $table, string $prefix)
+    public function __construct(string $table, string $prefix, \IPS\Application $application)
     {
         $this->table = $table;
         $this->tablePrefix = $prefix;
+        $this->application = $application;
         $this->schema['name'] = $this->table;
         if (!Db::i()->checkForTable($this->table)) {
             $column = $this->buildDefinition(
@@ -133,53 +136,21 @@ class Database
         bool $zerofill = false,
         bool $binary = false
     ): array {
-        $args = func_get_args();
-        return ['column' => $this->createDefinition(... $args)];
-    }
-
-    /**
-     * @param string $name
-     * @param string|null $comment
-     * @param string $type
-     * @param int $length
-     * @param bool $unsigned
-     * @param null $default
-     * @param bool $allow_null
-     * @param bool $auto_increment
-     * @param null $values
-     * @param bool $decimals
-     * @param bool $zerofill
-     * @param bool $binary
-     *
-     * @return array
-     */
-    public function createDefinition(
-        string $name,
-        string $comment = null,
-        string $type = 'VARCHAR',
-        int $length = 20,
-        bool $unsigned = true,
-        mixed $default = null,
-        bool $allow_null = true,
-        bool $auto_increment = false,
-        mixed $values = null,
-        bool $decimals = false,
-        bool $zerofill = false,
-        bool $binary = false
-    ): array {
         return [
-            'name'           => $this->tablePrefix . $name,
-            'type'           => $type,
-            'default'        => $default,
-            'comment'        => $comment,
-            'length'         => $type === 'TEXT' ? null : $length,
-            'unsigned'       => $unsigned,
-            'decimals'       => $decimals,
-            'values'         => $values,
-            'allow_null'     => $allow_null,
-            'zerofill'       => $zerofill,
-            'auto_increment' => $auto_increment,
-            'binary'         => $binary,
+            'column' => [
+                'name'           => $this->tablePrefix . $name,
+                'type'           => $type,
+                'default'        => $default,
+                'comment'        => $comment,
+                'length'         => $type === 'TEXT' ? null : $length,
+                'unsigned'       => $unsigned,
+                'decimals'       => $decimals,
+                'values'         => $values,
+                'allow_null'     => $allow_null,
+                'zerofill'       => $zerofill,
+                'auto_increment' => $auto_increment,
+                'binary'         => $binary,
+            ]
         ];
     }
 
@@ -209,6 +180,7 @@ class Database
      */
     protected function constructSchema(array $schema): void
     {
+
         if (isset($schema['column'])) {
             $this->schema['columns'][$schema['column']['name']] = $schema['column'];
         }
@@ -255,11 +227,11 @@ class Database
     /**
      * checks to see if there is a "predefined" definition for selected column.
      *
-     * @param bool|array|null $name
+     * @param string $name
      *
      * @return bool|array
      */
-    protected function definitions(null|bool|array $name): bool|array
+    protected function definitions(string $name): bool|array
     {
         $name = $this->pascalCase($name);
         if (method_exists($this, $name)) {
@@ -290,7 +262,6 @@ class Database
                 $name .= mb_ucfirst(mb_strtolower($word));
             }
         }
-
         return $name;
     }
 
@@ -299,13 +270,7 @@ class Database
      */
     public function createTable(): static
     {
-        //        try {
         Db::i()->createTable($this->schema);
-        $this->continue = true;
-        //        } catch ( Exception $e ) {
-        //            Log::log( $e );
-        //        }
-
         return $this;
     }
 
@@ -754,7 +719,7 @@ class Database
 
     protected function numHelpful(): array
     {
-        return $this->buildDefinition('num_helpful', 'helpful count.', 'INT', 10, true,0);
+        return $this->buildDefinition('num_helpful', 'helpful count.', 'INT', 10, true, 0);
     }
 
     protected function hiddenReviews(): array
@@ -795,6 +760,5 @@ class Database
     protected function icon(): array
     {
         return $this->buildDefinition('icon', 'Icon field', 'TEXT');
-
     }
 }
