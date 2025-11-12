@@ -275,11 +275,6 @@ EOF;
         return $this;
     }
 
-    public function disableImports(): static
-    {
-        $this->doImports = false;
-        return $this;
-    }
 
     public function addUse($class): static
     {
@@ -317,13 +312,12 @@ EOF;
         } else {
             $og = explode('\\', $extends);
         }
-        if ($import === true && $this->doImports === true && count($og) >= 2) {
+
+        if (count($og) >= 2) {
             $this->addImport($extends);
             $extends = array_pop($og);
         }
-        if (\mb_substr($extends, 0, 3) === 'IPS' && $import === false) {
-            $extends = '\\' . $extends;
-        }
+
         $this->extends = $extends;
         return $this;
     }
@@ -338,17 +332,12 @@ EOF;
      *
      * @return $this
      */
-    public function addInterfaces($interface): static
+    public function addInterfaces(string $interface): static
     {
         if (empty($interface) === false) {
-            if (is_array($interface)) {
-                $og = $interface;
-                $interface = implode('\\', $interface);
-            } else {
-                $og = explode('\\', $interface);
-            }
+            $og = explode('\\', $interface);
 
-            if ($this->doImports === true && count($og) >= 2) {
+            if ( count($og) >= 2) {
                 $this->addImport($interface);
                 $interface = array_pop($og);
             }
@@ -366,7 +355,7 @@ EOF;
         if (empty($this->classUses) === false) {
             foreach ($this->classUses as $use) {
                 {
-                    $this->output("\n\n{$tab}use " . $use . ";\n");
+                    $this->output("{$tab}use " . $use . ";\n");
                 }
             }
         }
@@ -397,7 +386,7 @@ EOF;
         if (empty($this->interfaces) !== true) {
             $this->output(" implements \n" . implode(",\n", $this->interfaces));
         }
-        $this->output("\n{");
+        $this->output("\n{\n");
     }
 
     public function isAbstract(): bool

@@ -1,7 +1,6 @@
 <ips:template parameters="$appKey, $menus, $controller,$start, $active = null, $content=null"/>
 
 <div class="ipsPad ipsClearfix stormColumns">
-
     <div class="stormColumnLarge">
     <i-tabs class="ipsTabs" id="elTabs_{$controller}_{$appKey}_tabs" data-ipstabbar data-ipstabbar-contentarea="#elTabs_{$controller}_{$appKey}_tabs_content" data-ipstabbar-defaultTab="#elTab_{$controller}_{$appKey}_tab_{{if $active === null}}{$start}{{else}}{$active}{{endif}}" data-ipstabbar-updateURL="false">
         <div role="tablist">

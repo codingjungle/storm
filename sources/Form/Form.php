@@ -896,6 +896,12 @@ class Form extends ipsForm
                 $name = Member::loggedIn()->language()->addToStack($name, false, ['sprintf' => $sprintf]);
             }
         }
+
+        if ($element->getProp('label')) {
+            $label = $element->getProp('label');
+            $name = lang($label['key'], false, ['sprintf' => $label['sprintf']]);
+        }
+
         $css = $extra['css'] ?? '';
         $id = $extra['id'] ?? '';
         if (!isset($this->messagesExist[$id])) {
@@ -1255,7 +1261,7 @@ class Form extends ipsForm
     {
         try {
             $this->addHeaders($lang, $after, $tab);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Debug::log($e);
         }
     }

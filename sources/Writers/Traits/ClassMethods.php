@@ -91,22 +91,22 @@ trait ClassMethods
                 }
 
                 if (isset($method['static']) && $method['static'] === true) {
-                    $static = ' static';
+                    $static = 'static ';
                 }
 
                 $visibility = $method['visibility'];
 
                 if ($visibility === T_PUBLIC) {
-                    $visibility = 'public';
+                    $visibility = 'public ';
                 } elseif ($visibility === T_PROTECTED) {
-                    $visibility = 'protected';
+                    $visibility = 'protected ';
                 } elseif ($visibility === T_PRIVATE) {
-                    $visibility = 'private';
+                    $visibility = 'private ';
                 } else {
-                    $visibility = 'public';
+                    $visibility = null;
                 }
 
-                $this->output($this->tab . $abstract . $final . $visibility . $static . ' function ' . $name . '(');
+                $this->output($this->tab . $abstract . $final . $visibility . $static . 'function ' . $name . '(');
 
                 if (empty($method['params']) !== true && is_array($method['params'])) {
                     $this->writeParams($method['params']);
@@ -114,23 +114,21 @@ trait ClassMethods
 
                 $this->output(')');
 
-                if (isset($method['returnType']) && $method['returnType']) {
+                if (isset($method['returnType']) && $method['returnType'] !== 0) {
                     $this->output(': ' . $method['returnType']);
                 }
 
                 $body = $this->replaceMethods[$name] ?? trim($method['body']);
-                if ($abstract === null) {
-                    $wrap = false;
-                    if (mb_strpos($body, '{') !== 0) {
-                        $wrap = true;
-                    }
 
-                    $this->output("{\n\n{$this->tab}{$this->tab}");
-                    $this->output('' . $body . '');
+                if ($abstract === null) {
+                    $this->output("\n{$this->tab}{\n");
+                    $this->output($this->tab . $this->tab);
+                    $this->output($body);
                     $this->output("\n{$this->tab}}");
                 } else {
                     $this->output(";");
                 }
+
                 if (isset($this->afterMethod[$name])) {
                     $this->output("\n");
 
@@ -142,12 +140,12 @@ trait ClassMethods
         }
     }
 
-    public function writeParams(array $params ): void
+    public function writeParams(array $params): void
     {
-            $this->output(' ');
-            $built = $this->buildParams($params);
-            $this->output($built);
-            $this->output(' ');
+        $this->output(' ');
+        $built = $this->buildParams($params);
+        $this->output($built);
+        $this->output(' ');
     }
 
     /**

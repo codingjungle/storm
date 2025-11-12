@@ -36,7 +36,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  */
 class sources extends DeveloperController
 {
-    use \IPS\storm\DevCenter\Traits\Sources;
+    use \IPS\storm\Center\Traits\Sources;
     /**
      * @var bool
      */
@@ -47,7 +47,7 @@ class sources extends DeveloperController
     protected ?Application $application = null;
 
     /**
-     * @var \IPS\storm\DevCenter\Sources
+     * @var \IPS\storm\Center\Sources
      */
     protected $elements;
     protected $front = false;
@@ -60,7 +60,7 @@ class sources extends DeveloperController
             $app = 'core';
         }
         $this->application = Application::load($app);
-        $this->elements = new \IPS\storm\DevCenter\Sources($this->application);
+        $this->elements = new \IPS\storm\Center\Sources($this->application);
         parent::execute($command);
         $og = Output::i()->sidebar['actions']['apps'];
         $newMenus = [];

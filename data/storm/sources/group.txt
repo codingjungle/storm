@@ -1,0 +1,79 @@
+
+    /**
+     * @inheritdoc
+     */
+    protected static array $multitons;
+
+    /**
+     * @inheritdoc
+     */
+    protected static array $multitonMap;
+
+    /**
+     * @inheritdoc
+     */
+    public static ?string $databaseTable = '#databaseTable#';
+
+    /**
+     * @inheritdoc
+     */
+    public static string $databasePrefix = '#databasePrefix#';
+
+    /**
+     * @inheritdoc
+     */
+    public static array $bitOptions = [
+        'bits' => [
+            'bits' => []
+        ]
+    ];
+
+    public static function getForm(&$form, \IPS\Member\Group $group): static
+    {
+        $gid = $group->g_id;
+        try {
+            $groupSettings = static::load($gid);
+        } catch (Exception $e) {
+            $groupSettings = new static();
+            $groupSettings->gid = $gid;
+            $groupSettings->save();
+        }
+
+        return $groupSettings;
+    }
+
+    public static function saveForm(array $values, &$group)
+    {
+        $gid = $group->g_id;
+        try {
+            $groupSettings = static::load($gid);
+        } catch (Exception) {
+            $groupSettings = new static();
+            $groupSettings->gid = $gid;
+            $groupSettings->save();
+        }
+
+        $groupSettings->save();
+    }
+
+    public static function settings(?Member $member = null): array
+    {
+        $member = $member ?? Member::loggedIn();
+        $return = [];
+        $groups = $member->groups;
+        foreach ($groups as $group) {
+            try {
+                $group = static::load($group);
+                foreach (static::$bitOptions['bits']['bits'] as $name => $val) {
+                    $setting = '#app#_' . $name;
+                    if (isset($return[$setting]) && $return[$setting] === true) {
+                        continue;
+                    }
+                    $return[$setting] = $group->bits[$name];
+                }
+            } catch (Exception) {
+                continue;
+            }
+        }
+        return $return;
+    }

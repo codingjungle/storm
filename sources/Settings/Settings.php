@@ -72,9 +72,6 @@ class Settings extends \IPS\Settings
     public const STRINGS = [
     ];
 
-    public const MIXED = [
-    ];
-
     protected static ?Singleton $instance = null;
 
     public function __get($key): mixed
@@ -133,7 +130,7 @@ class Settings extends \IPS\Settings
             }
 
             return $return;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
         }
 
         return null;

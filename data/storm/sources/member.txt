@@ -1,0 +1,104 @@
+
+    /**
+     * @inheritdoc
+     */
+    protected static array $multitons = [];
+
+    /**
+     * @brief Merged Group Permissions
+     * @var array
+     */
+    protected array $myGroups = [];
+
+    /**
+     * @inheritdoc
+     */
+    protected static array $multitonMap = [];
+
+    /**
+     * @inheritdoc
+     */
+    public static ?IPSMember $loggedInMember = null;
+
+    /**
+     * @brief table name of your member table
+     * @var string
+     */
+    public static string $altDatabaseTable = '#databaseTable#';
+
+    /**
+     * @brief prefix of your apps member table
+     * @var string
+     */
+    public static string $altPrefix = '#databasePrefix#';
+
+    /**
+     * @brief the id of your record row, without the table's prefix
+     * @var string
+     */
+    public static string $altIdField = 'id';
+
+    /**
+     * @inheritdoc
+     */
+    public static function loggedIn(): ?IPSMember
+    {
+        if (static::$loggedInMember === null) {
+            static::$loggedInMember = static::load(parent::loggedIn()->member_id);
+        }
+
+        return static::$loggedInMember;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function constructLoadQuery(int|string $id, string $idField, mixed $extraWhereClause): Select
+    {
+        return parent::constructLoadQuery($id, $idField, $extraWhereClause)->join(
+            static::$altDatabaseTable,
+            static::$altDatabaseTable . '.' . static::$altPrefix . static::$altIdField . '=core_members.member_id'
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function load(int|string|null $id, string $idField = null, mixed $extraWhereClause = null): ActiveRecord|static
+    {
+        /** @var static $member */
+        $member = parent::load($id, $idField, $extraWhereClause);
+        $field = static::$altPrefix . static::$altIdField;
+
+        if (!(int)$member->{$field} && $member->member_id !== null) {
+            $member->{$field} = $member->member_id;
+            $member->save();
+        }
+
+        return $member;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save(): void
+    {
+        if ($this->member_id !== null) {
+            $data = $this->_data;
+            $table = [];
+            foreach (!$this->_new ? $this->_data : $this->changed as $k => $v) {
+                if (mb_strpos(trim($k), static::$altPrefix) === 0) {
+                    $table[$k] = $v;
+                    unset($this->_data[$k], $this->changed[$k]);
+                }
+            }
+
+            parent::save();
+            $data['member_id'] = $this->_data['member_id'];
+            $this->_data = $data;
+            if (empty($table) === false) {
+                $table[static::$altPrefix . static::$altIdField] = $this->member_id;
+                Db::i()->insert(static::$altDatabaseTable, $table, true);
+            }
+        }
+    }

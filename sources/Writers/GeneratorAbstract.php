@@ -526,7 +526,7 @@ EOF;
                 }
 
                 $hint = $param['hint'];
-                if ($doImports === true && method_exists($this, 'addImport')) {
+                if (method_exists($this, 'addImport')) {
                     try {
                         if ($hint instanceof ReflectionNamedType) {
                             $hint = $hint->getName();

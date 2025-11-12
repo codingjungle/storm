@@ -41,11 +41,11 @@ trait Properties
         $this->properties[$name] = [
             'name'       => $name,
             'value'      => $value,
-            'document'   => $extra['document'] ?? null,
+            'document'   => $extra['document'] ?? ['@inheritdoc'],
             'static'     => $extra['static'] ?? false,
             'visibility' => $extra['visibility'] ?? T_PUBLIC,
             'type'       => $extra['type'] ?? 'string',
-            'hint'       => $extra['hint'] ?? null,
+            'hint'       => $extra['hint'] ?? 'string',
         ];
         return $this;
     }
@@ -134,18 +134,12 @@ trait Properties
 
                 if ($visibility === T_PUBLIC) {
                     $visibility = 'public ';
-                } else {
-                    if ($visibility === T_PROTECTED) {
-                        $visibility = 'protected ';
-                    } else {
-                        if ($visibility === T_PRIVATE) {
-                            $visibility = 'private ';
-                        } else {
-                            if ($visibility === null) {
-                                $visibility = 'public ';
-                            }
-                        }
-                    }
+                } elseif ($visibility === T_PROTECTED) {
+                    $visibility = 'protected ';
+                } elseif ($visibility === T_PRIVATE) {
+                    $visibility = 'private ';
+                } elseif ($visibility === null) {
+                    $visibility = '';
                 }
 
                 $this->output($visibility);

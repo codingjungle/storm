@@ -101,8 +101,8 @@ $lang = array(
     'storm_devcenter_item_node_class' => 'Item Node Class',
     'storm_devcenter_comment_class' => 'Comment Class',
     'storm_devcenter_review_class' => 'Review Class',
-    'storm_devcenter_interface_implements_item' => 'Interface Items implements',
-    'storm_devcenter_ips_traits_item' => 'Trait Items',
+    'storm_devcenter_interface_implements_item' => 'IPS Interface',
+    'storm_devcenter_ips_traits_item' => 'IPS Traits',
     'storm_devcenter_content_item_class' => 'Item Class',
     'storm_devcenter_strict_types' => 'Strict Type',
     'storm_devcenter_strict_types_desc' => 'Adds in declare(strict_types=1); to your class file.',
@@ -293,6 +293,9 @@ $lang = array(
     'storm_devcenter_caches_enabled' => 'Load From Cache',
     'storm_devcenter_caches_enabled_desc' => 'If yes, will set the static property $loadFromCache to true.',
     'storm_devcenter_caches_names' => 'Cache Names',
+    'storm_devcenter_debug_message2' => 'This will create a special Profiler Debug class for you app, which will allow you to keep debug messages in your app and use a special constant (%s) to enable/disable them.',
+    'storm_devcenter_orm_message' => 'This will add a trait you can add to ActiveRecords/Nodes/Content Items/Comments & Review classes, that will add some additional functionality that you might find useful.',
+    'storm_devcenter_member_message' => 'This will create a special Member class and database table for your app, similar to the one found in Nexus. It will also created a Groups class/Database that can be used with the GroupForm Extension to create group settings for your app.'
 
 
 

@@ -15,13 +15,16 @@ namespace IPS\storm\Writers\Traits;
 use Exception;
 use InvalidArgumentException;
 
+use function _p;
 use function array_pop;
 use function class_exists;
 use function count;
 use function explode;
+use function interface_exists;
 use function mb_strtolower;
 use function mb_substr;
 use function str_replace;
+use function trait_exists;
 
 trait Imports
 {
@@ -113,19 +116,22 @@ trait Imports
         if ($continue) {
             $import = ltrim($import, '\\');
         }
+
+        $exists = $this->existsCheck($import);
+
         if (
             $continue === true &&
             (
                 $import === 'Throwable' ||
                 $import === '\\Throwable' ||
-                class_exists($import) ||
-                class_exists('\\' . $import)
+                $exists === true
             ) &&
             $this->checkForImport($class) === false &&
             $this->checkForImport($alias) === false
         ) {
             $this->imports[$hash] = ['class' => $import, 'alias' => $alias];
         }
+
         if (
             $continue === true &&
             $return !== $import &&
@@ -135,15 +141,44 @@ trait Imports
             $this->imports[$hash] = ['class' => $import, 'alias' => $alias];
         }
 
-        if ($return === $import && count(explode('\\', $import)) >= 2) {
+        if (
+            $return === $import &&
+            count(explode('\\', $import)) >= 2
+        ) {
             $check = mb_substr($return, 0, 1);
             if ($check !== '\\') {
                 $return = '\\' . $return;
             }
         }
+
         return $return;
     }
 
+    protected function existsCheck($class): bool
+    {
+        if (
+            class_exists($class) ||
+            class_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        if (
+            interface_exists($class) ||
+            interface_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        if (
+            trait_exists($class) ||
+            trait_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
     public function canMakeImport($class): mixed
     {
         $nsClass = explode('\\', $class);
