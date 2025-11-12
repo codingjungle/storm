@@ -14,6 +14,8 @@ use IPS\storm\Application;
 use IPS\storm\DevFolder\Applications;
 use IPS\storm\Form;
 
+use IPS\storm\Tpl;
+
 use function array_pop;
 use function defined;
 use function file_exists;
@@ -92,8 +94,15 @@ class devfolder extends DeveloperController
             Output::i()->redirect($url->setQueryString(['do' => 'queue', 'appKey' => $values['appKey']]));
         }
 
+        Tpl::op(
+            $form,
+            [
+                'storm_devcenter_devfolder_landing',
+                false,
+                ['sprintf' => [$this->application->get__formattedTitle()]]
+            ]
+        );
 //        Output::i()->title = lang('storm_devfolder_title');
-        Output::i()->output = $form;
     }
 
     protected function queue()

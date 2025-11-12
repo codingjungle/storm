@@ -36,13 +36,21 @@ trait Assets
     {
 
         $menus = \IPS\storm\Center\Sources::processedSubMenus();
-        Output::i()->output = Tpl::get('devcenter.storm.global')
+        $output = Tpl::get('devcenter.storm.global')
             ->sources(
                 $this->application->directory,
                 $menus['assets'],
                 'assets',
                 'widget',
             );
+        Tpl::op(
+            $output,
+            [
+                'storm_devcenter_assets_landing',
+                false,
+                ['sprintf' => [$this->application->get__formattedTitle()]]
+            ]
+        );
     }
 
     protected function template()
@@ -65,7 +73,7 @@ trait Assets
 
             if ($this->elements->form->valuesError === true) {
                 $alt = $this->alt ?? $type;
-                Output::i()->output = Tpl::get('devcenter.storm.global')->sources(
+                $output = Tpl::get('devcenter.storm.global')->sources(
                     $this->application->directory,
                     \IPS\storm\Center\Sources::processedSubMenus()['assets'],
                     'assets',
@@ -73,8 +81,24 @@ trait Assets
                     $alt,
                     $output
                 );
+
+                Tpl::op(
+                    $output,
+                    [
+                        'storm_devcenter_assets_landing',
+                        false,
+                        ['sprintf' => [$this->application->get__formattedTitle()]]
+                    ]
+                );
             } elseif ($return === null) {
-                Output::i()->output = $output;
+                Tpl::op(
+                    $output,
+                    [
+                        'storm_devcenter_assets_landing',
+                        false,
+                        ['sprintf' => [$this->application->get__formattedTitle()]]
+                    ]
+                );
             } else {
                 if (Request::i()->isAjax()) {
                     Output::i()->json(['msg' => $return, 'type' => 'dtsources']);

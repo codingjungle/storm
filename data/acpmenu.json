@@ -34,6 +34,14 @@
       "restriction": null,
       "subcontrollers": "",
       "callback": "return \\IPS\\IN_DEV;"
+    },
+    "other": {
+      "tab": "developer",
+      "controller": "other",
+      "do": "",
+      "restriction": null,
+      "subcontrollers": "",
+      "callback": "return \\IPS\\IN_DEV;"
     }
   }
 }

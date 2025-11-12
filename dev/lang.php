@@ -321,6 +321,14 @@ $lang = array(
     'storm_devcenter_assets_mixin' => 'Controller',
     'storm_devcenter_asset_key' => 'Hint',
     'storm_devcenter_asset_value' => 'Argument',
+    'menu__storm_developer_other' => 'Other',
+    'storm_other_landing' => '%1$s - DevCenter+ : Other Tools',
+    'storm_devcenter_assets_landing' => '%1$s - DevCenter+ : Assets',
+    'storm_devcenter_sources_landing' => '%1$s - DevCenter+ : Sources',
+    'storm_devcenter_devfolder_landing' => '%1$s - DevCenter+ : Dev Folder Generator',
+    'storm_devcenter_other_index_html' => 'Generate empty index.html',
+    'storm_devcenter_other_index_html_alert' => 'This will generate empty index.html files in your directories if one doesn\'t already exist.',
+    'storm_devcenter_other_index_html_success' => 'Successfully generated empty index.html files in your directories.',
 
 
 );

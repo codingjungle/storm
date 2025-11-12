@@ -53,70 +53,16 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  *
  * @package IPS\storm\Center
  */
-class Headerdoc extends \IPS\Patterns\Singleton
+class Headerdoc
 {
-
-    /**
-     * @inheritdoc
-     */
-    protected static ?\IPS\Patterns\Singleton $instance = NULL;
-
+    protected ?Application $application = null;
     /**
      * _Headerdoc constructor.
      */
-    public function __construct()
+    public function __construct( Application $application)
     {
+        $this->application = $application;
         \IPS\storm\Application::loadAutoLoader();
-    }
-
-    /**
-     * Adds a blank index.html to the directories, so its not as easy to view what is in the directory
-     *
-     * @param Application $app
-     */
-    public function addIndexHtml(Application $app)
-    {
-        $continue = false;
-
-        foreach ($app->extensions('storm', 'Headerdoc', true) as $class) {
-            if (method_exists($class, 'indexEnabled')) {
-                $continue = $class->indexEnabled();
-            }
-        }
-
-        if (!$continue) {
-            return;
-        }
-
-        $exclude = [
-            '.git',
-            '.idea',
-            'dev',
-        ];
-
-        try {
-            $finder = new Finder();
-            $dir = \IPS\Application::getRootPath() . '/applications/' . $app->directory;
-            $filter = function (SplFileInfo $file) use ($exclude) {
-                if (!in_array($file->getExtension(), $exclude, true)) {
-                    return true;
-                }
-
-                return false;
-            };
-
-            $finder->in($dir)->filter($filter)->directories();
-
-            foreach ($finder as $iter) {
-                if ($iter->isDir()) {
-                    $path = $iter->getPathname();
-                    if (!file_exists($path . '/index.html')) {
-                        file_put_contents($path . '/index.html', '');
-                    }
-                }
-            }
-        } catch (Exception $e) {
-        }
     }
 
     /**
@@ -128,13 +74,9 @@ class Headerdoc extends \IPS\Patterns\Singleton
      * @throws InvalidArgumentException
      * @throws RuntimeException
      */
-    public function process(Application $app)
+    public function process()
     {
-        if (!$this->can($app)) {
-            return;
-        }
-
-        $subpackage = Member::loggedIn()->language()->get("__app_{$app->directory}");
+        $subpackage = Member::loggedIn()->language()->get("__app_{$this->application->directory}");
 
         $directory = [
             'hooks',
@@ -151,10 +93,11 @@ class Headerdoc extends \IPS\Patterns\Singleton
             '.idea',
         ];
 
-        $since = $app->version;
+        $since = $this->application->version;
 
         /* @var \IPS\storm\Center\extensions\storm\Center\Headerdoc\Headerdoc $class */
-        foreach ($app->extensions('storm', 'Headerdoc', true) as $class) {
+        foreach ($this->application->extensions('storm', 'Headerdoc', false) as $extension) {
+            $class = new $extension($this->application);
             if (method_exists($class, 'filesSkip')) {
                 $class->filesSkip($files);
             }
@@ -166,7 +109,7 @@ class Headerdoc extends \IPS\Patterns\Singleton
                 $isProto = ($reflector->getDeclaringClass()->getName() !== get_class($class));
 
                 if ($isProto) {
-                    $since = $class->since($app);
+                    $since = $class->since();
                 }
             } catch (Exception $e) {
             }
@@ -177,13 +120,13 @@ class Headerdoc extends \IPS\Patterns\Singleton
         }
 
         $finder = new Finder();
-        $dir = \IPS\Application::getRootPath() . '/applications/' . $app->directory;
+        $dir = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory;
 
 
         $finder->in($dir)->name('*.php')->notName('Application.php');
 
         foreach ($directory as $dirs) {
-            $finder->notPath($dirs);
+            $finder->exclude($dirs);
         }
 
         foreach ($files as $file) {
@@ -195,33 +138,13 @@ class Headerdoc extends \IPS\Patterns\Singleton
         foreach ($finder as $file) {
             $filePath = $file->getRealPath();
             $line = $file->getContents();
-            $this->build($filePath, $line, $app, $subpackage, $since);
+            $this->build($filePath, $line, $subpackage, $since);
         }
     }
 
-    /**
-     * checks to see if an application can run the headerdoc.
-     *
-     * @param Application $app
-     *
-     * @return bool
-     */
-    public function can(Application $app): bool
+    public function build($filePath, $line, $subpackage, $since)
     {
-        $continue = false;
-
-        /* @var \IPS\storm\Center\extensions\storm\Center\Headerdoc\Headerdoc $class */
-        foreach ($app->extensions('storm', 'Headerdoc', true) as $class) {
-            if (method_exists($class, 'enabled')) {
-                $continue = $class->enabled();
-            }
-        }
-
-        return $continue;
-    }
-
-    public function build($filePath, $line, $app, $subpackage, $since)
-    {
+        $app = $this->application;
         try {
             $regex = '#extends([^{]+)?#u';
 
@@ -231,7 +154,6 @@ class Headerdoc extends \IPS\Patterns\Singleton
             if (isset($section[0])) {
                 preg_match('#@since([^\n]+)?#', $section[0], $sinced);
             }
-
 
             if (!isset($sinced[1])) {
                 preg_match("#^.+?\s(?=namespace)#s", $line, $section);
@@ -274,7 +196,8 @@ class Headerdoc extends \IPS\Patterns\Singleton
                     $brief = str_replace(' ', '', trim($brief[1]));
                 }
 
-                $replacement = file_get_contents(\IPS\Application::getRootPath() . '/applications/storm/data/defaults/headerDoc.txt');
+                $replacement = file_get_contents(
+                    \IPS\Application::getRootPath() . '/applications/storm/data/storm/headerDoc.txt');
                 $replacement = str_replace(
                     ['{brief}', '{subpackage}', '{since}'],
                     [
@@ -287,67 +210,51 @@ class Headerdoc extends \IPS\Patterns\Singleton
                 $line = preg_replace("#^.+?\s(?=namespace)#s", "<?php\n\n$replacement\n\n", $line);
 
                 file_put_contents($filePath, $line);
-            } else {
-                $write = false;
-
-                $line = preg_replace_callback(
-                    "#^.+?\s(?=namespace)#s",
-                    function ($m) use (&$write, $since) {
-                        $line = $m[0];
-                        preg_match('#@since([^\n]+)?#', $line, $since);
-
-                        if (isset($since[1]) && trim($since[1]) === '-storm_since_version-') {
-                            $write = true;
-                            $since = <<<EOF
-@author      {$since[1]}
-EOF;
-                            $line = preg_replace('#@author([^\n]+)?#', $since, $line);
-                        }
-                        //author
-                        preg_match('#@author([^\n]+)?#', $line, $auth);
-
-                        if (isset($auth[1]) && trim($auth[1]) !== '-storm_author-') {
-                            $write = true;
-                            $author = <<<EOF
-@author      -storm_author-
-EOF;
-                            $line = preg_replace('#@author([^\n]+)?#', $author, $line);
-                        }
-
-//                        //version
-//                        preg_match('#@version([^\n]+)?#', $line, $ver);
-//
-//                        if (isset($ver[1]) && trim($ver[1]) !== '-storm_version-') {
-//                            $write = true;
-//                            $ver = <<<EOF
-//@version     -storm_version-
-//EOF;
-//                            $line = preg_replace('#@version([^\n]+)?#', $ver, $line);
-//                        }
-
-                        //copyright
-                        preg_match('#@copyright([^\n]+)?#', $line, $cp);
-
-                        if (isset($cp[1]) && trim($cp[1]) !== '-storm_copyright-') {
-//                            $write = true;
-//                            $cpy = <<<EOF
-//@copyright   -storm_copyright-
-//EOF;
-//                            $line = preg_replace('#@copyright([^\n]+)?#', $cpy, $line);
-                            $line = '';
-                        }
-
-                        return $line;
-                    },
-                    $line
-                );
-
-                if ($write) {
-                    file_put_contents($filePath, $line);
-                }
             }
+//            else {
+//                $write = false;
+//
+//                $line = preg_replace_callback(
+//                    "#^.+?\s(?=namespace)#s",
+//                    function ($m) use (&$write, $since, $app) {
+//                        $line = $m[0];
+//
+//                        if(empty($app->author) === false) {
+//                            //author
+//                            preg_match('#@author([^\n]+)?#', $line, $auth);
+//
+//                            if (isset($auth[1]) && trim($auth[1]) !== '-storm_author-') {
+//                                $write = true;
+//                                $author = <<<EOF
+//@author      {$this->application->author}
+//EOF;
+//                                $line = preg_replace('#@author([^\n]+)?#', $author, $line);
+//                            }
+//                        }
+//
+//                        //copyright
+//                        preg_match('#@copyright([^\n]+)?#', $line, $cp);
+//
+//                        if (isset($cp[1]) && trim($cp[1]) !== '-storm_copyright-') {
+////                            $write = true;
+////                            $cpy = <<<EOF
+////@copyright   -storm_copyright-
+////EOF;
+////                            $line = preg_replace('#@copyright([^\n]+)?#', $cpy, $line);
+//                            $line = '';
+//                        }
+//
+//                        return $line;
+//                    },
+//                    $line
+//                );
+//
+//                if ($write) {
+//                    file_put_contents($filePath, $line);
+//                }
+//            }
         } catch (Exception $e) {
-            Debug::add('foo', $e);
+            Debug::log( $e);
         }
     }
 }

@@ -28,6 +28,9 @@
 
                 config.type = options.type;
                 config.message = options.msg;
+                if(_.isUndefined(options.url) && !_.isUndefined(el.attr('href'))){
+                    options.url = el.attr('href');
+                }
                 switch(config.type){
                     case 'confirm':
                         config.icon = 'question';

@@ -14,6 +14,8 @@ namespace IPS\storm\Center\Headerdoc;
 
 use DateTime;
 
+use IPS\Application;
+
 use function defined;
 use function header;
 use function preg_replace;
@@ -26,7 +28,11 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 
 class HeaderdocAbstract
 {
-
+    protected ?Application $application = null;
+    public function __construct(Application $application)
+    {
+        $this->application = $application;
+    }
     /**
      * finalize header Doc
      *
@@ -35,27 +41,24 @@ class HeaderdocAbstract
      *
      * @return string|string[]|null
      */
-    public function finalize($line, $application)
+    public function finalize( string $line): string
     {
-        $line = preg_replace_callback("#^.+?\s(?=namespace)#s", function ($m) use ($application) {
+        $application = $this->application;
+        return preg_replace_callback("#^.+?\s(?=namespace)#s", function ($m) use ($application) {
             $line = $m[0];
             $author = "<a href='" . $application->website . "'>" . $application->author . "</a>";
             $line = preg_replace('#@author([^\n]+)?#', "@author      {$author}", $line);
             $copyright = "(c) " . (new DateTime())->format("Y") . " " . $application->author;
             $line = preg_replace('#@copyright([^\n]+)?#', "@copyright   {$copyright}", $line);
-            $line = preg_replace('#@version([^\n]+)?#', "@version     {$application->version}", $line);
-
-            return $line;
+            return preg_replace('#@version([^\n]+)?#', "@version     {$application->version}", $line);
         }, $line);
-
-        return $line;
     }
 
     /**
      * since version, shouldn't be used unless you want the "since" version to change
      **/
-    public function since($application)
+    public function since()
     {
-        return $application->version;
+        return $this->application->version;
     }
 }

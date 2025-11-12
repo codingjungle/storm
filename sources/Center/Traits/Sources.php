@@ -384,11 +384,21 @@ trait Sources
     protected function manage(): void
     {
         $menus = \IPS\storm\Center\Sources::processedSubMenus();
-        Output::i()->output = Tpl::get('devcenter.storm.global')->sources(
+        $output = Tpl::get('devcenter.storm.global')->sources(
             $this->application->directory,
             $menus['sources'],
             'sources',
             'standard'
+        );
+
+
+        Tpl::op(
+            $output,
+            [
+                'storm_devcenter_sources_landing',
+                false,
+                ['sprintf' => [$this->application->get__formattedTitle()]]
+            ]
         );
     }
 }

@@ -48,7 +48,7 @@ class Template extends CompilerAbstract
             }
         }
 
-        $params = empty($params) === false ? implode(',', $params) : null;
+        $params = empty($params) === false ? implode(',', $params) : '';
 
         return $this->replace('{params}', $params, $this->getFile('template'));
     }
