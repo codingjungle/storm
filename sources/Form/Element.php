@@ -53,6 +53,8 @@ use IPS\Helpers\Form\SocialGroup;
 use IPS\Helpers\Form\WidthHeight;
 use IPS\Helpers\Form\FormAbstract;
 use IPS\Helpers\Form\Translatable;
+use \IPS\storm\Form\Arguments;
+
 use function header;
 use function defined;
 use function explode;
@@ -137,7 +139,8 @@ class Element
         'widthheight' => WidthHeight::class,
         'wh' => WidthHeight::class,
         'yn' => YesNo::class,
-        'yesno' => YesNo::class
+        'yesno' => YesNo::class,
+        'args' => Arguments::class,
     ];
 
     public static $nonHelpers = [

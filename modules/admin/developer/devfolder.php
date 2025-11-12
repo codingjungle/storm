@@ -34,7 +34,7 @@ class devfolder extends DeveloperController
     /**
      * @brief    Has been CSRF-protected
      */
-    public static $csrfProtected = true;
+    public static bool $csrfProtected = true;
     /**
      * Execute
      *

@@ -1,0 +1,12 @@
+;( function($, _, undefined){
+    "use strict";
+    ips.createModule('{module}', () => {
+        // Functions that become public methods
+        var init = () => {};
+
+        // Expose public methods
+        return {
+            init: init,
+        }
+    });
+}(jQuery, _));

@@ -233,7 +233,7 @@ class Sources
                 'form',
                 'orm'
             ],
-            'dev' => [
+            'assets' => [
                 'template',
                 'widget',
                 'module',

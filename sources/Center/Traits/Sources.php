@@ -17,7 +17,6 @@ use IPS\Request;
 use IPS\storm\Form\Element;
 use IPS\storm\Proxy\Generator\Cache;
 use IPS\storm\Proxy\Generator\Store;
-use IPS\storm\Template;
 use IPS\storm\Tpl;
 use IPS\Theme;
 
@@ -96,7 +95,7 @@ trait Sources
                 ->extra(['css' => 'ipsMessage ipsMessage--warning'])
                 ->label(
                     'storm_devcenter_debug_message2',
-                    [strtoupper($this->application->directory) . '_DEBUG_LOG']
+                    [$this->application->directory,strtoupper($this->application->directory) . '_DEBUG_LOG']
                 )
         ];
         $this->doOutput($config, 'Debug', 'Debug');
@@ -109,11 +108,6 @@ trait Sources
                 ->extra(['css' => 'ipsMessage ipsMessage--warning'])
         ];
         $this->doOutput($config, 'Orm', 'Orm');
-    }
-
-    protected function doDone($msg)
-    {
-        Output::i()->output = '<div class="ipsMessage ipsMessage_info">' . $msg . '</div>';
     }
 
     protected function member()
@@ -396,9 +390,5 @@ trait Sources
             'sources',
             'standard'
         );
-
-        Theme::i()
-            ->getTemplate('devcenter', 'storm', 'global')
-            ->sources($this->application->directory, $menus['sources'], 'sources', 'standard');
     }
 }

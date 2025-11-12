@@ -1,0 +1,8 @@
+;( function($, _, undefined){
+    "use strict";
+    ips.controller.register('{module}', {
+        initialize: () => {
+            // Controller events are initialized here
+        }
+    });
+}(jQuery, _));

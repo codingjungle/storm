@@ -26,6 +26,14 @@
       "restriction": null,
       "subcontrollers": "",
       "callback": "return \\IPS\\IN_DEV;"
+    },
+    "assets": {
+      "tab": "developer",
+      "controller": "assets",
+      "do": "",
+      "restriction": null,
+      "subcontrollers": "",
+      "callback": "return \\IPS\\IN_DEV;"
     }
   }
 }

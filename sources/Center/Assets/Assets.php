@@ -18,9 +18,9 @@ use IPS\Application;
 use IPS\Patterns\Singleton;
 use IPS\Request;
 use IPS\storm\Form;
-use IPS\storm\Center\Compiler\CompilerAbstract;
-use IPS\storm\Center\Dev\Compiler\Javascript;
-use IPS\storm\Center\Dev\Compiler\Template;
+use IPS\storm\Center\Assets\Compiler\CompilerAbstract;
+use IPS\storm\Center\Assets\Compiler\Javascript;
+use IPS\storm\Center\Assets\Compiler\Template;
 use IPS\storm\Profiler\Debug;
 use IPS\storm\ReservedWords;
 use IPS\Xml\XMLReader;
@@ -52,19 +52,16 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 
 
 /**
- * @brief      _Dev Class
- * @mixin Dev
+ * @brief  Assets Class
  */
-class Dev extends Singleton
+class Assets
 {
-    /**
-     * @inheritdoc
-     */
-    protected static ?Singleton $instance  = null;
     /**
      * @var Form
      */
     public ?Form $form = null;
+
+    public ?string $type;
     /**
      * The current application object
      *
@@ -99,8 +96,7 @@ class Dev extends Singleton
     {
         $this->type = $type;
         $this->form
-            ->setPrefix('dtdevplus_dev_')
-            ->addExtraPrefix('_r' . $this->type . 'r_')
+            ->setPrefix('storm_devcenter_assets_')
             ->setId('dtdevplus_dev__r' . $this->type . 'r_')
             ->submitLang('Create Asset');
 
@@ -130,7 +126,7 @@ class Dev extends Singleton
                 $class = new $class($values, $this->application, $this->type);
                 $msg = $class->process();
                 $msg = 'Asset ' . $msg . ' created!';
-            } catch (Throwable|\Exception $e) {
+            } catch (Throwable | \Exception $e) {
                 $msg = $e->getMessage();
             }
             return $msg;
@@ -145,9 +141,9 @@ class Dev extends Singleton
      */
     public function validateFilename($data)
     {
-        $manual = 'dtdevplus_dev__r' . $this->type . 'r_group_manual';
-        $manualCheck = $manual . '_checkbox';
-        $manualGroup = 'dtdevplus_dev__r' . $this->type . 'r__group';
+        $manual = 'storm_devcenter_assets_group_manual';
+        $manualCheck = 'storm_devcenter_assets_group_manual_checkbox';
+        $manualGroup = 'storm_devcenter_assets__group';
         if (
             Request::i()->{$manual} &&
             isset(Request::i()->{$manualCheck})
@@ -155,8 +151,8 @@ class Dev extends Singleton
             $locationGroup = Request::i()->{$manualGroup};
             [$location, $group] = explode(':', $locationGroup);
         } else {
-            $loc = 'dtdevplus_dev__r' . $this->type . 'r_group_manual_location';
-            $gr = 'dtdevplus_dev__r' . $this->type . 'r_group_manual_folder';
+            $loc = 'storm_devcenter_assets_group_manual_location';
+            $gr = 'storm_devcenter_assets_group_manual_folder';
             $location = Request::i()->{$loc};
             $group = Request::i()->{$gr};
         }
@@ -170,13 +166,13 @@ class Dev extends Singleton
             if ($this->type === 'widget') {
                 $file = 'ips.ui.' . $this->app . '.' . $data;
             } elseif ($this->type === 'controller') {
-                $file = 'ips.' . $this->app . '.' . $location . '.' . $group . '.' . $data;
+                $file = 'ips.controller.' . $this->app . '.' . $location . '.' . $group . '.' . $data;
             } elseif ($this->type === 'module') {
-                $file = 'ips.' . $this->app . '.' . $data;
+                $file = 'ips.module.' . $this->app . '.' . $data;
             } elseif ($this->type === 'jstemplate') {
                 $file = 'ips.templates.' . $data;
             } elseif ($this->type === 'jsmixin') {
-                $file = 'ips.' . $this->app . '.' . $data;
+                $file = 'ips.mixin.' . $this->app . '.' . $data;
             }
 
             if ($this->type === 'jstemplate') {
@@ -221,11 +217,11 @@ class Dev extends Singleton
 
     protected function elArguments()
     {
-        $this->elements[] = [
-            'name'  => 'arguments',
-            'class' => 'stack',
-        ];
-        $this->form->addElement('arguments', 'stack');
+//        $this->elements[] = [
+//            'name'  => 'arguments',
+//            'class' => 'stack',
+//        ];
+        $this->form->addElement('arguments', 'stack')->options(['stackFieldType' => Form\Arguments::class]);
     }
 
     protected function elWidgetName()
@@ -236,7 +232,6 @@ class Dev extends Singleton
     protected function elMixin()
     {
         $controllers = [];
-        /** @var Application $app */
         foreach (Application::applications() as $app) {
             $file = $app->getApplicationPath() . '/data/javascript.xml';
             if (is_file($file)) {
@@ -286,8 +281,7 @@ class Dev extends Singleton
             $path = $this->type !== 'template' ? 'js' : 'html';
             $options = $this->_getGroups($path);
             $groupManual = true;
-        } catch (InvalidArgumentException $e) {
-            Debug::log($e);
+        } catch (InvalidArgumentException) {
         }
         if (empty($options) === false) {
             $this->form
@@ -376,7 +370,7 @@ class Dev extends Singleton
                     $options[$name] = $name;
                 }
             }
-        } catch (Throwable|\Exception $e) {
+        } catch (Throwable | \Exception $e) {
             throw new InvalidArgumentException($e->getMessage());
         }
 

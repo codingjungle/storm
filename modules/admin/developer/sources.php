@@ -49,10 +49,17 @@ class sources extends DeveloperController
     /**
      * @var \IPS\storm\Center\Sources
      */
-    protected $elements;
+    protected ?\IPS\storm\Center\Sources $elements = null;
     protected $front = false;
     public function execute(string $command = 'do'): void
     {
+        if (\IPS\NO_WRITES === true) {
+            Output::i()
+                ->error(
+                    'Sources generator can not be used for as NO_WRITES are enabled in constants.php.',
+                    '101foo'
+                );
+        }
         Head::i()->css(['global_storm']);
         //Sources::menu();
         $app = (string)Request::i()->appKey;

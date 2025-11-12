@@ -2,10 +2,10 @@
 
 <div class="ipsPad ipsClearfix stormColumns">
     <div class="stormColumnLarge">
-    <i-tabs class="ipsTabs" id="elTabs_{$controller}_{$appKey}_tabs" data-ipstabbar data-ipstabbar-contentarea="#elTabs_{$controller}_{$appKey}_tabs_content" data-ipstabbar-defaultTab="#elTab_{$controller}_{$appKey}_tab_{{if $active === null}}{$start}{{else}}{$active}{{endif}}" data-ipstabbar-updateURL="false">
+    <i-tabs class="ipsTabs" id="elTabs_{$controller}_{$appKey}_tabs" data-ipstabbar data-ipstabbar-contentarea="#elTabs_{$controller}_{$appKey}_tabs_content" data-ipstabbar-updateURL="false">
         <div role="tablist">
             {{foreach $menus as $m}}
-                <a href='{url="app=storm&module=developer&controller={$controller}&appKey={$appKey}&do={$m}"}' id="elTab_{$controller}_{$appKey}_tab_{$m}" class="ipsTabs__tab" role="tab">
+                <a href='{url="app=storm&module=developer&controller={$controller}&appKey={$appKey}&do={$m}"}' id="elTab_{$controller}_{$appKey}_tab_{$m}" class="ipsTabs__tab" role="tab"{{if $m === $start}} aria-selected="true"{{endif}}>
                     {lang="storm_menu_title_{$m}"}
                 </a>
             {{endforeach}}
