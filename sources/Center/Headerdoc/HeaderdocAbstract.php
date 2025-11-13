@@ -29,36 +29,15 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 class HeaderdocAbstract
 {
     protected ?Application $application = null;
-    public function __construct(Application $application)
+    final public function __construct(Application $application)
     {
         $this->application = $application;
     }
-    /**
-     * finalize header Doc
-     *
-     * @param $line
-     * @param $application
-     *
-     * @return string|string[]|null
-     */
-    public function finalize( string $line): string
-    {
-        $application = $this->application;
-        return preg_replace_callback("#^.+?\s(?=namespace)#s", function ($m) use ($application) {
-            $line = $m[0];
-            $author = "<a href='" . $application->website . "'>" . $application->author . "</a>";
-            $line = preg_replace('#@author([^\n]+)?#', "@author      {$author}", $line);
-            $copyright = "(c) " . (new DateTime())->format("Y") . " " . $application->author;
-            $line = preg_replace('#@copyright([^\n]+)?#', "@copyright   {$copyright}", $line);
-            return preg_replace('#@version([^\n]+)?#', "@version     {$application->version}", $line);
-        }, $line);
-    }
 
-    /**
-     * since version, shouldn't be used unless you want the "since" version to change
-     **/
-    public function since()
+    public function since(): ?string
     {
-        return $this->application->version;
+        //you can override this in the extension
+        $version = $this->application->version;
+        return empty($version) === true ? 'Pre 1.0.0' : $version;
     }
 }

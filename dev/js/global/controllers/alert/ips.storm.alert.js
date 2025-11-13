@@ -24,6 +24,20 @@
     let _stormProfilerProxy = function (el, options) {
         var ajax = ips.getAjax(),
             init = function () {
+                $(document).on('submitDialog', (e,f) => {
+                    let data = f.response;
+                    console.log(data);
+                   if(data.success === 'storm_devcenter_other'){
+                       ips.ui.flashMsg.show(
+                           data.message,
+                           {
+                               timeout: data.timeout,
+                               escape: data.escape
+                           }
+                       );
+                   }
+                })
+
                 let config = {};
 
                 config.type = options.type;

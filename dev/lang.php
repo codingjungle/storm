@@ -326,9 +326,28 @@ $lang = array(
     'storm_devcenter_assets_landing' => '%1$s - DevCenter+ : Assets',
     'storm_devcenter_sources_landing' => '%1$s - DevCenter+ : Sources',
     'storm_devcenter_devfolder_landing' => '%1$s - DevCenter+ : Dev Folder Generator',
-    'storm_devcenter_other_index_html' => 'Generate empty index.html',
+    'storm_devcenter_other_index_html' => 'index.html',
     'storm_devcenter_other_index_html_alert' => 'This will generate empty index.html files in your directories if one doesn\'t already exist.',
     'storm_devcenter_other_index_html_success' => 'Successfully generated empty index.html files in your directories.',
+    'storm_devcenter_other_header_doc' => 'HeaderDoc',
+    'storm_devcenter_other_header_doc_replace' => 'Replace/Update All',
+    'storm_devcenter_other_header_doc_replace_desc' => 'If you need/want to replace the existing headerDoc in your php files, switch this to on.',
+    'storm_devcenter_other_header_doc_update_version' => 'Update Version',
+    'storm_devcenter_other_header_doc_update_version_desc' => 'If you enable this option, it will only update the @version tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
+    'storm_devcenter_other_header_doc_update_copyright' => 'Update Copyright',
+    'storm_devcenter_other_header_doc_update_copyright_desc' => 'If you enable this option, it will only update the copyright tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
+    'storm_devcenter_other_header_doc_message' => 'This tool will add a HeaderDoc comment to your php files. Add a Storm->HeaderDoc extension to your application to gain customization options for the various tags it can generate. This tool can also be used to replace/update the existing headerDoc in your php files or update particular tags. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
+    'storm_devcenter_other_header_doc_message_no_extension' => 'This app does not have a Storm->HeaderDoc extension. Please add one to gain customization options for the various tags it can generate.',
+
+
+    'storm_devcenter_other_header_doc_update_author' => 'Update Author',
+    'storm_devcenter_other_header_doc_update_author_desc' => 'If you enable this option, it will only update the @author tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
+
+    'storm_devcenter_other_header_doc_success' => 'Successfully added HeaderDoc to your php files.',
+
+    'storm_devcenter_other_header_doc_success_replace' => 'Successfully added/replaced HeaderDoc in your php files.',
+
+    'storm_devcenter_other_header_doc_update_success' => 'Successfully updated HeaderDoc in your php files. Tags Updated: %1$s',
 
 
 );

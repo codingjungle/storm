@@ -12,7 +12,7 @@ if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) )
 /**
  * {class}
  */
-class _{class} extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
+class {class} extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
 {
     /**
     * files to skip during in the headerdoc
@@ -24,9 +24,52 @@ class _{class} extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
 
     /**
     * directories to skip during in the headerdoc
+    * you can use a partial path like 'dev' or a full path like '~/public_html/www/applications/storm/dev/'
     **/
     public function dirSkip(&$skip)
     {
 
     }
+
+    /**
+     * Get the author of the application
+     *
+     * @return string|null
+     */
+    public function author(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Get the website for the author of the application
+     *
+     * @return string|null
+     */
+    public function website(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Get the license for the application
+     *
+     * @return string|null
+     */
+    public function license(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Get the author of the application
+     * uncomment to ovveride the parent method
+     * to implement your own since text
+     * @return string|null
+     */
+     //public function since(): ?string
+    //{
+    //    return null;
+    //}
+
 }

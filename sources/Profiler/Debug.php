@@ -106,7 +106,7 @@ class Debug extends ActiveRecord
      * @param $key
      * @param $message
      */
-    public static function log(Exception|string|array $message, ?string $category = null, ?int $level = null): void
+    public static function log(mixed $message, ?string $category = null, ?int $level = null): void
     {
         if (Settings::i()->storm_profiler_debug_enabled === true) {
             if ($level === null) {
@@ -234,7 +234,7 @@ class Debug extends ActiveRecord
         return Profiler::dump($list);
     }
 
-    public function get_logRaw(): string
+    public function get_logRaw(): ?string
     {
         if ($this->type === 'exception' || $this->type === 'array') {
             $list = json_decode($this->_data['log'], true);
@@ -242,7 +242,9 @@ class Debug extends ActiveRecord
         } else {
             $list = $this->_data['log'];
         }
-        $list = str_replace('"', '', $list);
+        if(empty($list) === false) {
+            $list = str_replace('"', '', $list);
+        }
         return $list;
     }
 

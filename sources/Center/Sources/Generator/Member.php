@@ -26,6 +26,7 @@ use IPS\Patterns\ActiveRecord;
 use function defined;
 use function file_get_contents;
 use function header;
+use function swapLineEndings;
 use function trait_exists;
 
 use const T_PROTECTED;
@@ -55,10 +56,10 @@ class Member extends GeneratorAbstract
 
         $this->brief = 'Class';
 
-        $content = file_get_contents(
+        $content = swapLineEndings(file_get_contents(
             Application::getRootPath('storm') .
             '/applications/storm/data/storm/sources/member.txt'
-        );
+        ));
         $content = str_replace(
             ['#databaseTable#','#databasePrefix#'],
             [$this->database, $this->prefix],

@@ -7,6 +7,7 @@ use IPS\storm\Application;
 use function defined;
 use function file_get_contents;
 use function header;
+use function swapLineEndings;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -23,10 +24,10 @@ class Group extends GeneratorAbstract
         $this->scaffolding_create = true;
         $this->scaffolding_type = ['db'];
 
-        $content = file_get_contents(
+        $content = swapLineEndings(file_get_contents(
             Application::getRootPath('storm') .
             '/applications/storm/data/storm/sources/group.txt'
-        );
+        ));
         $content = str_replace(
             [
                 '#databaseTable#',

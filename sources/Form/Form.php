@@ -247,11 +247,9 @@ class Form extends ipsForm
 
     public function dialogForm(bool $vertical = false): self
     {
-        $this->addClass('PopUpForm ipsClearfix');
-        if ($vertical === true) {
-            $this->addClass('ipsForm_vertical');
-        } else {
-            $this->addClass('ipsForm_horizontal');
+        $this->addClass('i-padding_2');
+        if ($vertical === false) {
+            $this->addClass('ipsForm--horizontal');
         }
         return $this;
     }

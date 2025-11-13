@@ -63,6 +63,7 @@ use function set_time_limit;
 use function str_replace;
 use function strpos;
 use function substr_replace;
+use function swapLineEndings;
 use function token_get_all;
 use function trim;
 use function var_export;
@@ -328,7 +329,7 @@ class Proxy extends Singleton
 
         $mixinDocComment .= "\n#[\AllowDynamicProperties]";
         $filename = $reflection->getFileName();
-        $contents = file_get_contents($filename);
+        $contents = swapLineEndings(file_get_contents($filename));
         $contents = str_replace("#[\AllowDynamicProperties]", "", $contents);
 
         if ($originalDoc) {

@@ -11,6 +11,7 @@
         },
         "ProxyHelpers": {
             "ProxyHelpers": "IPS\\storm\\extensions\\storm\\ProxyHelpers\\ProxyHelpers"
-        }
+        },
+        "Headerdoc": {"Headerdoc": "IPS\\storm\\extensions\\storm\\Headerdoc\\HeaderDoc"}
     }
 }

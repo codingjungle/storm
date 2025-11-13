@@ -250,7 +250,7 @@ abstract class GeneratorAbstract
     }
 
     /**
-     * gathers all the info neeed to begin class building.
+     * gathers all the info needed to begin class building.
      * @throws SourceBuilderException
      */
     final public function process(): void
@@ -331,14 +331,14 @@ abstract class GeneratorAbstract
         }
 
         $this->generator->setPath($dir);
-        $ver = empty($this->application->version) === false ? $this->application->version : 'Pre 1.0.0';
         $doc = [
-            '@brief      ' . $this->classname . ' ' . $this->brief,
+            '@brief      -storm_brief-',
             '@author     -storm_author-',
             '@copyright  -storm_copyright-',
-            '@package    IPS Social Suite',
-            '@subpackage ' . $this->app,
-            '@since      ' . $ver,
+            '@license    -storm_license-',
+            '@package    -storm_package-',
+            "@since      -storm_since-",
+            '@version    -storm_version-',
         ];
 
         $this->generator->setDocumentComment($doc);

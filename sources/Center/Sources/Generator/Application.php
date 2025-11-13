@@ -20,6 +20,8 @@ use IPS\storm\Proxy\Proxyclass;
 
 use function class_exists;
 use function explode;
+use function file_get_contents;
+use function swapLineEndings;
 use function var_export;
 
 use const STR_PAD_LEFT;
@@ -38,7 +40,7 @@ class Application extends GeneratorAbstract
         if (!class_exists($og)) {
             $path = $this->application->getApplicationPath();
             $file = $path . '/Application.php';
-            $content = \file_get_contents($file);
+            $content = swapLineEndings(file_get_contents($file));
             $content = str_replace('_Application', '_ApplicationOG', $content);
             $newPath = $path . '/sources/ApplicationOG/';
             if (!\is_dir($newPath)) {

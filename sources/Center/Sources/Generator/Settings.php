@@ -17,6 +17,8 @@ use IPS\storm\Application;
 use Throwable;
 use UnderflowException;
 
+use function swapLineEndings;
+use function file_get_contents;
 
 class Settings extends GeneratorAbstract
 {
@@ -34,7 +36,14 @@ class Settings extends GeneratorAbstract
         $this->generator->addImportFunction('header');
         $this->generator->addImportFunction('json_decode');
 
-        $this->generator->addClassBody(\file_get_contents(Application::getRootPath('storm').'/applications/storm/data/defaults/settings.txt') );
-        $this->generator->addExtends(IPSSettings::class,false);
+        $this->generator->addClassBody(
+            swapLineEndings(
+                file_get_contents(
+                    Application::getRootPath('storm') .
+                    '/applications/storm/data/defaults/settings.txt'
+                )
+            )
+        );
+        $this->generator->addExtends(IPSSettings::class, false);
     }
 }

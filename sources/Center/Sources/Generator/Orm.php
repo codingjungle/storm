@@ -18,6 +18,9 @@ use IPS\Patterns\ActiveRecordIterator;
 use IPS\storm\Application;
 use UnderflowException;
 
+use function file_get_contents;
+use function swapLineEndings;
+
 class Orm extends GeneratorAbstract
 {
     protected bool $includeConstructor = false;
@@ -42,7 +45,7 @@ class Orm extends GeneratorAbstract
         $this->generator->addImportFunction('explode');
 
         $tb = Application::getRootPath('storm');
-        $content = \file_get_contents($tb . '/applications/storm/data/storm/sources/orm.txt');
+        $content = swapLineEndings(file_get_contents($tb . '/applications/storm/data/storm/sources/orm.txt'));
 
         $this->generator->addClassBody($content);
     }

@@ -19,6 +19,7 @@ use IPS\storm\Writers\FileGenerator;
 use function explode;
 use function is_array;
 use function str_replace;
+use function swapLineEndings;
 use function trim;
 
 /**
@@ -123,7 +124,7 @@ abstract class CompilerAbstract
     protected function getFile(string $file): ?string
     {
         $path = \IPS\storm\Application::getRootPath() . '/applications/storm/data/storm/assets/' . $file . '.txt';
-        return file_exists($path) ? file_get_contents($path) : null;
+        return file_exists($path) ? swapLineEndings(file_get_contents($path)): null;
     }
 
     protected function replace(string|array $search, string|array $replace, string $content): string
