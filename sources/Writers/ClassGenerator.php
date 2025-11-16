@@ -137,7 +137,7 @@ class ClassGenerator extends GeneratorAbstract
         return "'" . $value . "'";
     }
 
-    public static function paramsFromString($params): string
+    public static function paramsFromString(string $params): array
     {
         $continue = true;
         $rand = 'foo' . random_int(1, 20000) . random_int(1, 20000) . random_int(1, 30000) . md5(
@@ -197,7 +197,7 @@ EOF;
         return $newParams;
     }
 
-    public static function paramFromString($param): string
+    public static function paramFromString(string $param): array
     {
         $sliced = <<<EOF
 <?php

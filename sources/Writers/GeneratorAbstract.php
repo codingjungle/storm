@@ -305,9 +305,7 @@ EOF;
 
             if ($this->strictTypes === true) {
                 $strictTypes = <<<eof
-
 declare(strict_types=1);
-
 eof;
                 $this->output($strictTypes);
             }
@@ -316,7 +314,6 @@ eof;
                 $ns = <<<EOF
 
 namespace {$this->nameSpace};
-
 EOF;
                 $this->output($ns);
             }
@@ -333,7 +330,7 @@ if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) ) {
 }
 EOF;
 
-                $this->output("\n\n" . $headerCatch);
+                $this->output("\n" . $headerCatch);
             }
         }
     }

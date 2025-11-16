@@ -1,0 +1,23 @@
+    public const CRITICAL = 5;
+    public const ERROR = 4;
+    public const WARNING = 3;
+    public const INFO = 2;
+    public const DEBUG = 1;
+
+    /**
+    * Debug constructor
+    */
+    public function __construct()
+    {
+    }
+
+    public static function log(mixed $message, ?string $category = null,  int $level = Debug::INFO): void
+    {
+        if (
+            defined('{constant}') &&
+            {constant} === true &&
+            class_exists(\IPS\storm\Profiler\Debug::class)
+        ) {
+            ProfilerDebug::log($message, $category, $level);
+        }
+    }

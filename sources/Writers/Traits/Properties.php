@@ -121,7 +121,7 @@ trait Properties
     {
         if (empty($this->properties) !== true) {
             foreach ($this->properties as $property) {
-                $this->output("\n{$this->tab}");
+                $this->output("{$this->tab}");
 
                 if ($property['document']) {
                     $this->output("/**\n");

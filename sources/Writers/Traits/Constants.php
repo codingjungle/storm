@@ -50,7 +50,7 @@ trait Constants
     {
         if (empty($this->const) !== true) {
             foreach ($this->const as $const) {
-                $this->output("\n{$this->tab}");
+                $this->output("{$this->tab}");
 
                 if ($const['document']) {
                     $this->output("/**\n");

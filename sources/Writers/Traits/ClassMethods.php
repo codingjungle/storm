@@ -43,7 +43,7 @@ trait ClassMethods
     public function writeMethods(): void
     {
         if (empty($this->body) === false) {
-            $this->output(implode("\n\n", $this->body));
+            $this->output(implode("\n", $this->body));
         }
 
         if (empty($this->methods) === false) {
@@ -51,7 +51,6 @@ trait ClassMethods
                 if (isset($this->removeMethods[$name])) {
                     continue;
                 }
-                $this->output("\n\n");
                 if ($method['document'] && is_array($method['document'])) {
                     $this->output($this->tab . "/**\n");
                     $returned = false;
