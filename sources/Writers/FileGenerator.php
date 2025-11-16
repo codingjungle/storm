@@ -1,6 +1,7 @@
 <?php
 
 namespace IPS\storm\Writers;
+
 /**
  * @brief       FileGenerator Class
  * @author      -storm_author-
@@ -12,7 +13,6 @@ namespace IPS\storm\Writers;
  */
 
 use IPS\Patterns\Singleton;
-use IPS\storm\Writers\GeneratorAbstract;
 
 
 /**
@@ -22,9 +22,8 @@ use IPS\storm\Writers\GeneratorAbstract;
  */
 class FileGenerator extends GeneratorAbstract
 {
-    protected static ?Singleton $instance = null;
     protected const HASCLASS = false;
-
+    protected static ?Singleton $instance = null;
     protected $body = [];
 
     public function addBody($body): static

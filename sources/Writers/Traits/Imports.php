@@ -15,7 +15,6 @@ namespace IPS\storm\Writers\Traits;
 use Exception;
 use InvalidArgumentException;
 
-use function _p;
 use function array_pop;
 use function class_exists;
 use function count;
@@ -67,7 +66,7 @@ trait Imports
             $class = array_pop($parts);
             $hash = $class;
         }
-        if (($this->checkForImportFunction($class) || $this->checkForImportFunction($alias) ) && $throw === true) {
+        if (($this->checkForImportFunction($class) || $this->checkForImportFunction($alias)) && $throw === true) {
             throw new InvalidArgumentException('This function exist as a import! ' . $class);
         }
         $this->importsFunctions[$hash] = ['class' => $import, 'alias' => $alias];
@@ -82,15 +81,15 @@ trait Imports
     public function addImport(string $import, string $alias = null): mixed
     {
         $skipOn = [
-            'array'    => 1,
-            'self'     => 1,
+            'array' => 1,
+            'self' => 1,
             'callable' => 1,
-            'bool'     => 1,
-            'float'    => 1,
-            'int'      => 1,
-            'string'   => 1,
+            'bool' => 1,
+            'float' => 1,
+            'int' => 1,
+            'string' => 1,
             'iterable' => 1,
-            'object'   => 1,
+            'object' => 1,
         ];
 
         if (isset($skipOn[mb_strtolower($import)])) {
@@ -154,31 +153,6 @@ trait Imports
         return $return;
     }
 
-    protected function existsCheck($class): bool
-    {
-        if (
-            class_exists($class) ||
-            class_exists('\\' . $class)
-        ) {
-            return true;
-        }
-
-        if (
-            interface_exists($class) ||
-            interface_exists('\\' . $class)
-        ) {
-            return true;
-        }
-
-        if (
-            trait_exists($class) ||
-            trait_exists('\\' . $class)
-        ) {
-            return true;
-        }
-
-        return false;
-    }
     public function canMakeImport($class): mixed
     {
         $nsClass = explode('\\', $class);
@@ -205,6 +179,32 @@ trait Imports
         }
 
         return $newClass;
+    }
+
+    protected function existsCheck($class): bool
+    {
+        if (
+            class_exists($class) ||
+            class_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        if (
+            interface_exists($class) ||
+            interface_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        if (
+            trait_exists($class) ||
+            trait_exists('\\' . $class)
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     public function checkForImport($import): bool

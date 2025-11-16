@@ -11,7 +11,7 @@ class Applications
     public static function run(): void
     {
         $body = Store::i()->read('storm_metadata_final');
-        $apps  = [];
+        $apps = [];
 
         foreach (Application::roots() as $app) {
             $apps[] = "'" . $app->directory . "'";
@@ -38,8 +38,7 @@ EOF;
             ['f' => '\\IPS\\Output::css()', 'i' => 0]
         ];
 
-        foreach ( $methods as $m )
-        {
+        foreach ($methods as $m) {
             $body[] = <<<EOF
     expectedArguments({$m['f']}, {$m['i']}, argumentsSet('applications'));
 EOF;

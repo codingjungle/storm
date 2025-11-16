@@ -13,22 +13,14 @@
 namespace IPS\storm\Profiler;
 
 use IPS\Settings;
-use IPS\Theme;
 use IPS\storm\Profiler;
+use IPS\Theme;
 use UnexpectedValueException;
 
-use function count;
 use function defined;
-use function floor;
 use function header;
-use function json_encode;
-use function log;
 use function memory_get_usage;
-use function round;
 use function time;
-
-use function end;
-
 
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -43,7 +35,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @mixin Memory
  */
 class Memory
-{ 
+{
     protected static $store = [];
     /**
      * start time
@@ -61,7 +53,7 @@ class Memory
      * @throws UnexpectedValueException
      */
     public static function render()
-    { 
+    {
         $total = static::total();
         $panel = '';
 
@@ -72,13 +64,13 @@ class Memory
             lang('storm_profiler_button_memory_total'),
             'microchip',
             '#0066ff',
-            '#fff' 
+            '#fff'
         );
 
         return [
             'button' => $button,
             'panel' => $panel
-        ]; 
+        ];
     }
 
     /**
@@ -118,8 +110,8 @@ class Memory
         if ($key !== null && Settings::i()->dtprofiler_enabled_memory_summary) {
             static::$store[] = [
                 'name' => $name,
-                'key'  => $key,
-                'log'  => $mem,
+                'key' => $key,
+                'log' => $mem,
                 'time' => time(),
             ];
         }

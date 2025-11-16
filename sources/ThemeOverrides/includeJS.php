@@ -1,7 +1,5 @@
 <?php
 
-use IPS\Output;
-
 return <<<eof
 \\IPS\\storm\\Head::i()->insertAfterJs();
 \\IPS\\storm\\Head::i()->js(['global_alert']);

@@ -1,7 +1,7 @@
 <?php
 
 return <<<eof
-\\IPS\\storm\\Head::i()->css(['global_storm']);
+\\IPS\\storm\\Head::i()->css(['global_storm','global_varDumper']);
 
 if (\\IPS\\storm\\Settings::i()->storm_profiler_enabled === true && \\IPS\\QUERY_LOG && !\\IPS\\Request::i()->isAjax()) {
     \\IPS\\storm\\Head::i()->css(['global_devtoys']);

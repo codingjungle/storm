@@ -12,12 +12,10 @@
 
 namespace IPS\storm\Profiler;
 
-use IPS\core\extensions\core\FileStorage\Profile;
 use IPS\Db;
 use IPS\Patterns\Singleton;
-use IPS\Theme;
 use IPS\storm\Editor;
-use IPS\storm\Profiler;
+use IPS\Theme;
 use UnexpectedValueException;
 
 use function count;
@@ -73,7 +71,7 @@ class Database extends Singleton
                 foreach ($data['backtrace'] as $k => $v) {
                     $url = null;
                     if (isset($v['file'])) {
-                        $url =  Editor::i()->replace($v['file'], $v['line']);
+                        $url = Editor::i()->replace($v['file'], $v['line']);
                     }
                     $class = $v['class'] ?? '';
 
@@ -124,7 +122,10 @@ class Database extends Singleton
             '#fff',
             $count
         );
-        $panel = Theme::i()->getTemplate('profiler', 'storm', 'global')->databasePanel($newStore, 'Database Queries (' . $count . ')');
+        $panel = Theme::i()->getTemplate('profiler', 'storm', 'global')->databasePanel(
+            $newStore,
+            'Database Queries (' . $count . ')'
+        );
 
         return [
             'button' => $button,

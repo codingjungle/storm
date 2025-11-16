@@ -10,14 +10,12 @@ use IPS\storm\Profiler\Debug;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
-use function _p;
 use function array_pop;
 use function defined;
 use function explode;
 use function file_get_contents;
 use function file_put_contents;
 use function header;
-use function in_array;
 use function mb_strtolower;
 use function pathinfo;
 use function preg_match;
@@ -50,6 +48,7 @@ class Headerdoc
     protected bool $updateCopyright = false;
     protected bool $updateVersion = false;
     protected bool $updateAuthor = false;
+
     /**
      * _Headerdoc constructor.
      */
@@ -114,7 +113,7 @@ class Headerdoc
     public function process(): void
     {
         //the directory we want to scan
-        $dir = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory;
+        $dir = Application::getRootPath() . '/applications/' . $this->application->directory;
         //create the finder object
         $finder = new Finder();
         //setup what directory to begin in, should be the root of the application
@@ -210,8 +209,8 @@ class Headerdoc
                 $brief = $extApp . ' ' . $extension . ' extension: ' . $brief;
                 //is it a task?
             } elseif (str_contains($filePath, "{$this->application->directory}/tasks")) {
-                    $brief .= ' Task';
-                    //is it a controller?
+                $brief .= ' Task';
+                //is it a controller?
             } elseif (str_contains($filePath, "{$this->application->directory}/modules")) {
                 $brief .= ' Controller';
                 //is it a listener?
@@ -306,7 +305,7 @@ class Headerdoc
                 }
 
                 return $content;
-            //here we will either add one if it doesn't exist or replace it if $this->replace is set to true
+                //here we will either add one if it doesn't exist or replace it if $this->replace is set to true
             } elseif (!isset($section[1]) || $this->replace === true) {
                 //$package = null;
                 $replacements = [
@@ -380,7 +379,7 @@ class Headerdoc
                         1
                     );
                 }
-                if ($this->updateAuthor === true && empty($author)  === false) {
+                if ($this->updateAuthor === true && empty($author) === false) {
                     $content = preg_replace(
                         '#@author(\s*)(.*)?#',
                         "@author$1{$author}",

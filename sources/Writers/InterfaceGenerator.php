@@ -43,16 +43,22 @@ class InterfaceGenerator extends GeneratorAbstract
     public function addMethod($name, string $body, array $params = [], array $extra = []): static
     {
         $this->methods[trim($name)] = [
-            'name'       => $name,
-            'static'     => $extra['static'],
+            'name' => $name,
+            'static' => $extra['static'],
             'visibility' => $extra['visibility'],
-            'final'      => $extra['final'],
-            'document'   => $extra['document'],
-            'params'     => $params,
+            'final' => $extra['final'],
+            'document' => $extra['document'],
+            'params' => $params,
             'returnType' => $extra['returnType'],
         ];
 
         return $this;
+    }
+
+    public function writeSourceType(): void
+    {
+        $this->output("\ninterface {$this->className}");
+        $this->output("\n{");
     }
 
     protected function writeBody(): void
@@ -132,11 +138,5 @@ class InterfaceGenerator extends GeneratorAbstract
             $this->output(';');
         }
         $this->output("\n}");
-    }
-
-    public function writeSourceType(): void
-    {
-        $this->output("\ninterface {$this->className}");
-        $this->output("\n{");
     }
 }

@@ -17,8 +17,8 @@ use IPS\storm\Application;
 use Throwable;
 use UnderflowException;
 
-use function swapLineEndings;
 use function file_get_contents;
+use function swapLineEndings;
 
 class Settings extends GeneratorAbstract
 {

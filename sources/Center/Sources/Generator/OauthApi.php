@@ -17,6 +17,8 @@ use Exception;
 use IPS\Http\Response;
 use IPS\Http\Url;
 use IPS\Patterns\Singleton;
+use IPS\storm\Api\ApiException;
+use IPS\storm\Api\Oauth;
 use Laminas\Code\Reflection\ClassReflection;
 use Throwable;
 
@@ -29,19 +31,20 @@ use function trim;
 class OauthApi extends GeneratorAbstract
 {
     protected bool $includeConstructor = false;
+
     /**
      * @inheritdoc
      */
     protected function bodyGenerator()
     {
-        $ns = '\\IPS\\'.$this->application->directory.'\\Api';
-        $check = $ns.'\\ApiException';
-        if(!class_exists($check)) {
-            $code = (new ClassReflection(\IPS\storm\Api\ApiException::class))->getParentClass();
+        $ns = '\\IPS\\' . $this->application->directory . '\\Api';
+        $check = $ns . '\\ApiException';
+        if (!class_exists($check)) {
+            $code = (new ClassReflection(ApiException::class))->getParentClass();
             $content = $code->getContents(false);
             $content = trim($content);
-            $content = ltrim($content,'{');
-            $content = rtrim($content,"}");
+            $content = ltrim($content, '{');
+            $content = rtrim($content, "}");
             $content = trim($content);
             $gen = new ClassGenerator();
             $gen->addHeaderCatch();
@@ -60,23 +63,23 @@ class OauthApi extends GeneratorAbstract
                 '@copyright  -storm_copyright-',
                 '@package    IPS Social Suite',
                 '@subpackage ' . $this->app,
-                    '@since      ' . $this->application->version ?? '1.0.0',
+                '@since      ' . $this->application->version ?? '1.0.0',
                 '@version    -storm_version-',
             ];
             $gen->setDocumentComment($doc);
             $gen->addClassComments(['ApiException Class']);
             $gen->addClassName('_ApiException');
             $gen->addFileName('ApiException');
-            $gen->addNameSpace('IPS\\'.$this->application->directory.'\\Api');
+            $gen->addNameSpace('IPS\\' . $this->application->directory . '\\Api');
             $gen->save();
         }
-        $check = $ns.'\\Oauth';
-        if(!class_exists($check)) {
-            $code = (new ClassReflection(\IPS\storm\Api\Oauth::class))->getParentClass();
+        $check = $ns . '\\Oauth';
+        if (!class_exists($check)) {
+            $code = (new ClassReflection(Oauth::class))->getParentClass();
             $content = $code->getContents(false);
             $content = trim($content);
-            $content = ltrim($content,'{');
-            $content = rtrim($content,"}");
+            $content = ltrim($content, '{');
+            $content = rtrim($content, "}");
             $content = trim($content);
             $gen = new ClassGenerator();
             $gen->addClassBody("\n    " . $content);
@@ -86,7 +89,7 @@ class OauthApi extends GeneratorAbstract
             $gen->addImport(Singleton::class);
             $gen->addImportFunction('json_encode');
             $gen->addHeaderCatch();
-            $gen->addExtends(\IPS\Patterns\Singleton::class);
+            $gen->addExtends(Singleton::class);
             $gen->addMixin($check);
             $dir = $this->application->getApplicationPath() . '/sources/Api/';
             $gen->addPath($dir);
@@ -97,7 +100,7 @@ class OauthApi extends GeneratorAbstract
                 '@copyright  -storm_copyright-',
                 '@package    IPS Social Suite',
                 '@subpackage ' . $this->app,
-                    '@since      ' . $this->application->version ?? '1.0.0',
+                '@since      ' . $this->application->version ?? '1.0.0',
                 '@version    -storm_version-',
             ];
 
@@ -105,7 +108,7 @@ class OauthApi extends GeneratorAbstract
             $gen->addClassComment(['Oauth Class'], true);
             $gen->addClassName('_Oauth');
             $gen->addFileName('Oauth');
-            $gen->addNameSpace('IPS\\'.$this->application->directory.'\\Api');
+            $gen->addNameSpace('IPS\\' . $this->application->directory . '\\Api');
             $gen->makeAbstract();
             $gen->save();
         }
@@ -125,6 +128,5 @@ eof;
         $this->brief = 'Class';
         $this->generator->addClassBody($body);
         $this->generator->addExtends($check);
-
     }
 }

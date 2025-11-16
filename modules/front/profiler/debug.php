@@ -43,6 +43,10 @@ class debug extends Controller
     public function execute(): void
     {
 
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
+
         parent::execute();
     }
 
@@ -159,58 +163,5 @@ class debug extends Controller
         Head::i()->jsVars(['debugLogIcon' => (string) $image]);
         $output = Tpl::get('popup.storm.global')->popup(\IPS\storm\Profiler\Debug::popup(), 'Storm Debug Logs');
         Output::i()->sendOutput($output);
-    }
-
-    protected function manifest(): void
-    {
-        $image192 = (string)\IPS\Theme::i()->resource('bug192.png', 'storm', 'global', false);
-        $image512 = (string)\IPS\Theme::i()->resource('bug512.png', 'storm', 'global', false);
-
-        $image192 = str_replace(Url::baseUrl(), '', $image192);
-        $image512 = str_replace(Url::baseUrl(), '', $image512);
-        if (str_starts_with($image512, '/') === false) {
-            $image512 = '/' . $image512;
-        }
-
-        if (str_starts_with($image192, '/') === false) {
-            $image192 = '/' . $image192;
-        }
-        $manifest = [
-            'shortname' => 'SDL',
-            'name' => 'Storm Debug Logs',
-            'icons' => [
-                [
-                    'src' => $image192,
-                    'sizes' => '192x192',
-                    'type' => 'image/png'
-                ],
-                [
-                    'src' => $image512,
-                    'sizes' => '512x512',
-                    'type' => 'image/png'
-                ]
-            ],
-            'start_url' => (string) Url::internal('app=storm&module=profiler&controller=debug&do=popup', 'front'),
-            'display' => 'standalone',
-            'theme_color' => '#000000',
-            'background_color' => '#ffffff'
-        ];
-
-        Output::i()->sendOutput(
-            json_encode($manifest, JSON_PRETTY_PRINT),
-            200,
-            'application/manifest+json',
-            Output::i()->httpHeaders
-        );
-        //Output::i()->json($manifest);
-    }
-
-    protected function app(): void
-    {
-        $hide = (int) Request::i()->hide;
-        if ($hide === 2) {
-            $hide = 0;
-        }
-        Settings::i()->changeValues(['storm_profiler_show_app_button' => $hide]);
     }
 }

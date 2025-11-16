@@ -37,9 +37,9 @@ class Log extends \IPS\_Log
         if (Settings::i()->storm_profiler_debug_catpure_ips_log === true) {
             if (
                 Settings::i()->storm_profiler_debug_enabled === true &&
-                $category !== 'request' &&
-                (defined('\IPS\DEBUG_LOG') && DEBUG_LOG)
+                $category !== 'request' && DEBUG_LOG
             ) {
+                $logLevel = $logLevel ?? Debug::DEBUG;
                 Debug::log($message, $category, $logLevel);
                 static::$skip = true;
             }

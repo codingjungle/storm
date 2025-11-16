@@ -16,7 +16,6 @@ use IPS\Content\Anonymous;
 use IPS\Content\Assignable;
 use IPS\Content\EditHistory;
 use IPS\Content\Featurable;
-use IPS\Content\Followable;
 use IPS\Content\FuturePublishing;
 use IPS\Content\Helpful;
 use IPS\Content\Hideable;
@@ -28,7 +27,6 @@ use IPS\Content\Pinnable;
 use IPS\Content\Polls;
 use IPS\Content\Ratings;
 use IPS\Content\Reactable;
-use IPS\Content\ReadMarkers;
 use IPS\Content\Reportable;
 use IPS\Content\Solvable;
 use IPS\Content\ViewUpdates;
@@ -58,13 +56,14 @@ class Item extends GeneratorAbstract
 {
     protected function addFurl($value, $url): void
     {
-        $furlFile = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/furl.json';
+        $furlFile = \IPS\Application::getRootPath(
+            ) . '/applications/' . $this->application->directory . '/data/furl.json';
         if (file_exists($furlFile)) {
             $furls = json_decode(file_get_contents($furlFile), true);
         } else {
             $furls = [
                 'topLevel' => $this->app,
-                'pages'    => [],
+                'pages' => [],
             ];
         }
 
@@ -75,7 +74,7 @@ class Item extends GeneratorAbstract
 
         $furls['pages'][$value] = [
             'friendly' => $this->classname_lower . '/' . $node . '/{#project}-{?}',
-            'real'     => $url,
+            'real' => $url,
         ];
 
         file_put_contents($furlFile, json_encode($furls, JSON_PRETTY_PRINT));
@@ -102,11 +101,11 @@ class Item extends GeneratorAbstract
         ];
 
         $columnMap = [
-            'author'     => 'author',
+            'author' => 'author',
             'author_name' => 'author_name',
-            'content'  => 'content',
-            'title'      => 'title',
-            'date'       => 'start_date',
+            'content' => 'content',
+            'title' => 'title',
+            'date' => 'start_date',
             'updated' => 'updated_date',
             'ip_address' => 'ip_address'
         ];
@@ -148,7 +147,7 @@ class Item extends GeneratorAbstract
             'title',
             $this->app . '_' . $this->classname_lower . $title,
             [
-                'static'   => true,
+                'static' => true,
                 'hint' => 'string'
             ]
         );
@@ -177,7 +176,7 @@ class Item extends GeneratorAbstract
                 'containerNodeClass',
                 $itemNodeClass,
                 [
-                    'static'   => true,
+                    'static' => true,
                     'hint' => '?string'
                 ]
             );
@@ -258,7 +257,7 @@ class Item extends GeneratorAbstract
                 'reviewClass',
                 $reviewClass,
                 [
-                    'static'   => true,
+                    'static' => true,
                     'hint' => 'string'
                 ]
             );
@@ -268,7 +267,7 @@ class Item extends GeneratorAbstract
                 'reviewsPerPage',
                 25,
                 [
-                    'static'   => true,
+                    'static' => true,
                     'hint' => 'int',
                 ]
             );
@@ -477,7 +476,8 @@ eof;
                     '',
                     [
                         [
-                            'name' => 'poll', '
+                            'name' => 'poll',
+                            '
                             hint' => 'SplSubject'
                         ]
                     ]
@@ -515,7 +515,7 @@ eof;
                     'icon',
                     'cubes',
                     [
-                        'static'   => true,
+                        'static' => true,
                         'hint' => 'string',
                     ]
                 );
@@ -543,7 +543,7 @@ eof;
                     $body,
                     $params,
                     [
-                        'static'   => false,
+                        'static' => false,
                         'returnType' => 'bool'
                     ]
                 );
@@ -555,7 +555,7 @@ eof;
                     $body,
                     $params,
                     [
-                        'static'   => true,
+                        'static' => true,
                         'returnType' => 'bool'
                     ]
                 );

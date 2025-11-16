@@ -14,26 +14,26 @@ namespace IPS\storm\DevToys;
 
 use Exception;
 
-use function microtime;
-use function substr;
-use function str_pad;
-use function dechex;
-use function random_int;
-use function sprintf;
-use function md5;
-use function hex2bin;
-use function random_bytes;
-use function sha1;
-use function str_split;
-use function str_replace;
-use function strtolower;
-use function preg_match;
 use function bin2hex;
+use function dechex;
+use function hex2bin;
 use function hexdec;
+use function md5;
+use function microtime;
+use function preg_match;
+use function random_bytes;
+use function random_int;
+use function sha1;
+use function sprintf;
+use function str_pad;
+use function str_replace;
+use function str_split;
+use function strtolower;
+use function substr;
 
-use const STR_PAD_LEFT;
 use const false;
 use const null;
+use const STR_PAD_LEFT;
 
 /**
  * @mixin Uuid
@@ -78,6 +78,24 @@ class Uuid
     }
 
     /**
+     * Get generated Node (for v1)
+     *
+     * @return string
+     * @throws Exception
+     */
+    public static function getNode(): string
+    {
+        if (self::$node) {
+            return self::$node;
+        }
+        return self::$node = sprintf(
+            '%06x%06x',
+            random_int(0, 0xffffff) | 0x010000,
+            random_int(0, 0xffffff)
+        );
+    }
+
+    /**
      * Generate UUID v3 string
      *
      * @param string $string
@@ -93,6 +111,45 @@ class Uuid
         }
         $hash = md5(hex2bin($namespace) . $string);
         return self::output(3, $hash);
+    }
+
+    final protected static function nsResolve(string $namespace): array|bool|string
+    {
+        if (self::isValid($namespace)) {
+            return str_replace('-', '', $namespace);
+        }
+        $namespace = str_replace(['namespace', 'ns', '_'], '', strtolower($namespace));
+        if (isset(self::$nsList[$namespace])) {
+            return "6ba7b81" . self::$nsList[$namespace] . "9dad11d180b400c04fd430c8";
+        }
+        return false;
+    }
+
+    /**
+     * @param $uuid
+     * @return bool
+     */
+    final protected static function isValid(string $uuid): bool
+    {
+        return (bool)preg_match('{^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$}Di', $uuid);
+    }
+
+    /**
+     * @param int $version
+     * @param string $string
+     * @return string
+     */
+    final protected static function output(int $version, string $string): string
+    {
+        $string = str_split($string, 4);
+        return sprintf(
+            "%08s-%04s-{$version}%03s-%04x-%012s",
+            $string[0] . $string[1],
+            $string[2],
+            substr($string[3], 1, 3),
+            hexdec($string[4]) & 0x3fff | 0x8000,
+            $string[5] . $string[6] . $string[7]
+        );
     }
 
     /**
@@ -123,62 +180,5 @@ class Uuid
         }
         $hash = sha1(hex2bin($namespace) . $string);
         return self::output(5, $hash);
-    }
-
-    /**
-     * Get generated Node (for v1)
-     *
-     * @return string
-     * @throws Exception
-     */
-    public static function getNode(): string
-    {
-        if (self::$node) {
-            return self::$node;
-        }
-        return self::$node = sprintf(
-            '%06x%06x',
-            random_int(0, 0xffffff) | 0x010000,
-            random_int(0, 0xffffff)
-        );
-    }
-
-    /**
-     * @param int $version
-     * @param string $string
-     * @return string
-     */
-    final protected static function output(int $version, string $string): string
-    {
-        $string = str_split($string, 4);
-        return sprintf(
-            "%08s-%04s-{$version}%03s-%04x-%012s",
-            $string[0] . $string[1],
-            $string[2],
-            substr($string[3], 1, 3),
-            hexdec($string[4]) & 0x3fff | 0x8000,
-            $string[5] . $string[6] . $string[7]
-        );
-    }
-
-    final protected static function nsResolve(string $namespace): array|bool|string
-    {
-        if (self::isValid($namespace)) {
-            return str_replace('-', '', $namespace);
-        }
-        $namespace = str_replace(['namespace', 'ns', '_'], '', strtolower($namespace));
-        if (isset(self::$nsList[$namespace])) {
-            return "6ba7b81" . self::$nsList[$namespace] . "9dad11d180b400c04fd430c8";
-        }
-        return false;
-    }
-
-    /**
-     * @param $uuid
-     * @return bool
-     */
-    final protected static function isValid(string $uuid): bool
-    {
-        return (bool)preg_match('{^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$}Di', $uuid);
     }
 }

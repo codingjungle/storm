@@ -17,9 +17,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 }
 
 use IPS\Patterns\Singleton;
-
 use IPS\storm\Proxy;
-
 use IPS\storm\Writers\FileGenerator;
 
 use function defined;
@@ -66,7 +64,7 @@ class Cache extends Singleton
 
     public function getClasses(): array
     {
-        if(empty($this->classes) === true) {
+        if (empty($this->classes) === true) {
             $return = [];
             $classPath = $this->path . 'classes.json';
             if (is_file($classPath)) {
@@ -79,7 +77,6 @@ class Cache extends Singleton
 
     public function setClasses(array $data): void
     {
-
         FileGenerator::i()
             ->setPath($this->path)
             ->setFileName('classes')
@@ -99,7 +96,7 @@ class Cache extends Singleton
 
     public function getNamespaces(): array
     {
-        if(empty($this->namespaces) === true) {
+        if (empty($this->namespaces) === true) {
             $return = [];
             $namespace = $this->path . 'namespace.json';
             if (is_file($namespace)) {
@@ -131,7 +128,7 @@ class Cache extends Singleton
 
     public function getInterfaces()
     {
-        if($this->interfaces === null) {
+        if ($this->interfaces === null) {
             $return = [];
             $interfaces = $this->path . 'interfaces.json';
             if (is_file($interfaces)) {
@@ -160,7 +157,7 @@ class Cache extends Singleton
 
     public function getTraits()
     {
-        if($this->traits === null) {
+        if ($this->traits === null) {
             $return = [];
             $traits = $this->path . 'traits.json';
             if (is_file($traits)) {

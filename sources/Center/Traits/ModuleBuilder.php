@@ -24,16 +24,16 @@ use IPS\storm\Writers\ClassGenerator;
 use IPS\toolbox\Generator\DTClassGenerator;
 use IPS\toolbox\Generator\DTFileGenerator;
 use IPS\toolbox\Profiler\Debug;
-use OutOfRangeException;
-use RuntimeException;
-use Symfony\Component\Filesystem\Filesystem;
-use UnderflowException;
 use Laminas\Code\Generator\DocBlock\Tag\ReturnTag;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\Exception\InvalidArgumentException;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\PropertyGenerator;
 use Laminas\Code\Generator\PropertyValueGenerator;
+use OutOfRangeException;
+use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
+use UnderflowException;
 
 use function array_replace_recursive;
 use function count;
@@ -47,11 +47,8 @@ use function is_file;
 use function json_decode;
 use function mb_strtolower;
 
-use function trim;
-
 use const IPS\IPS_FOLDER_PERMISSION;
 use const T_PROTECTED;
-use const T_PUBLIC;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -89,7 +86,7 @@ trait ModuleBuilder
 
         $this->addToLangs('menutab__' . $application->directory, $lang, $application);
         $methods = [];
-        $classGenerator =  ClassGenerator::i()->setClassName($classLower)->setFileName($classLower);
+        $classGenerator = ClassGenerator::i()->setClassName($classLower)->setFileName($classLower);
         if ($type === 'node') {
             $config = [
                 'document' => [
@@ -148,12 +145,12 @@ trait ModuleBuilder
         $module->save();
         $modules[$location][$module->key] = [
             'default_controller' => $module->default_controller,
-            'protected'          => $module->protected,
+            'protected' => $module->protected,
         ];
 
         $this->addToLangs('menu__' . $application->directory . '_' . $module->key, $module->key, $application);
         $this->writeModules($modules, $application);
-        $targetDir = \IPS\Application::getRootPath() .
+        $targetDir = Application::getRootPath() .
             "/applications/{$application->directory}/modules/{$location}/{$module->key}/";
         $fs = new Filesystem();
 
@@ -172,11 +169,11 @@ trait ModuleBuilder
             $restrictions = [];
             if (
                 is_file(
-                    \IPS\Application::getRootPath() .
+                    Application::getRootPath() .
                     "/applications/{$application->directory}/data/acprestrictions.json"
                 )
             ) {
-                $file = \IPS\Application::getRootPath() .
+                $file = Application::getRootPath() .
                     '/applications/' .
                     $application->directory .
                     '/data/acprestrictions.json';
@@ -189,7 +186,7 @@ trait ModuleBuilder
 
             try {
                 Application::writeJson(
-                    \IPS\Application::getRootPath() .
+                    Application::getRootPath() .
                     "/applications/{$application->directory}/data/acprestrictions.json",
                     $restrictions
                 );
@@ -234,22 +231,22 @@ trait ModuleBuilder
 
         if ($location === 'admin') {
             /* Add to the menu */
-            $file = \IPS\Application::getRootPath() . '/applications/' . $application->directory . '/data/acpmenu.json';
+            $file = Application::getRootPath() . '/applications/' . $application->directory . '/data/acpmenu.json';
             $menu = [];
             if (file_exists($file)) {
                 $menu = json_decode(file_get_contents($file), true);
             }
 
             $menu[$module->key][$classLower] = [
-                'tab'         => $application->directory,
-                'controller'  => $classLower,
-                'do'          => '',
+                'tab' => $application->directory,
+                'controller' => $classLower,
+                'do' => '',
                 'restriction' => $restriction,
             ];
 
             try {
                 Application::writeJson(
-                    \IPS\Application::getRootPath() . "/applications/{$application->directory}/data/acpmenu.json",
+                    Application::getRootPath() . "/applications/{$application->directory}/data/acpmenu.json",
                     $menu
                 );
             } catch (RuntimeException $e) {
@@ -266,7 +263,7 @@ trait ModuleBuilder
      */
     protected function getModules(Application $application): array
     {
-        $file = \IPS\Application::getRootPath() . "/applications/{$application->directory}/data/modules.json";
+        $file = Application::getRootPath() . "/applications/{$application->directory}/data/modules.json";
         $json = [];
         if (file_exists($file)) {
             $json = json_decode(file_get_contents($file), true);
@@ -284,10 +281,10 @@ trait ModuleBuilder
         ) {
             $db[] = $row;
             $extra[$row['sys_module_area']][$row['sys_module_key']] = [
-                'default'            => $row['sys_module_default'],
-                'id'                 => $row['sys_module_id'],
+                'default' => $row['sys_module_default'],
+                'id' => $row['sys_module_id'],
                 'default_controller' => $row['sys_module_default_controller'],
-                'protected'          => $row['sys_module_protected'],
+                'protected' => $row['sys_module_protected'],
             ];
         }
 
@@ -297,7 +294,7 @@ trait ModuleBuilder
             foreach ($db as $row) {
                 $modules[$row['sys_module_area']][$row['sys_module_key']] = [
                     'default_controller' => $row['sys_module_default_controller'],
-                    'protected'          => $row['sys_module_protected'],
+                    'protected' => $row['sys_module_protected'],
                 ];
             }
         }
@@ -335,7 +332,10 @@ trait ModuleBuilder
         }
 
         try {
-            Application::writeJson(\IPS\Application::getRootPath() . "/applications/{$application->directory}/data/modules.json", $json);
+            Application::writeJson(
+                Application::getRootPath() . "/applications/{$application->directory}/data/modules.json",
+                $json
+            );
         } catch (RuntimeException $e) {
         }
     }

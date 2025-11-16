@@ -12,22 +12,13 @@
 
 namespace IPS\storm\Writers\Traits;
 
-use Exception;
-use IPS\storm\Writers\ClassGenerator;
-use IPS\storm\Writers\GeneratorAbstract;
-use ReflectionNamedType;
-
-use function array_key_exists;
 use function array_pop;
 use function count;
 use function explode;
 use function implode;
 use function is_array;
-use function is_string;
 use function mb_strpos;
-use function mb_strtolower;
 use function mb_substr;
-use function method_exists;
 use function trim;
 
 use const T_PRIVATE;
@@ -159,15 +150,15 @@ trait ClassMethods
     public function addMethod($name, string $body, array $params = [], array $extra = []): void
     {
         $this->methods[trim($name)] = [
-            'name'       => $name,
-            'abstract'   => $extra['abstract'] ?? false,
-            'static'     => $extra['static'] ?? false,
+            'name' => $name,
+            'abstract' => $extra['abstract'] ?? false,
+            'static' => $extra['static'] ?? false,
             'visibility' => $extra['visibility'] ?? T_PUBLIC,
-            'final'      => $extra['final'] ?? false,
-            'document'   => $extra['document'] ?? '@inheritdoc',
-            'params'     => $params,
+            'final' => $extra['final'] ?? false,
+            'document' => $extra['document'] ?? '@inheritdoc',
+            'params' => $params,
             'returnType' => $extra['returnType'] ?? 'void',
-            'body'       => $body,
+            'body' => $body,
         ];
     }
 

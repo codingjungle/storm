@@ -3,25 +3,18 @@
 namespace IPS\storm\Shared;
 
 use IPS\storm\Application;
-use Symfony\Component\VarDumper\Cloner\Data;
-
-use Symfony\Component\VarDumper\Dumper\AbstractDumper;
-
-use function _p;
-use function implode;
-use function json_encode;
-use function str_replace;
 
 Application::initAutoloader();
+
 class HtmlDumper extends \Symfony\Component\VarDumper\Dumper\HtmlDumper
 {
     protected string $dumpPrefix = '<pre class="CodeMirror sf-dump" id=%s data-indent-pad="%s" data-ips-text-highlighted="yes">';
     protected string $dumpSuffix = '</pre><script>Sfdump(%s)</script>';
 
-protected function getDumpHeader(): string
-{
-    return '';
-}
+    protected function getDumpHeader(): string
+    {
+        return '';
+    }
 //    public function dump(Data $data, $output = null, array $extraDisplayOptions = []): ?string
 //    {
 //        $html =  parent::dump($data, $output, $extraDisplayOptions);

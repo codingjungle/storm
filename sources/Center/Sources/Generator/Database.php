@@ -22,7 +22,6 @@ use IPS\storm\Center\Traits\SchemaBuilder;
 use IPS\storm\Profiler\Debug;
 use IPS\storm\ReservedWords;
 
-use function _p;
 use function array_shift;
 use function count;
 use function defined;
@@ -71,7 +70,7 @@ class Database
      * @var array
      */
     protected array $schema = [
-        'name'    => null,
+        'name' => null,
         'columns' => [],
         'indexes' => [],
     ];
@@ -138,18 +137,18 @@ class Database
     ): array {
         return [
             'column' => [
-                'name'           => $this->tablePrefix . $name,
-                'type'           => $type,
-                'default'        => $default,
-                'comment'        => $comment,
-                'length'         => $type === 'TEXT' ? null : $length,
-                'unsigned'       => $unsigned,
-                'decimals'       => $decimals,
-                'values'         => $values,
-                'allow_null'     => $allow_null,
-                'zerofill'       => $zerofill,
+                'name' => $this->tablePrefix . $name,
+                'type' => $type,
+                'default' => $default,
+                'comment' => $comment,
+                'length' => $type === 'TEXT' ? null : $length,
+                'unsigned' => $unsigned,
+                'decimals' => $decimals,
+                'values' => $values,
+                'allow_null' => $allow_null,
+                'zerofill' => $zerofill,
                 'auto_increment' => $auto_increment,
-                'binary'         => $binary,
+                'binary' => $binary,
             ]
         ];
     }
@@ -705,6 +704,7 @@ class Database
     {
         return $this->buildDefinition('bits', 'bitwise field.', 'BIGINT', 20);
     }
+
     protected function gid(): array
     {
         return $this->buildDefinition('gid', 'gid field.', 'BIGINT', 20);

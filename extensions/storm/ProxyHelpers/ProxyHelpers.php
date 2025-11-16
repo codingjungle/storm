@@ -100,15 +100,4 @@ class ProxyHelpers
         $classDoc[] = ['pt' => 'p', 'prop' => 'alpha', 'type' => 'string'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'omega', 'type' => 'int'];
     }
-
-    /**
-    * returns a list of classes available to run on classes
-    * @return array
-    * $heelpers[ class\to\look\for ][] = class\of\helper\class;
-    * @param $helpers
-    */
-    public function map(&$helpers)
-    {
-        //see toolbox\extensions\toolbox\ProxyHelpers\proxy.php::map()
-    }
 }

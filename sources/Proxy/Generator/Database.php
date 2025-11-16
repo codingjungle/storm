@@ -4,6 +4,8 @@ namespace IPS\storm\Proxy\Generator;
 
 use Exception;
 
+use IPS\Db;
+
 use function array_values;
 use function implode;
 use function str_replace;
@@ -14,7 +16,7 @@ class Database
     {
         $body = Store::i()->read('storm_metadata_final');
         try {
-            $tables = \IPS\Db::i()->query('SHOW TABLES');
+            $tables = Db::i()->query('SHOW TABLES');
         } catch (Exception $e) {
             $tables = [];
         }
@@ -22,7 +24,7 @@ class Database
         $toWrite = [];
         foreach ($tables as $table) {
             $foo = array_values($table);
-            $toWrite[] = "'" . str_replace(\IPS\Db::i()->prefix, '', $foo[0]). "'";
+            $toWrite[] = "'" . str_replace(Db::i()->prefix, '', $foo[0]) . "'";
         }
 
         $toWrite = implode(',', $toWrite);
@@ -50,8 +52,7 @@ EOF;
             ['f' => '\\IPS\\Helpers\\Table\\Db::__construct()', 'i' => 0]
         ];
 
-        foreach ( $methods as $m )
-        {
+        foreach ($methods as $m) {
             $body[] = <<<EOF
     expectedArguments({$m['f']}, {$m['i']}, argumentsSet('db'));
 EOF;

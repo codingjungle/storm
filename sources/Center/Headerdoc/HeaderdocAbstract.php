@@ -12,14 +12,10 @@
 
 namespace IPS\storm\Center\Headerdoc;
 
-use DateTime;
-
 use IPS\Application;
 
 use function defined;
 use function header;
-use function preg_replace;
-use function preg_replace_callback;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header((isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0') . ' 403 Forbidden');
@@ -29,6 +25,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 class HeaderdocAbstract
 {
     protected ?Application $application = null;
+
     final public function __construct(Application $application)
     {
         $this->application = $application;

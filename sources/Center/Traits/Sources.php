@@ -18,7 +18,6 @@ use IPS\storm\Form\Element;
 use IPS\storm\Proxy\Generator\Cache;
 use IPS\storm\Proxy\Generator\Store;
 use IPS\storm\Tpl;
-use IPS\Theme;
 
 use function array_shift;
 use function explode;
@@ -95,7 +94,7 @@ trait Sources
                 ->extra(['css' => 'ipsMessage ipsMessage--warning'])
                 ->label(
                     'storm_devcenter_debug_message2',
-                    [$this->application->directory,strtoupper($this->application->directory) . '_DEBUG_LOG']
+                    [$this->application->directory, strtoupper($this->application->directory) . '_DEBUG_LOG']
                 )
         ];
         $this->doOutput($config, 'Debug', 'Debug');

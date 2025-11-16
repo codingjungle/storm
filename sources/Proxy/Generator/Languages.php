@@ -14,7 +14,7 @@ class Languages
         $lang = Lang::load(Lang::defaultLanguage());
         $body = Store::i()->read('storm_metadata_final');
         foreach ($lang->words as $key => $val) {
-            $toWrite[] = "'" . $key. "'";
+            $toWrite[] = "'" . $key . "'";
         }
         $toWrite = implode(',', $toWrite);
         $body[] = <<<EOF
@@ -31,8 +31,7 @@ EOF;
             ['f' => '\\IPS\\Lang::copyCustom()', 'i' => 2],
         ];
 
-        foreach ( $methods as $m )
-        {
+        foreach ($methods as $m) {
             $body[] = <<<EOF
     expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Languages'));
 EOF;

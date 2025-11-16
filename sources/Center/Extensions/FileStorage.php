@@ -36,20 +36,12 @@ class FileStorage extends ExtensionsAbstract
 {
 
     /**
-     * @inheritdoc
-     */
-    protected function _content()
-    {
-        return $this->_getFile($this->extension);
-    }
-
-    /**
      * @return array
      * @throws Exception
      */
     public function elements()
     {
-        $this->form->addElement('use_default','yn')->toggles(['table', 'field'], true);
+        $this->form->addElement('use_default', 'yn')->toggles(['table', 'field'], true);
 
         /* @var array $tablesDb */
         $tablesDb = Db::i()->query('SHOW TABLES');
@@ -72,7 +64,7 @@ class FileStorage extends ExtensionsAbstract
         $this->form->addElement('table', 'select')->options(
             [
                 'options' => $tables,
-                'parse'   => 'raw',
+                'parse' => 'raw',
             ]
         )->validation($validate)->appearRequired();
         $fieldValidate = static function ($data) {
@@ -90,5 +82,13 @@ class FileStorage extends ExtensionsAbstract
 
 
         return $this->elements;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function _content()
+    {
+        return $this->_getFile($this->extension);
     }
 }

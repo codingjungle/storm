@@ -1,76 +1,77 @@
 <?php
 
 /**
-* @brief      Form Class
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage nucleus
-* @since
-*/
+ * @brief      Form Class
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage nucleus
+ * @since
+ */
 
 namespace IPS\storm;
 
-use IPS\Log;
 use Exception;
+use InvalidArgumentException;
+use IPS\Content\Item;
+use IPS\Helpers\Form as ipsForm;
+use IPS\Helpers\Form\CheckboxSet;
+use IPS\Helpers\Form\FormAbstract;
+use IPS\Helpers\Form\Matrix;
+use IPS\Helpers\Form\Radio;
+use IPS\Http\Url;
+use IPS\Log;
 use IPS\Login;
-use IPS\storm\Profiler\Debug;
-use IPS\Theme;
 use IPS\Member;
 use IPS\Request;
 use IPS\Session;
-use IPS\Http\Url;
-use IPS\Content\Item;
-use IPS\Helpers\Form\Radio;
-use IPS\Helpers\Form\Matrix;
-use InvalidArgumentException;
 use IPS\storm\Form\Element;
+use IPS\storm\Profiler\Debug;
+use IPS\Theme;
+use Throwable;
 use UnexpectedValueException;
-use IPS\Helpers\Form\CheckboxSet;
-use IPS\Helpers\Form\FormAbstract;
-use IPS\Helpers\Form as ipsForm;
 
-use function sha1;
-use function count;
-use function header;
-use function uniqid;
-use function defined;
-use function implode;
-use function shuffle;
-use function explode;
-use function is_array;
+use function array_combine;
+use function array_key_exists;
+use function array_keys;
 use function array_map;
+use function array_merge;
+use function array_values;
+use function class_exists;
+use function count;
+use function defined;
+use function explode;
+use function func_get_args;
+use function header;
+use function implode;
+use function is_array;
 use function is_object;
+use function json_encode;
 use function mb_strlen;
 use function mb_strpos;
 use function mb_substr;
-use function array_keys;
-use function array_merge;
-use function json_encode;
-use function str_replace;
-use function array_values;
-use function class_exists;
-use function array_combine;
-use function func_get_args;
 use function property_exists;
-use function array_key_exists;
+use function sha1;
+use function shuffle;
+use function str_replace;
+use function uniqid;
 
-use const null;
 use const false;
+use const null;
 use const true;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
-* Form Class
-* @mixin \IPS\nucleus\Form
-*/
+ * Form Class
+ * @mixin \IPS\nucleus\Form
+ */
 class Form extends ipsForm
 {
-/**
+    /**
      * @var bool
      */
     public bool $valuesError = false;
@@ -277,27 +278,27 @@ class Form extends ipsForm
         if (property_exists($object, 'nodeTitle')) {
             try {
                 $this->formPrefix = $object::$nodeTitle;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
         if (property_exists($object, 'formLangPrefix')) {
             try {
                 $this->formPrefix = $object::$formLangPrefix;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
         if (property_exists($object, 'formPrefix')) {
             try {
                 $this->formPrefix = $object::$formPrefix;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
         if (property_exists($object, 'bitOptions')) {
             try {
                 $this->setBitOptions($object::$bitOptions);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
@@ -508,8 +509,13 @@ class Form extends ipsForm
      * @param $attributes
      * @return $this
      */
-    public function addButton(string $lang, string $type, string $href = null, string $class = '', array $attributes = array()): void
-    {
+    public function addButton(
+        string $lang,
+        string $type,
+        string $href = null,
+        string $class = '',
+        array $attributes = array()
+    ): void {
         parent::addButton($lang, $type, $href, $class, $attributes);
     }
 
@@ -625,7 +631,7 @@ class Form extends ipsForm
         ) {
             if ($this->built === false) {
                 $this->build();
-            };
+            }
             $this->valuesError = true;
             $this->hasSubmitted = true;
             if ($values = parent::values($stringValues)) {
@@ -743,7 +749,7 @@ class Form extends ipsForm
             $this->languageKeys[] = $element->name . '_desc';
             $this->languageKeys[] = $element->name . '_warning';
 
-            if (isset($element->options['options']) and \count($element->options['options'])) {
+            if (isset($element->options['options']) and count($element->options['options'])) {
                 $this->languageKeys = array_merge(
                     $this->languageKeys,
                     array_map(
@@ -799,11 +805,6 @@ class Form extends ipsForm
         }
 
         return $prefix ? $formPrefix . $name : $name;
-    }
-
-    protected function addTabForm($lang, $icon = null, $blurblang = null, $css = null)
-    {
-        parent::addTab($lang, $icon, $blurblang, $css);
     }
 
     /**
@@ -1007,7 +1008,7 @@ class Form extends ipsForm
                         case 'togglesOff':
                         case 'natogglesOff':
                             foreach ($toggle['elements'] as $k => $val) {
-                                if (\is_array($val)) {
+                                if (is_array($val)) {
                                     foreach ($val as $v) {
                                         if ($this->togglesAppending) {
                                             $prefixed = 'js_' . $this->compileName($v);
@@ -1312,8 +1313,14 @@ class Form extends ipsForm
      * @return $this
      * @throws Exception
      */
-    public function addMessage(string $lang, ?string $css = '', bool $parse = true, string $_id = null, string $after = null, string $tab = null): void
-    {
+    public function addMessage(
+        string $lang,
+        ?string $css = '',
+        bool $parse = true,
+        string $_id = null,
+        string $after = null,
+        string $tab = null
+    ): void {
         $key = $lang . '_message';
 
         if ($_id === null) {
@@ -1343,8 +1350,15 @@ class Form extends ipsForm
      * @throws Exception
      */
 
-    public function addDummy(string $langKey, string $value, string $desc = '', string $warning = '', string $id = '', string $after = null, string $tab = null): void
-    {
+    public function addDummy(
+        string $langKey,
+        string $value,
+        string $desc = '',
+        string $warning = '',
+        string $id = '',
+        string $after = null,
+        string $tab = null
+    ): void {
         if (empty($id) === true) {
             $id = uniqid('dummy_');
         }
@@ -1469,6 +1483,11 @@ class Form extends ipsForm
             $this->class = $this->customClasses;
         }
         return parent::__toString();
+    }
+
+    protected function addTabForm($lang, $icon = null, $blurblang = null, $css = null)
+    {
+        parent::addTab($lang, $icon, $blurblang, $css);
     }
 
     /**

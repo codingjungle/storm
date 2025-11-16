@@ -1,14 +1,14 @@
 <?php
 
 /**
-* @brief      Numbers Singleton
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage toolbox
-* @since      5.0.1
-* @version    -storm_version-
-*/
+ * @brief      Numbers Singleton
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage toolbox
+ * @since      5.0.1
+ * @version    -storm_version-
+ */
 
 namespace IPS\storm\DevToys;
 
@@ -16,32 +16,32 @@ use InvalidArgumentException;
 use IPS\Patterns\Singleton;
 
 use function bindec;
+use function ctype_xdigit;
 use function decbin;
 use function dechex;
 use function decoct;
-use function hexdec;
-use function ctype_xdigit;
 use function defined;
 use function header;
+use function hexdec;
 use function octdec;
 use function preg_match;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
-* Numbers Class
-* @mixin Numbers
-*/
+ * Numbers Class
+ * @mixin Numbers
+ */
 class Numbers extends Singleton
 {
     /**
-    * @brief Singleton Instance
-    * @note This needs to be declared in any child class
-    * @var static
-    */
+     * @brief Singleton Instance
+     * @note This needs to be declared in any child class
+     * @var static
+     */
     public static ?Singleton $instance = null;
 
 

@@ -53,6 +53,9 @@ class sources extends DeveloperController
     protected $front = false;
     public function execute(string $command = 'do'): void
     {
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
         if (\IPS\NO_WRITES === true) {
             Output::i()
                 ->error(

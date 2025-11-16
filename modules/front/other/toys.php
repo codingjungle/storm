@@ -89,6 +89,10 @@ class toys extends Controller
 {
     public function execute(): void
     {
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
+
         Head::i()->js(['global_copy']);
         parent::execute();
     }

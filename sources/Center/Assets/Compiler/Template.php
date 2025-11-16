@@ -12,7 +12,6 @@
 
 namespace IPS\storm\Center\Assets\Compiler;
 
-use function count;
 use function implode;
 use function str_starts_with;
 

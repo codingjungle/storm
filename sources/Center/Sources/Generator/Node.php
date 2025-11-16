@@ -14,18 +14,15 @@ namespace IPS\storm\Center\Sources\Generator;
 
 use Exception;
 use IPS\Content\ClubContainer;
-use IPS\Helpers\Form;
 use IPS\Node\Colorize;
 use IPS\Node\DelayedCount;
 use IPS\Node\Icon;
 use IPS\Node\Model;
 use IPS\Node\Permissions;
 use IPS\Node\Ratings;
-use IPS\Node\Statistics;
 
 use function defined;
 use function file_exists;
-use function class_exists;
 use function file_get_contents;
 use function file_put_contents;
 use function header;
@@ -47,19 +44,20 @@ class Node extends GeneratorAbstract
 {
     protected function addFurl($value, $url)
     {
-        $furlFile = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/furl.json';
+        $furlFile = \IPS\Application::getRootPath(
+            ) . '/applications/' . $this->application->directory . '/data/furl.json';
         if (file_exists($furlFile)) {
             $furls = json_decode(file_get_contents($furlFile), true);
         } else {
             $furls = [
                 'topLevel' => $this->app,
-                'pages'    => [],
+                'pages' => [],
             ];
         }
 
         $furls['pages'][$value] = [
             'friendly' => $this->classname_lower . '/{#project}-{?}',
-            'real'     => $url,
+            'real' => $url,
         ];
 
         file_put_contents($furlFile, json_encode($furls, JSON_PRETTY_PRINT));
@@ -85,8 +83,8 @@ class Node extends GeneratorAbstract
             null,
             [
                 'visibility' => T_PROTECTED,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -96,8 +94,8 @@ class Node extends GeneratorAbstract
             [],
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'array'
             ]
         );
@@ -107,8 +105,8 @@ class Node extends GeneratorAbstract
             false,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'bool'
             ]
         );
@@ -117,8 +115,8 @@ class Node extends GeneratorAbstract
             null,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -127,8 +125,8 @@ class Node extends GeneratorAbstract
             null,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -137,8 +135,8 @@ class Node extends GeneratorAbstract
             false,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'bool'
             ]
         );
@@ -147,8 +145,8 @@ class Node extends GeneratorAbstract
             false,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => false,
-                'document'   => ['@inheritdoc'],
+                'static' => false,
+                'document' => ['@inheritdoc'],
                 'hint' => 'bool'
             ]
         );
@@ -157,8 +155,8 @@ class Node extends GeneratorAbstract
             $this->app,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'string'
             ]
         );
@@ -177,10 +175,10 @@ class Node extends GeneratorAbstract
             'module',
             $this->classname_lower,
             [
-            'visibility' => T_PUBLIC,
-            'static'     => true,
-            'document'   => ['@inheritdoc'],
-            'hint' => 'string'
+                'visibility' => T_PUBLIC,
+                'static' => true,
+                'document' => ['@inheritdoc'],
+                'hint' => 'string'
             ]
         );
         $this->databaseColumnParent();
@@ -250,73 +248,15 @@ class Node extends GeneratorAbstract
         $this->addToLangs($this->app . '_' . $this->classname_lower . '_node', $this->classname, $this->application);
     }
 
-    protected function colorize(&$dbColumns): void
-    {
-        if (in_array(Colorize::class, $this->traits, true)) {
-            $this->generator->addProperty(
-                'featureColumnName',
-                'feature_color',
-                [
-                    'static' => true,
-                    'visibility' => T_PUBLIC,
-                    'hint' => 'string'
-                ]
-            );
-            $dbColumns[] = 'feature_color';
-        }
-    }
-
-    protected function icon(&$dbColumns): void
-    {
-        if (in_array(Icon::class, $this->traits, true)) {
-            $this->generator->addProperty(
-                'iconColumn',
-                'icon',
-                [
-                    'visibility' => T_PUBLIC,
-                    'static'     => true,
-                    'document'   => ['@inheritdoc'],
-                    'hint' => 'string'
-                ]
-            );
-
-            $this->generator->addProperty(
-                'iconFormPrefix',
-                $this->classname_lower . '_icon_',
-                [
-                    'visibility' => T_PUBLIC,
-                    'static'     => false,
-                    'document'   => ['@inheritdoc'],
-                    'hint' => 'string'
-                ]
-            );
-
-            $this->generator->addProperty(
-                'iconStorageExtension',
-                $this->icon_storage,
-                [
-                    'visibility' => T_PUBLIC,
-                    'static'     => true,
-                    'document'   => ['@inheritdoc'],
-                    'hint' => 'string'
-                ]
-            );
-
-            $dbColumns[] = 'icon';
-        }
-    }
-
-
     protected function databaseColumnParent()
     {
-
         $this->generator->addProperty(
             'databaseColumnParent',
             'parent',
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -329,8 +269,8 @@ class Node extends GeneratorAbstract
             0,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'int'
             ]
         );
@@ -343,8 +283,8 @@ class Node extends GeneratorAbstract
             'order',
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -357,8 +297,8 @@ class Node extends GeneratorAbstract
             'true',
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'bool'
             ]
         );
@@ -371,23 +311,9 @@ class Node extends GeneratorAbstract
             'enabled',
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
-            ]
-        );
-    }
-
-    protected function nodeSortable()
-    {
-        $this->generator->addProperty(
-            'nodeSortable',
-            'true',
-            [
-                'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
-                'hint' => 'bool'
             ]
         );
     }
@@ -399,9 +325,23 @@ class Node extends GeneratorAbstract
             $this->app . '_' . $this->classname_lower . '_node',
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'string'
+            ]
+        );
+    }
+
+    protected function nodeSortable()
+    {
+        $this->generator->addProperty(
+            'nodeSortable',
+            'true',
+            [
+                'visibility' => T_PUBLIC,
+                'static' => true,
+                'document' => ['@inheritdoc'],
+                'hint' => 'bool'
             ]
         );
     }
@@ -421,8 +361,8 @@ class Node extends GeneratorAbstract
             $contentItemClass,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => '?string'
             ]
         );
@@ -433,8 +373,8 @@ class Node extends GeneratorAbstract
             $this->app . '_' . $this->classname_lower,
             [
                 'visibility' => T_PUBLIC,
-                'static'     => true,
-                'document'   => ['@inheritdoc'],
+                'static' => true,
+                'document' => ['@inheritdoc'],
                 'hint' => 'string'
             ]
         );
@@ -451,8 +391,8 @@ class Node extends GeneratorAbstract
                     $this->app,
                     [
                         'visibility' => T_PUBLIC,
-                        'static'     => true,
-                        'document'   => ['@inheritdoc'],
+                        'static' => true,
+                        'document' => ['@inheritdoc'],
                         'hint' => '?string'
                     ]
                 );
@@ -464,19 +404,19 @@ class Node extends GeneratorAbstract
                     $this->classname_lower,
                     [
                         'visibility' => T_PUBLIC,
-                        'static'     => true,
-                        'document'   => ['@inheritdoc'],
+                        'static' => true,
+                        'document' => ['@inheritdoc'],
                         'hint' => '?string'
                     ]
                 );
 
                 //perms map
                 $map = [
-                    'view'   => 'view',
-                    'read'   => 2,
-                    'add'    => 3,
+                    'view' => 'view',
+                    'read' => 2,
+                    'add' => 3,
                     'delete' => 4,
-                    'reply'  => 5,
+                    'reply' => 5,
                     'review' => 6,
                 ];
 
@@ -485,8 +425,8 @@ class Node extends GeneratorAbstract
                     $map,
                     [
                         'visibility' => T_PUBLIC,
-                        'static'     => true,
-                        'document'   => ['@inheritdoc'],
+                        'static' => true,
+                        'document' => ['@inheritdoc'],
                         'hint' => 'array'
                     ]
                 );
@@ -502,8 +442,8 @@ class Node extends GeneratorAbstract
                     $this->app . '_' . $this->classname_lower . '_perms_',
                     [
                         'visibility' => T_PUBLIC,
-                        'static'     => true,
-                        'document'   => $doc,
+                        'static' => true,
+                        'document' => $doc,
                         'hint' => 'string'
                     ]
                 );
@@ -517,8 +457,8 @@ class Node extends GeneratorAbstract
         if (in_array(Ratings::class, $this->implements, true)) {
             $map = [
                 'rating_average' => 'rating_average',
-                'rating_total'   => 'rating_total',
-                'rating_hits'    => 'rating_hits',
+                'rating_total' => 'rating_total',
+                'rating_hits' => 'rating_hits',
             ];
 
             foreach ($map as $m) {
@@ -535,10 +475,26 @@ class Node extends GeneratorAbstract
                 $map,
                 [
                     'visibility' => T_PUBLIC,
-                    'static'     => true,
-                    'document'   => $doc,
+                    'static' => true,
+                    'document' => $doc,
                 ]
             );
+        }
+    }
+
+    protected function colorize(&$dbColumns): void
+    {
+        if (in_array(Colorize::class, $this->traits, true)) {
+            $this->generator->addProperty(
+                'featureColumnName',
+                'feature_color',
+                [
+                    'static' => true,
+                    'visibility' => T_PUBLIC,
+                    'hint' => 'string'
+                ]
+            );
+            $dbColumns[] = 'feature_color';
         }
     }
 
@@ -550,12 +506,52 @@ class Node extends GeneratorAbstract
                 'return \'club_id\';',
                 [],
                 [
-                    'static'     => true,
+                    'static' => true,
                     'visibility' => T_PUBLIC,
-                    'document'   => '@inheritdoc',
+                    'document' => '@inheritdoc',
                     'returnType' => 'string',
                 ]
             );
+        }
+    }
+
+    protected function icon(&$dbColumns): void
+    {
+        if (in_array(Icon::class, $this->traits, true)) {
+            $this->generator->addProperty(
+                'iconColumn',
+                'icon',
+                [
+                    'visibility' => T_PUBLIC,
+                    'static' => true,
+                    'document' => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
+            $this->generator->addProperty(
+                'iconFormPrefix',
+                $this->classname_lower . '_icon_',
+                [
+                    'visibility' => T_PUBLIC,
+                    'static' => false,
+                    'document' => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
+            $this->generator->addProperty(
+                'iconStorageExtension',
+                $this->icon_storage,
+                [
+                    'visibility' => T_PUBLIC,
+                    'static' => true,
+                    'document' => ['@inheritdoc'],
+                    'hint' => 'string'
+                ]
+            );
+
+            $dbColumns[] = 'icon';
         }
     }
 }

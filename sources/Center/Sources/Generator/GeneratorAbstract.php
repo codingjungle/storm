@@ -20,6 +20,7 @@ use IPS\storm\Center\Traits\LanguageBuilder;
 use IPS\storm\Center\Traits\ModuleBuilder;
 use IPS\storm\Center\Traits\SchemaBuilder;
 use IPS\storm\Profiler\Debug;
+use IPS\storm\Proxy;
 use IPS\storm\Shared\Magic;
 use IPS\storm\Writers\ClassGenerator;
 use IPS\storm\Writers\FileGenerator;
@@ -396,6 +397,10 @@ abstract class GeneratorAbstract
                     }
                 }
             }
+            $lockFile = Proxy::i()->path . '/lock.txt';
+            if (file_exists($lockFile)) {
+                Proxy::i()->run('php');
+            }
         } catch (RuntimeException $e) {
             $msg = lang(
                 'storm_class_db_error',
@@ -567,18 +572,18 @@ EOF;
             . $this->application->directory
             . '/data/';
         $relations = [];
-        if (file_exists($path . '/arRelations.json')) {
+        if (file_exists($path . '/dbModels.json')) {
             $relations = json_decode(
                 file_get_contents(
                     $path
-                    . '/arRelations.json'
+                    . '/dbModels.json'
                 ),
                 true
             );
         }
         $relations[$this->database] = $this->namespace . '\\' . $this->classname;
         FileGenerator::i()
-            ->setFileName('arRelations')
+            ->setFileName('dbModels')
             ->setExtension('json')
             ->setPath($path)
             ->addBody(

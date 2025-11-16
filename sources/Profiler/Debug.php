@@ -15,13 +15,14 @@
 
 namespace IPS\storm\Profiler;
 
+use AllowDynamicProperties;
 use Exception;
 use IPS\DateTime;
 use IPS\Patterns\ActiveRecord;
-use IPS\storm\Settings;
-use IPS\Theme;
 use IPS\storm\Editor;
 use IPS\storm\Profiler;
+use IPS\storm\Settings;
+use IPS\Theme;
 use UnexpectedValueException;
 
 use function count;
@@ -29,14 +30,12 @@ use function debug_backtrace;
 use function defined;
 use function get_class;
 use function header;
-use function htmlentities;
 use function is_array;
 use function json_decode;
 use function json_encode;
 use function lang;
 use function md5;
 use function method_exists;
-use function nl2br;
 use function rand;
 use function time;
 
@@ -53,16 +52,16 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @package IPS\storm\Profiler
  * @mixin _Debug
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class Debug extends ActiveRecord
 {
     use \IPS\storm\Shared\ActiveRecord;
 
-    const CRITICAL = 5;
-    const ERROR = 4;
-    const WARNING = 3;
-    const INFO = 2;
-    const DEBUG = 1;
+    public const CRITICAL = 5;
+    public const ERROR = 4;
+    public const WARNING = 3;
+    public const INFO = 2;
+    public const DEBUG = 1;
 
     public static array $logLevels = [
         1 => 'debug',
@@ -71,6 +70,7 @@ class Debug extends ActiveRecord
         4 => 'error',
         5 => 'critical',
     ];
+
     /**
      * @brief    [ActiveRecord] Database Prefix
      */
@@ -114,6 +114,7 @@ class Debug extends ActiveRecord
             }
             $debug = new static();
             $debug->category = $category;
+            $debug->level = $level;
             $bt = [];
 
             if ($message instanceof Exception) {
@@ -174,7 +175,7 @@ class Debug extends ActiveRecord
 
         $count = count($list) ?: 0;
 
-        $button =  Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
+        $button = Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
             'storm_profiler_debug',
             '',
             'storm_profiler_debug_panel',
@@ -242,7 +243,7 @@ class Debug extends ActiveRecord
         } else {
             $list = $this->_data['log'];
         }
-        if(empty($list) === false) {
+        if (empty($list) === false) {
             $list = str_replace('"', '', $list);
         }
         return $list;
@@ -256,10 +257,10 @@ class Debug extends ActiveRecord
         foreach ($btOG as $k => $v) {
             $url = null;
             if (isset($v['file'])) {
-                $url =  Editor::i()->replace($v['file'], $v['line']);
+                $url = Editor::i()->replace($v['file'], $v['line']);
             }
             $class = $v['class'] ?? '';
-            $check = $class.'::'.$v['function'];
+            $check = $class . '::' . $v['function'];
 //            if(str_contains($check, 'storm\\Profiler\\Debug::log') || str_contains($check, 'IPS\\Log::log') || str_contains($check, 'IPS\\Log::debug'))
 //            {
 //                continue;

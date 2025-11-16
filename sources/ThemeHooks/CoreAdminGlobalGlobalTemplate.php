@@ -2,7 +2,6 @@
 
 namespace IPS\storm\ThemeHooks;
 
-use IPS\storm\Profiler;
 use IPS\storm\Settings;
 
 class CoreAdminGlobalGlobalTemplate

@@ -10,18 +10,15 @@
 
 namespace IPS\storm\Proxy\Generator;
 
-use IPS\storm\Application;
-use IPS\storm\Writers\ClassGenerator;
 use Exception;
 use IPS\Patterns\Singleton;
+use IPS\storm\Application;
 use IPS\storm\Proxy;
+use IPS\storm\Writers\ClassGenerator;
 
 use function defined;
 use function header;
 use function implode;
-use function json_encode;
-
-use const JSON_PRETTY_PRINT;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -56,10 +53,8 @@ class GeneratorAbstract extends Singleton
         ?array $body = null,
         string $ns = 'stormProxy',
         string $funcName = 'get'
-    ): void
-    {
+    ): void {
         try {
-
             $file = ClassGenerator::i()
                 ->setNameSpace($ns)
                 ->setClassName($class)
@@ -67,13 +62,10 @@ class GeneratorAbstract extends Singleton
                 ->setExtension('php')
                 ->setPath($this->save . DIRECTORY_SEPARATOR . 'providers');
 
-            if($body)
-            {
+            if ($body) {
                 $file->addInterfaces(['stormProxy', $implements]);
                 $file->addMethod($funcName, 'return [\'' . implode("','", $body) . '\'];');
-            }
-            else
-            {
+            } else {
                 $file->setExtends([$ns, $implements]);
             }
 

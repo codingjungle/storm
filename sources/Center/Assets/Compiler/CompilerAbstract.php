@@ -13,14 +13,14 @@
 namespace IPS\storm\Center\Assets\Compiler;
 
 use IPS\Application;
+use IPS\storm\Proxy;
 use IPS\storm\Shared\Magic;
 use IPS\storm\Writers\FileGenerator;
 
 use function explode;
-use function is_array;
+use function file_exists;
 use function str_replace;
 use function swapLineEndings;
-use function trim;
 
 /**
  * @brief      CompilerAbstract Class
@@ -42,9 +42,9 @@ abstract class CompilerAbstract
 {
     use Magic;
 
-//    use Read;
-//    use Replace;
-//    use Write;
+    //    use Read;
+    //    use Replace;
+    //    use Write;
 
     /**
      * @var Application
@@ -76,6 +76,11 @@ abstract class CompilerAbstract
         }
     }
 
+    protected function replace(string|array $search, string|array $replace, string $content): string
+    {
+        return str_replace($search, $replace, $content);
+    }
+
     /**
      * process the values for file creation
      */
@@ -94,7 +99,7 @@ abstract class CompilerAbstract
         $content = $this->content();
         $file = $this->filename;
 
-        $dir = \IPS\Application::getRootPath() . '/applications/' . $this->app . '/dev/';
+        $dir = Application::getRootPath() . '/applications/' . $this->app . '/dev/';
         if ($this->type === 'template') {
             $dir .= 'html/';
         } else {
@@ -109,10 +114,12 @@ abstract class CompilerAbstract
             ->setExtension($this->extension)
             ->addBody($content)
             ->save();
-
+        $lockFile = Proxy::i()->path . '/lock.txt';
+        if (file_exists($lockFile) && $this->extension === 'phtml') {
+            Proxy::i()->run('phtml');
+        }
         return $file;
     }
-
 
     /**
      * sets and gathers the class body blank
@@ -124,11 +131,6 @@ abstract class CompilerAbstract
     protected function getFile(string $file): ?string
     {
         $path = \IPS\storm\Application::getRootPath() . '/applications/storm/data/storm/assets/' . $file . '.txt';
-        return file_exists($path) ? swapLineEndings(file_get_contents($path)): null;
-    }
-
-    protected function replace(string|array $search, string|array $replace, string $content): string
-    {
-        return str_replace($search, $replace, $content);
+        return file_exists($path) ? swapLineEndings(file_get_contents($path)) : null;
     }
 }

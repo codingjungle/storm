@@ -28,9 +28,9 @@ trait Constants
     public function addConst(string $name, $value, array $extra = []): static
     {
         $this->const[$this->hash($name)] = [
-            'name'       => $name,
-            'value'      => $value,
-            'document'   => $extra['document'] ?? null,
+            'name' => $name,
+            'value' => $value,
+            'document' => $extra['document'] ?? null,
             'visibility' => $extra['visibility'] ?? null,
         ];
         return $this;

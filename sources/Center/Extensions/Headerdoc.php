@@ -33,6 +33,21 @@ class Headerdoc extends ExtensionsAbstract
 {
 
     /**
+     * @return array
+     * @throws Exception
+     */
+    public function elements()
+    {
+        $this->form->addElement('use_default', 'yn')->toggles(['table', 'field'], true);
+        $this->form->addElement('enabled', 'yn');
+        $this->form->addElement('indexEnabled', 'yn');
+        $this->form->addElement('dirSkip', 'stack');
+        $this->form->addElement('fileSkip', 'stack');
+        $this->form->addElement('exclude', 'stack');
+        return $this->elements;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function _content()
@@ -76,20 +91,5 @@ class Headerdoc extends ExtensionsAbstract
         ];
         unset($this->enabled, $this->indexEnabled, $this->dirSkip, $this->fileSkip, $this->exclude);
         return str_replace($find, $replace, $content);
-    }
-
-    /**
-     * @return array
-     * @throws Exception
-     */
-    public function elements()
-    {
-        $this->form->addElement('use_default','yn')->toggles(['table', 'field'], true);
-        $this->form->addElement('enabled', 'yn');
-        $this->form->addElement('indexEnabled', 'yn');
-        $this->form->addElement('dirSkip', 'stack');
-        $this->form->addElement('fileSkip', 'stack');
-        $this->form->addElement('exclude', 'stack');
-        return $this->elements;
     }
 }

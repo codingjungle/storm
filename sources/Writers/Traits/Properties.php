@@ -39,13 +39,13 @@ trait Properties
     public function addProperty(string $name, mixed $value = null, array $extra = []): static
     {
         $this->properties[$name] = [
-            'name'       => $name,
-            'value'      => $value,
-            'document'   => $extra['document'] ?? ['@inheritdoc'],
-            'static'     => $extra['static'] ?? false,
+            'name' => $name,
+            'value' => $value,
+            'document' => $extra['document'] ?? ['@inheritdoc'],
+            'static' => $extra['static'] ?? false,
             'visibility' => $extra['visibility'] ?? T_PUBLIC,
-            'type'       => $extra['type'] ?? 'string',
-            'hint'       => $extra['hint'] ?? 'string',
+            'type' => $extra['type'] ?? 'string',
+            'hint' => $extra['hint'] ?? 'string',
         ];
         return $this;
     }
@@ -154,8 +154,8 @@ trait Properties
 
                 $this->output('$' . $property['name']);
                 $value = $property['value'] ?? null;
-                    $value = trim(ClassGenerator::convertValue($value));
-                    $this->output(' = ' . $value);
+                $value = trim(ClassGenerator::convertValue($value));
+                $this->output(' = ' . $value);
                 $this->output(";\n");
             }
         }

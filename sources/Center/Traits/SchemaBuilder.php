@@ -56,7 +56,7 @@ trait SchemaBuilder
         $application = $this->application;
         try {
             $directory = $application->directory;
-            $path = \IPS\Application::getRootPath() . "/applications/{$directory}/";
+            $path = Application::getRootPath() . "/applications/{$directory}/";
             $definition = Db::i()->getTableDefinition($table);
 
             if (!is_dir($path . 'setup/upg_working/')) {
@@ -87,7 +87,7 @@ trait SchemaBuilder
 
             Db::i()->update('core_dev', [
                 'last_sync' => time(),
-                'ran'       => json_encode($write),
+                'ran' => json_encode($write),
             ], ['app_key=? AND working_version=?', $directory, 'working']);
 
             /* Add to schema.json */

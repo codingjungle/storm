@@ -2,6 +2,7 @@
 
 namespace IPS\storm\Center\Sources\Generator;
 
+use Exception;
 use IPS\storm\Application;
 
 use function defined;
@@ -20,14 +21,16 @@ class Group extends GeneratorAbstract
     {
         $memberClass = '\\IPS\\' . $this->application->directory . '\Member';
         $this->generator->addImport($memberClass);
-        $this->generator->addImport(\Exception::class);
+        $this->generator->addImport(Exception::class);
         $this->scaffolding_create = true;
         $this->scaffolding_type = ['db'];
 
-        $content = swapLineEndings(file_get_contents(
-            Application::getRootPath('storm') .
-            '/applications/storm/data/storm/sources/group.txt'
-        ));
+        $content = swapLineEndings(
+            file_get_contents(
+                Application::getRootPath('storm') .
+                '/applications/storm/data/storm/sources/group.txt'
+            )
+        );
         $content = str_replace(
             [
                 '#databaseTable#',

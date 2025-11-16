@@ -13,16 +13,14 @@
 namespace IPS\storm\Profiler;
 
 use IPS\Patterns\Singleton;
-use IPS\Theme;
 use IPS\storm\Editor;
-
+use IPS\Theme;
 use UnexpectedValueException;
 
 use function count;
 use function defined;
 use function get_included_files;
 use function header;
-use function json_encode;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -50,10 +48,10 @@ class Files extends Singleton
         $i = 1;
         foreach ($files as $key => $file) {
             $url = Editor::i()->replace($file);
-            $list[$file] = ['name' => $i.': '.$file, 'url' => $url];
+            $list[$file] = ['name' => $i . ': ' . $file, 'url' => $url];
             $i++;
         }
-        $count = count($list); 
+        $count = count($list);
         $button = Theme::i()->getTemplate('profiler', 'storm', 'global')->buttons(
             'storm_profiler_files',
             '',
@@ -64,12 +62,16 @@ class Files extends Singleton
             '#000',
             $count
         );
-        $panel = Theme::i()->getTemplate('profiler', 'storm', 'global')->listPanel( $list, 'storm_profiler_files_panel', lang('storm_profiler_title_files', false, ['sprintf'=> [$count ] ]) );
+        $panel = Theme::i()->getTemplate('profiler', 'storm', 'global')->listPanel(
+            $list,
+            'storm_profiler_files_panel',
+            lang('storm_profiler_title_files', false, ['sprintf' => [$count]])
+        );
 
         return [
             'button' => $button,
             'panel' => $panel
-        ]; 
+        ];
     }
 
 }

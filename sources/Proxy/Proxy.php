@@ -10,18 +10,21 @@ use Exception;
 use IPS\Application;
 use IPS\IPS;
 use IPS\Log;
-use IPS\Output;
 use IPS\Output\System;
 use IPS\Patterns\Singleton;
 use IPS\storm\Profiler\Debug;
-use IPS\storm\Proxy\Generator\Cache;
+use IPS\storm\Proxy\Generator\Database;
+use IPS\storm\Proxy\Generator\ErrorCodes;
+use IPS\storm\Proxy\Generator\Languages;
+use IPS\storm\Proxy\Generator\phpstormMeta;
 use IPS\storm\Proxy\Generator\Store;
+use IPS\storm\Proxy\Generator\Templates;
+use IPS\storm\Proxy\Generator\Url;
 use IPS\storm\Writers\ClassGenerator;
 use IPS\storm\Writers\FileGenerator;
 use IPS\Theme;
 use OutOfRangeException;
 use ReflectionClass;
-use ReflectionException;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -29,11 +32,9 @@ use Symfony\Component\Finder\Finder;
 use Throwable;
 
 use function _p;
-use function array_keys;
 use function array_merge;
 use function array_pop;
 use function array_shift;
-use function asort;
 use function class_exists;
 use function constant;
 use function count;
@@ -49,7 +50,6 @@ use function is_dir;
 use function is_float;
 use function is_int;
 use function is_numeric;
-use function iterator_to_array;
 use function json_decode;
 use function json_encode;
 use function md5;
@@ -94,130 +94,18 @@ class Proxy extends Singleton
         $this->path = \IPS\ROOT_PATH . DIRECTORY_SEPARATOR . 'stormProxy' . DIRECTORY_SEPARATOR;
     }
 
-    /**
-     * returns the class and namespace
-     *
-     * @param $source
-     *
-     * @return array
-     */
-    public function tokenize($source): array
+    public function adjustModel(string $table): void
     {
-        $namespace = null;
-        $tokens = token_get_all($source);
-        $count = count($tokens);
-        $dlm = false;
-        $final = false;
-        $abstract = false;
-        $extends = null;
-        for ($i = 2; $i < $count; $i++) {
-            if (
-                (
-                    isset($tokens[$i - 2][1]) &&
-                    ($tokens[$i - 2][1] === 'phpnamespace' || $tokens[$i - 2][1] === 'namespace')) ||
-                ($dlm && $tokens[$i - 1][0] === T_NS_SEPARATOR && $tokens[$i][0] === T_STRING)
-            ) {
-                if (!$dlm) {
-                    $namespace = 0;
-                }
-                if (isset($tokens[$i][1])) {
-                    $namespace = $namespace ? $namespace . "\\" . $tokens[$i][1] : $tokens[$i][1];
-                    $dlm = true;
-                }
-            } elseif ($dlm && ($tokens[$i][0] !== T_NS_SEPARATOR) && ($tokens[$i][0] !== T_STRING)) {
-                $dlm = false;
-            }
-
-            if ($tokens[$i][0] === T_FINAL) {
-                $final = true;
-            }
-
-            if ($tokens[$i][0] === T_ABSTRACT) {
-                $abstract = true;
-            }
-
-            if (
-                isset($tokens[$i - 2][1]) && $tokens[$i - 2][0] === T_INTERFACE ||
-                (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] === 'interface') ||
-                $tokens[$i - 2][0] === T_INTERFACE ||
-                (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] === 'trait') ||
-                $tokens[$i - 2][0] === T_CLASS ||
-                (
-                    isset($tokens[$i - 2][1]) &&
-                    $tokens[$i - 2][1] === 'class') &&
-                $tokens[$i - 1][0] === T_WHITESPACE &&
-                $tokens[$i][0] === T_STRING
-            ) {
-                $type = $tokens[$i - 2][0];
-                $class = $tokens[$i][1];
-                for ($ii = $i; $ii < $count; $ii++) {
-                    if (isset($tokens[$i][1]) && $tokens[$i][1] === 'extends') {
-                        for ($iii = $ii; $iii < $count; $iii++) {
-                            if (isset($tokens[$iii][0]) && $tokens[$iii][0] === T_STRING) {
-                                $extends = $tokens[$iii];
-                                break 2;
-                            }
-                        }
-                    }
-                }
-                return [
-                    'type' => $type,
-                    'namespace' => $namespace,
-                    'class' => $class,
-                    'extends' => $extends,
-                    'abstract' => $abstract,
-                    'final' => $final,
-                ];
-            }
-        }
-
-        return [];
-    }
-
-    public function buildModels(): void
-    {
+        $relations = $this->getArRelations();
         $modelCheck = Store::i()->read('storm_model_check');
-        foreach ($this->getArRelations() as $table => $dbClass) {
-            try {
-                if (is_array($dbClass)) {
-                    foreach ($dbClass as $db) {
-                        $this->buildDBProps($table, $db, true, $modelCheck);
-                    }
-                } else {
-                    $this->buildDBProps($table, $dbClass, true, $modelCheck);
-                }
-            } catch (Exception) {
-                continue;
-            }
-        }
 
-        Store::i()->write($modelCheck, 'storm_model_check');
-    }
-
-    public function buildNonOwnedModels(): void
-    {
-        $modelCheck = Store::i()->read('storm_model_check');
-        if (Settings::i()->storm_proxy_do_non_owned === true) {
-            foreach ($this->scrubAr() as $table => $classes) {
-                foreach ($classes as $dbClass) {
-                    $this->buildDBProps($table, $dbClass, false, $modelCheck);
-                }
+        if (isset($relations[$table])) {
+            $dbClasses = $relations[$table];
+            foreach ($dbClasses as $dbClass) {
+                $this->buildDBProps($table, $dbClass, $modelCheck, true);
             }
         }
         Store::i()->write($modelCheck, 'storm_model_check');
-    }
-
-    protected function scrubAr()
-    {
-        $relations = Store::i()->read('storm_ar_relations');
-        try {
-            foreach ($this->getArRelations() as $table => $dbClass) {
-                unset($relations[$table]);
-            }
-        } catch (Exception) {
-        }
-
-        return $relations;
     }
 
     /**
@@ -228,7 +116,7 @@ class Proxy extends Singleton
         $apps = Application::applications();
         $relations = [];
         foreach ($apps as $app) {
-            $dir = Application::getRootPath() . '/applications/' . $app->directory . '/data/arRelations.json';
+            $dir = Application::getRootPath() . '/applications/' . $app->directory . '/data/dbModels.json';
             if (file_exists($dir)) {
                 $dbd = json_decode(file_get_contents($dir), true);
                 foreach ($dbd as $k => $v) {
@@ -240,7 +128,7 @@ class Proxy extends Singleton
         return $relations;
     }
 
-    protected function buildDBProps(string $table, string $dbClass, bool $mixin = true, array &$modelCheck): void
+    protected function buildDBProps(string $table, string $dbClass, array &$modelCheck, bool $mixin = true): void
     {
         if ($mixin === true) {
             $mixin = Settings::i()->storm_proxy_write_mixin;
@@ -299,58 +187,6 @@ class Proxy extends Singleton
         if ($mixin === true) {
             $this->writeIn($dbClass);
         }
-    }
-
-    protected function writeIn($class): void
-    {
-        $reflection = new ReflectionClass($class);
-        $namespace = $reflection->getNamespaceName();
-        $classname = $reflection->getShortName();
-        $phpdocMixin = new DocBlock($reflection, new Context($namespace));
-        //check if the source file already has a proper mixin
-        foreach ($phpdocMixin->getTagsByName('mixin') as $tag) {
-            if (
-                str_contains($tag->getContent(), '_' . $classname) ||
-                str_contains($tag->getContent(), $namespace . '\\_' . $classname)
-            ) {
-                return;
-            }
-        }
-        $originalDoc = $reflection->getDocComment();
-        $serializer = new Serializer();
-        $mixinClassName = "_{$classname}";
-        $phpdocMixin->appendTag(Tag::createInstance("@mixin $mixinClassName", $phpdocMixin));
-        $mixinDocComment = $serializer->getDocComment($phpdocMixin);
-
-        // remove blank lines if there's no text
-        if (!$phpdocMixin->getText()) {
-            $mixinDocComment = preg_replace("/\s\*\s*\n/", '', $mixinDocComment);
-        }
-
-        $mixinDocComment .= "\n#[\AllowDynamicProperties]";
-        $filename = $reflection->getFileName();
-        $contents = swapLineEndings(file_get_contents($filename));
-        $contents = str_replace("#[\AllowDynamicProperties]", "", $contents);
-
-        if ($originalDoc) {
-            $contents = str_replace($originalDoc, $mixinDocComment, $contents);
-        } else {
-            $replace = "{$mixinDocComment}\n";
-            $pos = strpos($contents, "final class {$classname}") ?: strpos($contents, "class {$classname}");
-            if ($pos !== false) {
-                $contents = substr_replace($contents, $replace, $pos, 0);
-            }
-        }
-
-        $fileInfo = new SplFileInfo($filename);
-        $path = $fileInfo->getPath();
-        $ext = $fileInfo->getExtension();
-        $baseName = $fileInfo->getBasename('.' . $ext);
-        FileGenerator::i()
-            ->setFileName($baseName)
-            ->setPath($path)
-            ->addBody($contents)
-            ->save();
     }
 
     protected function buildHead(string $name, array $def, &$classDefinition): void
@@ -425,19 +261,82 @@ class Proxy extends Singleton
         return $block;
     }
 
-    public function adjustModel(string $table): void
+    protected function writeIn($class): void
     {
-        $relations = $this->getArRelations();
-        $modelCheck = Store::i()->read('storm_model_check');
+        $reflection = new ReflectionClass($class);
+        $namespace = $reflection->getNamespaceName();
+        $classname = $reflection->getShortName();
+        $phpdocMixin = new DocBlock($reflection, new Context($namespace));
+        //check if the source file already has a proper mixin
+        foreach ($phpdocMixin->getTagsByName('mixin') as $tag) {
+            if (
+                str_contains($tag->getContent(), '_' . $classname) ||
+                str_contains($tag->getContent(), $namespace . '\\_' . $classname)
+            ) {
+                return;
+            }
+        }
+        $originalDoc = $reflection->getDocComment();
+        $serializer = new Serializer();
+        $mixinClassName = "_{$classname}";
+        $phpdocMixin->appendTag(Tag::createInstance("@mixin $mixinClassName", $phpdocMixin));
+        $mixinDocComment = $serializer->getDocComment($phpdocMixin);
 
-        if (isset($relations[$table])) {
-            $dbClasses = $relations[$table];
-            foreach ($dbClasses as $dbClass) {
-                $this->buildDBProps($table, $dbClass, true, $modelCheck);
-                ;
+        // remove blank lines if there's no text
+        if (!$phpdocMixin->getText()) {
+            $mixinDocComment = preg_replace("/\s\*\s*\n/", '', $mixinDocComment);
+        }
+
+        $mixinDocComment .= "\n#[\AllowDynamicProperties]";
+        $filename = $reflection->getFileName();
+        $contents = swapLineEndings(file_get_contents($filename));
+        $contents = str_replace("#[\AllowDynamicProperties]", "", $contents);
+
+        if ($originalDoc) {
+            $contents = str_replace($originalDoc, $mixinDocComment, $contents);
+        } else {
+            $replace = "{$mixinDocComment}\n";
+            $pos = strpos($contents, "final class {$classname}") ?: strpos($contents, "class {$classname}");
+            if ($pos !== false) {
+                $contents = substr_replace($contents, $replace, $pos, 0);
+            }
+        }
+
+        $fileInfo = new SplFileInfo($filename);
+        $path = $fileInfo->getPath();
+        $ext = $fileInfo->getExtension();
+        $baseName = $fileInfo->getBasename('.' . $ext);
+        FileGenerator::i()
+            ->setFileName($baseName)
+            ->setPath($path)
+            ->addBody($contents)
+            ->save();
+    }
+
+    public function buildNonOwnedModels(): void
+    {
+        $modelCheck = Store::i()->read('storm_model_check');
+        if (Settings::i()->storm_proxy_do_non_owned === true) {
+            foreach ($this->scrubAr() as $table => $classes) {
+                foreach ($classes as $dbClass) {
+                    $this->buildDBProps($table, $dbClass, $modelCheck, false);
+                }
             }
         }
         Store::i()->write($modelCheck, 'storm_model_check');
+    }
+
+    protected function scrubAr()
+    {
+        $relations = Store::i()->read('storm_ar_relations');
+        try {
+            foreach ($this->getArRelations() as $table => $dbClass) {
+                unset($relations[$table]);
+            }
+        } catch (Exception) {
+        }
+
+        return $relations;
     }
 
     public function constants(): void
@@ -732,7 +631,7 @@ class Proxy extends Singleton
                 $check = md5($css->getMTime());
 
                 if (
-                    $nc->exists()  === true &&
+                    $nc->exists() === true &&
                     (
                         isset($cssCheck[$css->getBasename()]) &&
                         $cssCheck[$css->getBasename()] === $check
@@ -755,23 +654,6 @@ class Proxy extends Singleton
         }
 
         Store::i()->write($cssCheck, 'storm_css_check');
-    }
-
-    /**
-     * empties a directory, use with caution!
-     *
-     * @param string|null $dir
-     */
-    public function emptyDirectory(?string $dir = null): void
-    {
-        if ($dir === null) {
-            $dir = $this->path . DIRECTORY_SEPARATOR;
-        }
-        try {
-            $fs = new Filesystem();
-            $fs->remove($dir);
-        } catch (IOException) {
-        }
     }
 
     protected function excludedDirCss(): array
@@ -815,13 +697,236 @@ class Proxy extends Singleton
     }
 
     /**
+     * empties a directory, use with caution!
+     *
+     * @param string|null $dir
+     */
+    public function emptyDirectory(?string $dir = null): void
+    {
+        if ($dir === null) {
+            $dir = $this->path . DIRECTORY_SEPARATOR;
+        }
+        try {
+            $fs = new Filesystem();
+            $fs->remove($dir);
+        } catch (IOException) {
+        }
+    }
+
+    public function run(string $extension = 'php'): void
+    {
+        $this->clearJsonFiles();
+        $this->build($extension);
+        if ($extension === 'phtml') {
+            Templates::i()->create();
+        } else {
+            $this->buildModels();
+            Database::run();
+            Languages::run();
+            Url::run();
+            ErrorCodes::run();
+            phpstormMeta::i()->create();
+        }
+    }
+
+    public function clearJsonFiles(): void
+    {
+        Store::i()->delete('storm_alt_templates');
+        Store::i()->delete('storm_metadata_final');
+        Store::i()->delete('storm_phpstorm_templates');
+        Store::i()->delete('storm_templates_class');
+    }
+
+    public function build(string $extensions = 'php'): void
+    {
+        $files = $this->dirIterator(null, $extensions);
+        $interfacing = Store::i()->read('storm_interfacing');
+        $traits = Store::i()->read('storm_traits');
+        $bitWiseFiles = Store::i()->read('storm_bitwise_files');
+        $codes = Store::i()->read('storm_error_codes');
+        $altCodes = Store::i()->read('storm_error_codes2');
+        $arRelations = Store::i()->read('storm_ar_relations');
+        $storedNamespaces = Store::i()->read('storm_namespaces');
+        $storedClasses = Store::i()->read('storm_classes');
+        $templates = Store::i()->read('storm_templates');
+        $md5 = Store::i()->read('storm_md5');
+
+        try {
+            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+            foreach ($files as $file) {
+                if (isset($md5[$file->getRealPath()])) {
+                    if (sha1($file->getMTime()) === $md5[$file->getRealPath()]) {
+                        continue;
+                    }
+                }
+                $md5[$file->getRealPath()] = sha1($file->getMTime());
+
+                if ($file->getExtension() === 'phtml') {
+                    $content = $file->getContents();
+                    $methodName = $file->getBasename('.' . $file->getExtension());
+                    preg_match('/^<ips:template parameters="(.+?)?"(.+?)?\/>(\r\n?|\n)/', $content, $params);
+
+                    if (isset($params[0])) {
+                        $parameters = null;
+                        if (isset($params[1])) {
+                            $parameters = $params[1];
+                        }
+                        $templates[$file->getRealPath()] = [
+                            'method' => $methodName,
+                            'params' => $parameters
+                        ];
+                    }
+                } elseif ($file->getExtension() === 'php') {
+
+                    $path = $file->getRealPath();
+                    $content = $file->getContents();
+                    $data = $this->tokenize($content);
+
+                    //make sure it is an IPS class
+                    if (
+                        empty($data['namespace']) === true ||
+                        isset($data['namespace']) &&
+                        !str_contains($data['namespace'], 'IPS')
+                    ) {
+                        continue;
+                    }
+
+                    //we need to check to see if the app is installed.
+                    if (str_contains($path, 'applications')) {
+                        $explodedNs = explode('\\', $data['namespace']);
+                        $firstNs = array_shift($explodedNs);
+                        $shouldBeApp = array_shift($explodedNs);
+                        try {
+                            Application::load($shouldBeApp);
+                        } catch (OutOfRangeException) {
+                            continue;
+                        }
+                    }
+
+                    if (isset($data['type']) && $data['type'] !== T_CLASS) {
+                        $cc = $data['namespace'] . '\\' . $data['class'];
+                        /* Is it an interface? */
+                        if (
+                            $data['type'] === T_INTERFACE &&
+                            !str_contains($cc, 'IPS\\Content') &&
+                            !str_contains($cc, 'IPS\\Node')
+                        ) {
+                            $interfacing[$cc] = $cc;
+                        }
+
+                        /* Is it a trait? */
+                        if (
+                            $data['type'] === T_TRAIT &&
+                            !str_contains($cc, 'IPS\\Content') &&
+                            !str_contains($cc, 'IPS\\Node')
+                        ) {
+                            $traits[$cc] = $cc;
+                        }
+                    } elseif (isset($data['class'], $data['namespace'])) {
+                        $skip = $this->excludeClasses();
+                        $namespace = $data['namespace'];
+                        $ipsClass = $data['class'];
+                        $ns2 = explode('\\', $namespace);
+                        array_shift($ns2);
+                        $app = array_shift($ns2);
+
+                        if (
+                            ($namespace === 'IPS' && $ipsClass === 'Settings') ||
+                            mb_strpos($namespace, 'IPS\convert') !== false
+                        ) {
+                            continue;
+                        }
+                        $lines = preg_split("/\n|\r\n|\n/", $content);
+                        $line = 1;
+                        foreach ($lines as $cline) {
+                            preg_replace_callback(
+                                '#[0-9]{1}([a-zA-Z]{1,})[0-9]{1,}/[a-zA-Z0-9]{1,}#msu',
+                                static function ($m) use (&$codes, &$altCodes, $app, $path, $line) {
+                                    if (!isset($m[1])) {
+                                        return;
+                                    }
+                                    $c = trim($m[0]);
+                                    $codes[$c] = $c;
+                                    $altCodes[$c][] = [
+                                        'path' => $path,
+                                        'app' => $app,
+                                        'line' => $line
+                                    ];
+                                },
+                                trim($cline)
+                            );
+                            $line++;
+                        }
+
+                        $checkClass = $namespace . '\\' . $ipsClass;
+
+
+
+                        try {
+                            if (
+                                property_exists($checkClass, 'databaseTable') &&
+                                empty($checkClass::$databaseTable) === false
+                            ) {
+                                $arRelations[$checkClass::$databaseTable][] = $checkClass;
+                            }
+                        } catch (Throwable) {
+                        }
+
+                        if (isset($skip[$namespace . '\\' . $data['class']])) {
+                            continue;
+                        }
+
+
+                        preg_match('#\$bitOptions#', $content, $bitOptions);
+                        $storedNamespaces[$namespace] = $namespace;
+                        try {
+                            $storedClasses[$checkClass] = $checkClass;
+                        } catch (Throwable $e) {
+                            Log::debug($e, 'proxy', Debug::WARNING);
+                        }
+                        if (isset($bitOptions[0])) {
+                            try {
+                                $reflect = new ReflectionClass($checkClass);
+
+                                if ($reflect->hasProperty('bitOptions')) {
+                                    $bits = $reflect->getProperty('bitOptions');
+                                    $bits->setAccessible(true);
+
+                                    if ($bits->isStatic()) {
+                                        $fc = $namespace . '\\' . $ipsClass;
+                                        $bitWiseFiles[$fc] = $fc;
+                                    }
+                                }
+                            } catch (Throwable $e) {
+                                Debug::log($e, 'proxy', Debug::WARNING);
+                            }
+                        }
+                    }
+                }
+            }
+        }catch(\Throwable $e){
+        }
+
+        Store::i()->write($interfacing, 'storm_interfacing');
+        Store::i()->write($traits, 'storm_traits');
+        Store::i()->write($codes, 'storm_error_codes');
+        Store::i()->write($altCodes, 'storm_error_codes2');
+        Store::i()->write($arRelations, 'storm_ar_relations');
+        Store::i()->write($bitWiseFiles, 'storm_bitwise_files');
+        Store::i()->write($storedNamespaces, 'storm_namespaces');
+        Store::i()->write($storedClasses, 'storm_classes');
+        Store::i()->write($templates, 'storm_templates');
+        Store::i()->write($md5, 'storm_md5');
+    }
+
+    /**
      * this will iterator over directorys to find a list of php files to process, used in both the MR and CLI.
      *
      * @param string|null $dir
      * @param array $extension
      * @return array
      */
-    public function dirIterator(?string $dir = null, array $extension = ['php']): Finder
+    public function dirIterator(?string $dir = null, string $extension = 'php'): Finder
     {
         $finder = new Finder();
 
@@ -844,7 +949,7 @@ class Proxy extends Singleton
         }
 
         $filter = function (SplFileInfo $file) use ($extension) {
-            if (!in_array($file->getExtension(), $extension)) {
+            if ($file->getExtension() !== $extension) {
                 return false;
             }
 
@@ -887,6 +992,7 @@ class Proxy extends Singleton
             '3rdparty',
             '3rd_party',
             'vendor',
+            'Vendor',
             'themes',
             'StormTemplates',
             'ckeditor',
@@ -958,6 +1064,88 @@ class Proxy extends Singleton
         return $return;
     }
 
+    /**
+     * returns the class and namespace
+     *
+     * @param $source
+     *
+     * @return array
+     */
+    public function tokenize($source): array
+    {
+        $namespace = null;
+        $tokens = token_get_all($source);
+        $count = count($tokens);
+        $dlm = false;
+        $final = false;
+        $abstract = false;
+        $extends = null;
+        for ($i = 2; $i < $count; $i++) {
+            if (
+                (
+                    isset($tokens[$i - 2][1]) &&
+                    ($tokens[$i - 2][1] === 'phpnamespace' || $tokens[$i - 2][1] === 'namespace')
+                ) ||
+                ($dlm && $tokens[$i - 1][0] === T_NS_SEPARATOR && $tokens[$i][0] === T_STRING)
+            ) {
+                if (!$dlm) {
+                    $namespace = 0;
+                }
+                if (isset($tokens[$i][1])) {
+                    $namespace = $namespace ? $namespace . "\\" . $tokens[$i][1] : $tokens[$i][1];
+                    $dlm = true;
+                }
+            } elseif ($dlm && ($tokens[$i][0] !== T_NS_SEPARATOR) && ($tokens[$i][0] !== T_STRING)) {
+                $dlm = false;
+            }
+
+            if ($tokens[$i][0] === T_FINAL) {
+                $final = true;
+            }
+
+            if ($tokens[$i][0] === T_ABSTRACT) {
+                $abstract = true;
+            }
+
+            if (
+                isset($tokens[$i - 2][1]) && $tokens[$i - 2][0] === T_INTERFACE ||
+                (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] === 'interface') ||
+                $tokens[$i - 2][0] === T_INTERFACE ||
+                (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] === 'trait') ||
+                $tokens[$i - 2][0] === T_CLASS ||
+                (
+                    isset($tokens[$i - 2][1]) &&
+                    $tokens[$i - 2][1] === 'class'
+                ) &&
+                $tokens[$i - 1][0] === T_WHITESPACE &&
+                $tokens[$i][0] === T_STRING
+            ) {
+                $type = $tokens[$i - 2][0];
+                $class = $tokens[$i][1];
+                for ($ii = $i; $ii < $count; $ii++) {
+                    if (isset($tokens[$i][1]) && $tokens[$i][1] === 'extends') {
+                        for ($iii = $ii; $iii < $count; $iii++) {
+                            if (isset($tokens[$iii][0]) && $tokens[$iii][0] === T_STRING) {
+                                $extends = $tokens[$iii];
+                                break 2;
+                            }
+                        }
+                    }
+                }
+                return [
+                    'type' => $type,
+                    'namespace' => $namespace,
+                    'class' => $class,
+                    'extends' => $extends,
+                    'abstract' => $abstract,
+                    'final' => $final,
+                ];
+            }
+        }
+
+        return [];
+    }
+
     public function excludeClasses(): array
     {
         return [
@@ -965,187 +1153,23 @@ class Proxy extends Singleton
         ];
     }
 
-    public function clearJsonFiles(): void
+    public function buildModels(): void
     {
-        Store::i()->delete('storm_alt_templates');
-        Store::i()->delete('storm_metadata_final');
-        Store::i()->delete('storm_phpstorm_templates');
-        Store::i()->delete('storm_templates_class');
-    }
-
-    public function build(array $extensions = ['php']): void
-    {
-        $files = $this->dirIterator(null, $extensions);
-        $interfacing = Store::i()->read('storm_interfacing');
-        $traits = Store::i()->read('storm_traits');
-        $bitWiseFiles = Store::i()->read('storm_bitwise_files');
-        $codes = Store::i()->read('storm_error_codes');
-        $altCodes = Store::i()->read('storm_error_codes2');
-        $arRelations = Store::i()->read('storm_ar_relations');
-        $storedNamespaces = Store::i()->read('storm_namespaces');
-        $storedClasses = Store::i()->read('storm_classes');
-        $templates = Store::i()->read('storm_templates');
-        $md5 = Store::i()->read('storm_md5');
-
-        /** @var \Symfony\Component\Finder\SplFileInfo $file */
-        foreach ($files as $file) {
-            if (isset($md5[$file->getRealPath()])) {
-                if (sha1($file->getMTime()) === $md5[$file->getRealPath()]) {
-                    continue;
+        $modelCheck = Store::i()->read('storm_model_check');
+        foreach ($this->getArRelations() as $table => $dbClass) {
+            try {
+                if (is_array($dbClass)) {
+                    foreach ($dbClass as $db) {
+                        $this->buildDBProps($table, $db, $modelCheck, true);
+                    }
+                } else {
+                    $this->buildDBProps($table, $dbClass, $modelCheck, true);
                 }
-            }
-            $md5[$file->getRealPath()] = sha1($file->getMTime());
-
-            if ($file->getExtension() === 'phtml') {
-                $content = $file->getContents();
-                $methodName = $file->getBasename('.' . $file->getExtension());
-                preg_match('/^<ips:template parameters="(.+?)?"(.+?)?\/>(\r\n?|\n)/', $content, $params);
-
-                if (isset($params[0])) {
-                    $parameters = null;
-                    if (isset($params[1])) {
-                        $parameters = $params[1];
-                    }
-                    $templates[$file->getRealPath()] = [
-                        'method' => $methodName,
-                        'params' => $parameters
-                    ];
-                }
-            } elseif ($file->getExtension() === 'php') {
-                $path = $file->getRealPath();
-                $content = $file->getContents();
-                $data = $this->tokenize($content);
-
-                //make sure it is an IPS class
-                if (
-                    empty($data['namespace']) === true ||
-                    isset($data['namespace']) &&
-                    !str_contains($data['namespace'], 'IPS')
-                ) {
-                    continue;
-                }
-
-                //we need to check to see if the app is installed.
-//        if (str_contains($path, 'applications')) {
-//                $explodedNs = explode('\\', $data['namespace']);
-//                $firstNs = array_shift($explodedNs);
-//                $shouldBeApp = array_shift($explodedNs);
-//            try {
-//                Application::load($shouldBeApp);
-//            } catch (OutOfRangeException) {
-//                return;
-//            }
-//        }
-
-                if (isset($data['type']) && $data['type'] !== T_CLASS) {
-                    $cc = $data['namespace'] . '\\' . $data['class'];
-                    /* Is it an interface? */
-                    if (
-                        $data['type'] === T_INTERFACE &&
-                        !str_contains($cc, 'IPS\\Content') &&
-                        !str_contains($cc, 'IPS\\Node')
-                    ) {
-                        $interfacing[$cc] = $cc;
-                    }
-
-                    /* Is it a trait? */
-                    if (
-                        $data['type'] === T_TRAIT &&
-                        !str_contains($cc, 'IPS\\Content') &&
-                        !str_contains($cc, 'IPS\\Node')
-                    ) {
-                        $traits[$cc] = $cc;
-                    }
-                } elseif (isset($data['class'], $data['namespace'])) {
-                    $skip = $this->excludeClasses();
-                    $namespace = $data['namespace'];
-                    $ipsClass = $data['class'];
-                    $ns2 = explode('\\', $namespace);
-                    array_shift($ns2);
-                    $app = array_shift($ns2);
-
-                    if (
-                        ($namespace === 'IPS' && $ipsClass === 'Settings') ||
-                        mb_strpos($namespace, 'IPS\convert') !== false
-                    ) {
-                        continue;
-                    }
-                    $lines = preg_split("/\n|\r\n|\n/", $content);
-                    $line = 1;
-                    foreach ($lines as $cline) {
-                        preg_replace_callback(
-                            '#[0-9]{1}([a-zA-Z]{1,})[0-9]{1,}/[a-zA-Z0-9]{1,}#msu',
-                            static function ($m) use (&$codes, &$altCodes, $app, $path, $line) {
-                                if (!isset($m[1])) {
-                                    return;
-                                }
-                                $c = trim($m[0]);
-                                $codes[$c] = $c;
-                                $altCodes[$c][] = [
-                                    'path' => $path,
-                                    'app' => $app,
-                                    'line' => $line
-                                ];
-                            },
-                            trim($cline)
-                        );
-                        $line++;
-                    }
-
-                    $checkClass = $namespace . '\\' . $ipsClass;
-
-                    try {
-                        if (
-                            property_exists($checkClass, 'databaseTable') &&
-                            empty($checkClass::$databaseTable) === false
-                        ) {
-                            $arRelations[$checkClass::$databaseTable][] = $checkClass;
-                        }
-                    } catch (Throwable) {
-                    }
-
-                    if (isset($skip[$namespace . '\\' . $data['class']])) {
-                        continue;
-                    }
-
-                    preg_match('#\$bitOptions#', $content, $bitOptions);
-                    $storedNamespaces[$namespace] = $namespace;
-                    try {
-                        $storedClasses[$checkClass] = $checkClass;
-                    } catch (\Throwable $e) {
-                        Log::debug($e, 'proxy', Debug::WARNING);
-                    }
-                    if (isset($bitOptions[0])) {
-                        try {
-                            $reflect = new ReflectionClass($checkClass);
-
-                            if ($reflect->hasProperty('bitOptions')) {
-                                $bits = $reflect->getProperty('bitOptions');
-                                $bits->setAccessible(true);
-
-                                if ($bits->isStatic()) {
-                                    $fc = $namespace . '\\' . $ipsClass;
-                                    $bitWiseFiles[$fc] = $fc;
-                                }
-                            }
-                        } catch (Throwable $e) {
-                            Log::debug($e, 'proxy', Debug::WARNING);
-                        }
-                    }
-                }
+            } catch (Exception) {
+                continue;
             }
         }
 
-
-        Store::i()->write($interfacing, 'storm_interfacing');
-        Store::i()->write($traits, 'storm_traits');
-        Store::i()->write($codes, 'storm_error_codes');
-        Store::i()->write($altCodes, 'storm_error_codes2');
-        Store::i()->write($arRelations, 'storm_ar_relations');
-        Store::i()->write($bitWiseFiles, 'storm_bitwise_files');
-        Store::i()->write($storedNamespaces, 'storm_namespaces');
-        Store::i()->write($storedClasses, 'storm_classes');
-        Store::i()->write($templates, 'storm_templates');
-        Store::i()->write($md5, 'storm_md5');
+        Store::i()->write($modelCheck, 'storm_model_check');
     }
 }

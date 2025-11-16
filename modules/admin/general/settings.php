@@ -30,6 +30,10 @@ class settings extends Controller
      */
     public function execute(): void
     {
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
+
         Dispatcher::i()->checkAcpPermission('settings_manage');
         parent::execute();
     }

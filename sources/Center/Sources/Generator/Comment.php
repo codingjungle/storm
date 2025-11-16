@@ -43,12 +43,12 @@ class Comment extends Item
         ];
 
         $columnMap = [
-            'item'        => 'item_id',
-            'author'      => 'author',
+            'item' => 'item_id',
+            'author' => 'author',
             'author_name' => 'author_name',
-            'content'     => 'content',
-            'date'        => 'start_date',
-            'ip_address'  => 'ip_address'
+            'content' => 'content',
+            'date' => 'start_date',
+            'ip_address' => 'ip_address'
         ];
 
         if (mb_strtolower($this->type) === 'comment') {
@@ -111,7 +111,7 @@ class Comment extends Item
                 $itemClass,
                 [
                     'visibility' => T_PUBLIC,
-                    'static'     => true
+                    'static' => true
                 ]
             );
         }

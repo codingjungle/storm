@@ -13,7 +13,6 @@
 namespace IPS\storm\Writers;
 
 
-
 use IPS\Patterns\Singleton;
 use IPS\storm\Writers\Traits\ClassMethods;
 use IPS\storm\Writers\Traits\Constants;
@@ -43,17 +42,17 @@ class TraitGenerator extends GeneratorAbstract
 
     protected bool $doImports = true;
 
+    public function writeSourceType(): void
+    {
+        $this->output("\ntrait {$this->className}");
+        $this->output("\n{\n");
+    }
+
     protected function writeBody(): void
     {
         $this->writeConst();
         $this->writeProperties();
         $this->writeMethods();
         $this->output("\n}");
-    }
-
-    public function writeSourceType(): void
-    {
-        $this->output("\ntrait {$this->className}");
-        $this->output("\n{\n");
     }
 }

@@ -34,6 +34,18 @@ class ContentRouter extends ExtensionsAbstract
     /**
      * @inheritdoc
      */
+    public function elements()
+    {
+        $this->form->addElement('use_default')->toggles(['module', 'classRouter'], true);
+        $this->form->addElement('module')->required();
+        $this->form->addElement('classRouter', 'stack')->prefix(
+            '\\IPS\\' . $this->application->directory . '\\'
+        )->required();
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function _content()
     {
         if (is_array($this->classRouter) && count($this->classRouter)) {
@@ -47,15 +59,5 @@ class ContentRouter extends ExtensionsAbstract
         }
 
         return $this->_getFile($this->extension);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function elements()
-    {
-        $this->form->addElement('use_default')->toggles(['module', 'classRouter'], true);
-        $this->form->addElement('module')->required();
-        $this->form->addElement('classRouter', 'stack')->prefix('\\IPS\\' . $this->application->directory . '\\')->required();
     }
 }

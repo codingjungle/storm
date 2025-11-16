@@ -26,8 +26,12 @@ class Schema extends Singleton
 
     public function form(array $schema, Application $application)
     {
-        $table = new Custom($schema,
-            Url::internal("app=core&module=applications&controller=developer&appKey={$application->directory}&tab=SchemaImports"));
+        $table = new Custom(
+            $schema,
+            Url::internal(
+                "app=core&module=applications&controller=developer&appKey={$application->directory}&tab=SchemaImports"
+            )
+        );
         $table->langPrefix = 'dtdeveplus_table_';
         $table->limit = 150;
         $table->include = array('name');
@@ -35,9 +39,11 @@ class Schema extends Singleton
         $table->rowButtons = function ($row, $k) use ($application) {
             return array(
                 'import' => array(
-                    'icon'  => 'download',
+                    'icon' => 'download',
                     'title' => 'import',
-                    'link'  => Url::internal("app=core&module=applications&controller=developer&appKey={$application->directory}&do=dtdevplusImport&table={$k}")
+                    'link' => Url::internal(
+                        "app=core&module=applications&controller=developer&appKey={$application->directory}&do=dtdevplusImport&table={$k}"
+                    )
                 )
             );
         };

@@ -5,10 +5,6 @@ namespace IPS\storm\Proxy\Generator;
 use IPS\Application;
 use IPS\storm\Writers\FileGenerator;
 
-use function method_exists;
-use function PHPSTORM_META\map;
-use function PHPSTORM_META\override;
-
 class phpstormMeta extends GeneratorAbstract
 {
     public function create(): void

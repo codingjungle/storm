@@ -19,6 +19,7 @@ use IPS\storm\Proxy\Generator\phpstormMeta;
 use IPS\storm\Proxy\Generator\Templates;
 use IPS\storm\Proxy\Generator\Url;
 use IPS\storm\Settings;
+use IPS\storm\Writers\FileGenerator;
 use IPS\Theme;
 
 use function base64_decode;
@@ -44,6 +45,18 @@ class proxy extends Controller
      */
     public function execute(): void
     {
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
+
+        if (\IPS\NO_WRITES === true) {
+            Output::i()
+                ->error(
+                    'Can not be used for as NO_WRITES are enabled in constants.php.',
+                    '105foo'
+                );
+        }
+
         parent::execute();
     }
 
@@ -66,6 +79,12 @@ class proxy extends Controller
     protected function constants()
     {
         //\IPS\storm\Proxy::i()->emptyDirectory(\IPS\storm\Proxy::i()->path);
+        FileGenerator::i()
+            ->setPath(\IPS\storm\Proxy::i()->path)
+            ->setFileName('lock')
+            ->setExtension('txt')
+            ->addBody('')
+            ->save();
         \IPS\storm\Proxy::i()->clearJsonFiles();
         \IPS\storm\Proxy::i()->constants();
         $message = 'Constants proxy file built!';
@@ -129,29 +148,19 @@ class proxy extends Controller
             $phpstorm = 1;
         }
         $html = Theme::i()->getTemplate('generators', 'storm', 'global')->main($phpstorm);
-//        if (Request::i()->isAjax()) {
-//            Output::i()->json(['html' => $html]);
-//        } else {
-            Output::i()->output = $html;
-//        }
+        Output::i()->output = $html;
     }
 
     protected function phpCache(): void
     {
-        \IPS\storm\Proxy::i()->build();
-//        $path = \IPS\Application::getRootPath() . '/applications/storm/data/storm/';
-//        $jsonMeta = json_decode(file_get_contents($path . 'defaults.json'), true);
-//        $jsonMeta2 = json_decode(file_get_contents($path . 'defaults2.json'), true);
-//        $jsonMeta += $jsonMeta2;
-//        \IPS\storm\Proxy\Generator\Store::i()->write($jsonMeta, 'storm_json');
-
+        \IPS\storm\Proxy::i()->build('php');
         $message = 'MetaData: PHP Meta Caches completed.';
         Output::i()->json(['message' => $message]);
     }
 
     protected function phtmlCache(): void
     {
-        \IPS\storm\Proxy::i()->build(['phtml']);
+        \IPS\storm\Proxy::i()->build('phtml');
         $message = 'MetaData: PHTML Meta Caches completed.';
         Output::i()->json(['message' => $message]);
     }

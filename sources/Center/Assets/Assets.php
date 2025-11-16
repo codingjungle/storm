@@ -15,13 +15,11 @@ namespace IPS\storm\Center;
 use Exception;
 use InvalidArgumentException;
 use IPS\Application;
-use IPS\Patterns\Singleton;
 use IPS\Request;
-use IPS\storm\Form;
 use IPS\storm\Center\Assets\Compiler\CompilerAbstract;
 use IPS\storm\Center\Assets\Compiler\Javascript;
 use IPS\storm\Center\Assets\Compiler\Template;
-use IPS\storm\Profiler\Debug;
+use IPS\storm\Form;
 use IPS\storm\ReservedWords;
 use IPS\Xml\XMLReader;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -37,6 +35,7 @@ use function in_array;
 use function is_array;
 use function is_file;
 use function ksort;
+use function mb_strtoupper;
 use function mb_ucfirst;
 use function preg_match;
 
@@ -89,6 +88,33 @@ class Assets
     }
 
     /**
+     * create file
+     */
+    public function create()
+    {
+        if ($values = $this->form->values()) {
+            $tt = mb_strtoupper($this->type);
+            $msg = 'Asset ' . $tt . ' created!';
+            try {
+                if ($this->type === 'template') {
+                    $class = Template::class;
+                } else {
+                    $class = Javascript::class;
+                }
+                /**
+                 * @var CompilerAbstract $class ;
+                 */
+                $class = new $class($values, $this->application, $this->type);
+                $msg = $class->process();
+                $msg = 'Asset ' . $msg . ' created!';
+            } catch (Throwable|Exception $e) {
+                $msg = $e->getMessage();
+            }
+            return $msg;
+        }
+    }
+
+    /**
      * @param array $config
      * @param string $type
      */
@@ -103,33 +129,6 @@ class Assets
         foreach ($config as $func) {
             $method = 'el' . mb_ucfirst($func);
             $this->{$method}();
-        }
-    }
-
-    /**
-     * create file
-     */
-    public function create()
-    {
-        if ($values = $this->form->values()) {
-            $tt = \mb_strtoupper($this->type);
-            $msg = 'Asset ' . $tt . ' created!';
-            try {
-                if ($this->type === 'template') {
-                    $class = Template::class;
-                } else {
-                    $class = Javascript::class;
-                }
-                /**
-                 * @var CompilerAbstract $class ;
-                 */
-                $class = new $class($values, $this->application, $this->type);
-                $msg = $class->process();
-                $msg = 'Asset ' . $msg . ' created!';
-            } catch (Throwable | \Exception $e) {
-                $msg = $e->getMessage();
-            }
-            return $msg;
         }
     }
 
@@ -156,7 +155,7 @@ class Assets
             $location = Request::i()->{$loc};
             $group = Request::i()->{$gr};
         }
-        $dir = \IPS\Application::getRootPath() . '/applications/' . $this->app . '/dev/';
+        $dir = Application::getRootPath() . '/applications/' . $this->app . '/dev/';
         if ($this->type === 'template') {
             $dir .= 'html/';
             $file = $dir . '/' . $data;
@@ -370,7 +369,7 @@ class Assets
                     $options[$name] = $name;
                 }
             }
-        } catch (Throwable | \Exception $e) {
+        } catch (Throwable|Exception $e) {
             throw new InvalidArgumentException($e->getMessage());
         }
 

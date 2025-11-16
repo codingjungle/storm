@@ -6,8 +6,13 @@ use Exception;
 use IPS\Dispatcher\Controller;
 use IPS\Log;
 use IPS\Output;
+use IPS\Request;
+use IPS\Settings;
+use IPS\storm\Application;
+use IPS\storm\Proxy\Generator\Store;
 use IPS\Theme;
 use Throwable;
+use IPS\storm\Profiler\Debug;
 
 use function defined;
 use function randomString;
@@ -30,7 +35,9 @@ class phpinfo extends Controller
      */
     public function execute(): void
     {
-
+        if (\IPS\CIC === true || \IPS\CIC2 === true) {
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
         parent::execute();
     }
 
@@ -41,7 +48,6 @@ class phpinfo extends Controller
      */
     protected function manage(): void
     {
-        Log::debug('foo', 'test', 1);
         ob_start();
         phpinfo();
         $content = ob_get_clean();

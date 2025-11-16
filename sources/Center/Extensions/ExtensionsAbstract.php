@@ -16,14 +16,11 @@ use Exception;
 use IPS\Application;
 use IPS\Db;
 use IPS\Http\Url;
-use IPS\Member;
 use IPS\Output;
 use IPS\storm\Form;
-use IPS\storm\Shared\Magic;
 use IPS\storm\Shared\Read;
 use IPS\storm\Shared\Replace;
 use IPS\storm\Shared\Write;
-
 use IPS\storm\Writers\FileGenerator;
 
 use function array_pop;
@@ -105,11 +102,12 @@ abstract class ExtensionsAbstract
         $this->extApp = $extApp;
         $this->application = $application;
         $this->extension = $extension;
-        $this->dir = \IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/extensions/' . $this->extApp->directory . '/' . $this->extension . '/';
-        $this->blanks = \IPS\Application::getRootPath() . '/applications/toolbox/data/defaults/modExtensions/';
+        $this->dir = Application::getRootPath(
+            ) . '/applications/' . $this->application->directory . '/extensions/' . $this->extApp->directory . '/' . $this->extension . '/';
+        $this->blanks = Application::getRootPath() . '/applications/toolbox/data/defaults/modExtensions/';
         $this->form = Form::create()
-                          ->setAttributes(['data-controller' => 'ips.admin.dtdevplus.query'])
-                          ->setPrefix('dtdevplus_ext_');
+            ->setAttributes(['data-controller' => 'ips.admin.dtdevplus.query'])
+            ->setPrefix('dtdevplus_ext_');
         $this->form->addHeader('title_' . $extension);
         $this->form->addElement('class')->value($this->getName());
         $this->form->addElement('use_default', 'yn');
@@ -204,9 +202,8 @@ abstract class ExtensionsAbstract
         FileGenerator::i()
             ->setFileName('extensions')
             ->setExtension('json')
-            ->setPath(\IPS\Application::getRootPath() . '/applications/' . $this->application->directory . '/data/')
+            ->setPath(Application::getRootPath() . '/applications/' . $this->application->directory . '/data/')
             ->addBody(json_encode($this->application->buildExtensionsJson(), JSON_PRETTY_PRINT));
-
     }
 
     /**

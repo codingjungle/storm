@@ -13,18 +13,14 @@ namespace IPS\storm\Form;
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 
-use InvalidArgumentException;
-use IPS\Helpers\Form\FormAbstract;
 use IPS\Helpers\Form\KeyValue;
 use IPS\Helpers\Form\Text;
 use IPS\storm\Tpl;
-use IPS\Theme;
-use LengthException;
 
 use function defined;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
@@ -37,11 +33,24 @@ class Arguments extends KeyValue
     /**
      * @inheritdoc
      * */
-    public function __construct(string $name, mixed $defaultValue = null, ?bool $required = false, array $options = array(), callable $customValidationCode = null, string $prefix = null, string $suffix = null, string $id = null)
-    {
+    public function __construct(
+        string $name,
+        mixed $defaultValue = null,
+        ?bool $required = false,
+        array $options = array(),
+        callable $customValidationCode = null,
+        string $prefix = null,
+        string $suffix = null,
+        string $id = null
+    ) {
         $options = array_merge($this->defaultOptions, $options);
         $this->keyField = new Text("{$name}[key]", $defaultValue['key'] ?? null, false, $options['key'] ?? array());
-        $this->valueField = new Text("{$name}[value]", $defaultValue['value'] ?? null, false, $options['value'] ?? array());
+        $this->valueField = new Text(
+            "{$name}[value]",
+            $defaultValue['value'] ?? null,
+            false,
+            $options['value'] ?? array()
+        );
         parent::__construct($name, $defaultValue, $required, $options, $customValidationCode, $prefix, $suffix, $id);
     }
 

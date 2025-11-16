@@ -13,21 +13,15 @@
 namespace IPS\storm\Profiler;
 
 use IPS\Theme;
-
 use UnexpectedValueException;
 
 use function count;
 use function defined;
-use function floor;
 use function header;
 use function json_encode;
-use function log;
+use function krsort;
 use function microtime;
 use function round;
-
-use function end;
-use function krsort;
-
 
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -56,7 +50,7 @@ class Time
     public function __construct()
     {
         $this->start = microtime(true);
-    } 
+    }
 
     /**
      * @throws UnexpectedValueException
@@ -73,8 +67,8 @@ class Time
         foreach ($store as $times) {
             foreach ($times as $obj) {
                 $list[$obj['name']] = [
-                    'url'   => $obj['key'],
-                    'name'  => $obj['name'],
+                    'url' => $obj['key'],
+                    'name' => $obj['name'],
                     'extra' => ' : ' . round($obj['log'], 6) * 1000 . 'ms',
                 ];
             }
@@ -83,7 +77,8 @@ class Time
         return Theme::i()->getTemplate(
             'dtpsearch',
             'storm',
-            'front')->button(
+            'front'
+        )->button(
             'Executions',
             'executions',
             'Execution Times.',
@@ -114,8 +109,8 @@ class Time
         if ($key !== null) {
             static::$store[(string)$end][] = [
                 'name' => $name,
-                'key'  => $key,
-                'log'  => $end
+                'key' => $key,
+                'log' => $end
             ];
         }
         return $end;

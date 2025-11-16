@@ -1,13 +1,13 @@
 <?php
 
 /**
-* @brief      Head Singleton
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage storm
-* @since      1.0.0
-*/
+ * @brief      Head Singleton
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage storm
+ * @since      1.0.0
+ */
 
 namespace IPS\storm;
 
@@ -20,24 +20,23 @@ use IPS\Theme;
 use function array_merge;
 use function count;
 use function explode;
-use function stripos;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
-* Output Class
-* @mixin \IPS\storm\Head
-*/
+ * Output Class
+ * @mixin Head
+ */
 class Head extends Singleton
 {
     /**
-    * @brief Singleton Instance
-    * @note This needs to be declared in any child class
-    * @var static
-    */
+     * @brief Singleton Instance
+     * @note This needs to be declared in any child class
+     * @var static
+     */
     protected static ?Singleton $instance = null;
 
     public function both(array $files)
@@ -63,7 +62,7 @@ class Head extends Singleton
             if (count($v) === 2) {
                 [$loc, $file] = explode('_', $f);
             } else {
-                [$app, $loc, $file] =  explode('_', $f);
+                [$app, $loc, $file] = explode('_', $f);
             }
             if ($loc !== 'interface') {
                 $file = $loc . '_' . $file . '.js';
@@ -94,7 +93,7 @@ class Head extends Singleton
             if (count($v) === 2) {
                 [$loc, $file] = explode('_', $f);
             } else {
-                [$app, $loc, $file] =  explode('_', $f);
+                [$app, $loc, $file] = explode('_', $f);
             }
 
             $file .= '.css';
@@ -103,17 +102,6 @@ class Head extends Singleton
         }
         //merges $cssFiles into Output::i()->cssFiles
         Output::i()->cssFiles = array_merge(...$cssFiles);
-    }
-
-    /**
-     * @param array $jsVars a key/value array of jsVars to add, ['mykey' => 'value']
-     * @return void
-     */
-    public function jsVars(array $jsVars): void
-    {
-        foreach ($jsVars as $key => $jsVar) {
-            Output::i()->jsVars[$key] = $jsVar;
-        }
     }
 
     public function insertAfterJs()
@@ -150,7 +138,18 @@ class Head extends Singleton
                 $combined[] = 'do=instantNotifications';
             }
         }
-        $jsVars = [ 'stormProfilerFilters' => $combined ];
+        $jsVars = ['stormProfilerFilters' => $combined];
         $this->jsVars($jsVars);
+    }
+
+    /**
+     * @param array $jsVars a key/value array of jsVars to add, ['mykey' => 'value']
+     * @return void
+     */
+    public function jsVars(array $jsVars): void
+    {
+        foreach ($jsVars as $key => $jsVar) {
+            Output::i()->jsVars[$key] = $jsVar;
+        }
     }
 }

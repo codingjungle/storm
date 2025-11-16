@@ -35,6 +35,7 @@ use function in_array;
 use function is_array;
 use function is_dir;
 use function ksort;
+use function method_exists;
 use function mkdir;
 use function opendir;
 use function pathinfo;
@@ -46,8 +47,6 @@ use function var_export;
 
 use const IPS\IPS_FOLDER_PERMISSION;
 use const PHP_EOL;
-
-use function method_exists;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -114,7 +113,7 @@ class Applications
         }
 
         if (!$fs->exists($this->dev)) {
-            $fs->mkdir($this->dev, \IPS\IPS_FOLDER_PERMISSION);
+            $fs->mkdir($this->dev, IPS_FOLDER_PERMISSION);
         }
     }
 
@@ -201,7 +200,7 @@ class Applications
                     ->setFileName($xml->getAttribute('template_name'))
                     ->setExtension('phtml')
                     ->setPath($path)
-                    ->addBody('<ips:template parameters="' .  $xml->getAttribute('template_data') . '" />' . PHP_EOL)
+                    ->addBody('<ips:template parameters="' . $xml->getAttribute('template_data') . '" />' . PHP_EOL)
                     ->addBody($xml->readString())
                     ->save();
             } else {

@@ -21,7 +21,7 @@ use const DT_WSL_PATH;
 
 
 class Editor extends Singleton
-{ 
+{
 
     /**
      * @brief   Singleton Instances

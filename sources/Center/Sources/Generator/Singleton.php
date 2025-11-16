@@ -38,7 +38,7 @@ class Singleton extends GeneratorAbstract
         $this->generator->addImport(IPSSingleton::class);
         $extra = [
             'document' => ['@inheritdocs'],
-            'static'   => true,
+            'static' => true,
             'hint' => '?Singleton'
         ];
 

@@ -9,6 +9,7 @@ use IPS\Http\Url;
 use IPS\Output;
 use IPS\Request;
 use IPS\storm\Center\Headerdoc;
+use IPS\storm\Center\Langs;
 use IPS\storm\Center\Traits\Assets as TraitsAssets;
 use IPS\storm\Form;
 use IPS\storm\Form\Element;
@@ -54,13 +55,18 @@ class other extends DeveloperController
 
     public function execute(string $command = 'do'): void
     {
+        if(\IPS\CIC === true || \IPS\CIC2 === true){
+            Output::i()->error('Storm: Dev Toolbox is not available in CIC.', '100STORM');
+        }
+
         if (\IPS\NO_WRITES === true) {
             Output::i()
                 ->error(
-                    'Assets generator can not be used for as NO_WRITES are enabled in constants.php.',
-                    '102foo'
+                    'Can not be used for as NO_WRITES are enabled in constants.php.',
+                    '103foo'
                 );
         }
+
         Head::i()->css(['global_storm']);
         //Sources::menu();
         $app = (string)Request::i()->appKey;

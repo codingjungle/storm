@@ -19,18 +19,15 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
 
 use IPS\Db;
 use IPS\Db\Select;
-use IPS\storm\Application;
 use IPS\Member as IPSMember;
 use IPS\Patterns\ActiveRecord;
+use IPS\storm\Application;
 
 use function defined;
 use function file_get_contents;
 use function header;
 use function swapLineEndings;
 use function trait_exists;
-
-use const T_PROTECTED;
-use const T_PUBLIC;
 
 class Member extends GeneratorAbstract
 {
@@ -56,12 +53,14 @@ class Member extends GeneratorAbstract
 
         $this->brief = 'Class';
 
-        $content = swapLineEndings(file_get_contents(
-            Application::getRootPath('storm') .
-            '/applications/storm/data/storm/sources/member.txt'
-        ));
+        $content = swapLineEndings(
+            file_get_contents(
+                Application::getRootPath('storm') .
+                '/applications/storm/data/storm/sources/member.txt'
+            )
+        );
         $content = str_replace(
-            ['#databaseTable#','#databasePrefix#'],
+            ['#databaseTable#', '#databasePrefix#'],
             [$this->database, $this->prefix],
             $content,
         );

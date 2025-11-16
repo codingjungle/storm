@@ -13,23 +13,21 @@
 namespace IPS\storm\Center\Sources\Generator;
 
 use IPS\Output;
-use IPS\Theme;
-use Throwable;
-use UnderflowException;
 use IPS\storm\Proxy\Proxyclass;
+use IPS\Theme;
 
 use function class_exists;
-use function explode;
 use function file_get_contents;
+use function file_put_contents;
+use function is_dir;
+use function mkdir;
 use function swapLineEndings;
-use function var_export;
-
-use const STR_PAD_LEFT;
 
 class Application extends GeneratorAbstract
 {
     protected bool $overrideDir = true;
     protected bool $includeConstructor = false;
+
     /**
      * @inheritdoc
      */
@@ -43,10 +41,10 @@ class Application extends GeneratorAbstract
             $content = swapLineEndings(file_get_contents($file));
             $content = str_replace('_Application', '_ApplicationOG', $content);
             $newPath = $path . '/sources/ApplicationOG/';
-            if (!\is_dir($newPath)) {
-                \mkdir($newPath, 0777, true);
+            if (!is_dir($newPath)) {
+                mkdir($newPath, 0777, true);
             }
-            \file_put_contents($newPath . '/ApplicationOG.php', $content);
+            file_put_contents($newPath . '/ApplicationOG.php', $content);
             Proxyclass::i()->build($newPath . '/ApplicationOG.php');
         }
         $this->brief = 'Application Class';

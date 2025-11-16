@@ -1,34 +1,35 @@
 <?php
 
 /**
-* @brief      Settings Class
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage storm
-* @since 1.0.0
-*/
+ * @brief      Settings Class
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage storm
+ * @since 1.0.0
+ */
 
 namespace IPS\storm;
 
+use IPS\_Settings;
 use IPS\Patterns\Singleton;
-use UnderflowException;
 use Throwable;
+use UnderflowException;
 
 use function array_combine;
 use function array_values;
-use function is_array;
 use function defined;
 use function header;
+use function is_array;
 use function json_decode;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
- * @mixin \IPS\_Settings
+ * @mixin _Settings
  */
 class Settings extends \IPS\Settings
 {
@@ -141,7 +142,7 @@ class Settings extends \IPS\Settings
         $toSave = [];
 
         foreach ($newValues as $k => $v) {
-            if (\is_array($v)) {
+            if (is_array($v)) {
                 $v = json_encode($v);
             }
 

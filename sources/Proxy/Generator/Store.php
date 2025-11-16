@@ -3,10 +3,8 @@
 namespace IPS\storm\Proxy\Generator;
 
 use IPS\Patterns\Singleton;
-use IPS\storm\Application;
 use IPS\storm\Proxy;
 use IPS\storm\Writers\FileGenerator;
-use OutOfRangeException;
 use Throwable;
 
 use function file_exists;
@@ -25,7 +23,7 @@ class Store extends Singleton
      * @note  This needs to be declared in any child class.
      * @var static
      */
-    protected static ?Singleton $instance  = null;
+    protected static ?Singleton $instance = null;
 
     protected string $path = '';
 

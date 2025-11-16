@@ -1,14 +1,14 @@
 <?php
 
 /**
-* @brief      Dates Singleton
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage toolbox
-* @since      5.0.1
-* @version    -storm_version-
-*/
+ * @brief      Dates Singleton
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage toolbox
+ * @since      5.0.1
+ * @version    -storm_version-
+ */
 
 namespace IPS\storm\DevToys;
 
@@ -23,21 +23,21 @@ use const null;
 use const true;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
-    header(( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden');
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
-* Dates Class
-* @mixin Dates
-*/
+ * Dates Class
+ * @mixin Dates
+ */
 class Dates extends Singleton
 {
     /**
-    * @brief Singleton Instance
-    * @note This needs to be declared in any child class
-    * @var static
-    */
+     * @brief Singleton Instance
+     * @note This needs to be declared in any child class
+     * @var static
+     */
     public static ?Singleton $instance = null;
 
     public function __call(string $name, array $arguments): array

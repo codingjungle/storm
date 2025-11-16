@@ -3,6 +3,7 @@
 namespace IPS\storm\Proxy\Generator;
 
 use IPS\Application;
+use IPS\Content\ModeratorPermissions;
 use Throwable;
 
 use function array_keys;
@@ -11,30 +12,30 @@ use function implode;
 
 class Moderators
 {
-    public static function run() : void
+    public static function run(): void
     {
         $body = Store::i()->read('storm_metadata_final');
         $toggles = [
-            'view_future'         => [],
-            'future_publish'      => [],
-            'pin'                 => [],
-            'unpin'               => [],
-            'feature'             => [],
-            'unfeature'           => [],
-            'edit'                => [],
-            'hide'                => [],
-            'unhide'              => [],
-            'view_hidden'         => [],
-            'move'                => [],
-            'lock'                => [],
-            'unlock'              => [],
-            'reply_to_locked'     => [],
-            'delete'              => [],
-            'split_merge'         => [],
-            'feature_comments'    => [],
-            'unfeature_comments'  => [],
-            'add_item_message'    => [],
-            'edit_item_message'   => [],
+            'view_future' => [],
+            'future_publish' => [],
+            'pin' => [],
+            'unpin' => [],
+            'feature' => [],
+            'unfeature' => [],
+            'edit' => [],
+            'hide' => [],
+            'unhide' => [],
+            'view_hidden' => [],
+            'move' => [],
+            'lock' => [],
+            'unlock' => [],
+            'reply_to_locked' => [],
+            'delete' => [],
+            'split_merge' => [],
+            'feature_comments' => [],
+            'unfeature_comments' => [],
+            'add_item_message' => [],
+            'edit_item_message' => [],
             'delete_item_message' => [],
         ];
 
@@ -47,7 +48,7 @@ class Moderators
         ) {
             if ($ext instanceof ModeratorPermissions) {
                 /**
-                 * @var \IPS\Content\ModeratorPermissions $ext
+                 * @var ModeratorPermissions $ext
                  */
                 $class = null;
 

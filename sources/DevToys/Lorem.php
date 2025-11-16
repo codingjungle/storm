@@ -31,8 +31,8 @@ use function sprintf;
 use function sqrt;
 use function str_replace;
 
-use const M_PI;
 use const false;
+use const M_PI;
 use const true;
 
 /**
@@ -256,6 +256,7 @@ class Lorem extends Singleton
      */
     protected bool $first = true;
     protected array $firstWords = [];
+
     /**
      * Word
      *

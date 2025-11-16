@@ -12,72 +12,67 @@
 namespace IPS\storm\Center;
 
 use Exception;
+use InvalidArgumentException;
+use IPS\Application;
+use IPS\Content\Anonymous;
 use IPS\Content\Assignable;
+use IPS\Content\ClubContainer;
+use IPS\Content\EditHistory;
+use IPS\Content\Embeddable;
+use IPS\Content\Featurable;
 use IPS\Content\Filter;
+use IPS\Content\Followable;
+use IPS\Content\FuturePublishing;
 use IPS\Content\Helpful;
+use IPS\Content\Hideable;
 use IPS\Content\IntersectionViewTracking;
+use IPS\Content\ItemTopic;
+use IPS\Content\Lockable;
+use IPS\Content\MetaData;
+use IPS\Content\Pinnable;
+use IPS\Content\Polls;
+use IPS\Content\Reactable;
+use IPS\Content\ReadMarkers;
+use IPS\Content\Recognizable;
+use IPS\Content\Reportable;
+use IPS\Content\Searchable;
+use IPS\Content\Shareable;
+use IPS\Content\Solvable;
+use IPS\Content\Statistics;
 use IPS\Content\Taggable;
+use IPS\Content\Tags;
+use IPS\Content\Views;
 use IPS\Content\ViewUpdates;
+use IPS\Member;
+use IPS\Node\Colorize;
 use IPS\Node\CustomBadge;
 use IPS\Node\DelayedCount;
 use IPS\Node\Grouping;
 use IPS\Node\Icon;
-use IPS\storm\Profiler\Debug;
-use IPS\Theme;
-use Symfony\Component\Finder\Finder;
-use Throwable;
-use IPS\Member;
-use IPS\Output;
-use IPS\Request;
-use SplObserver;
-use IPS\Http\Url;
-use IPS\Application;
-use IPS\Content\Tags;
-use IPS\Node\Ratings;
-use IPS\storm\Form;
-use IPS\Content\Polls;
-use IPS\Content\Views;
-use IPS\Node\Colorize;
-use IPS\Content\Hideable;
-use IPS\Content\Lockable;
-use IPS\Content\MetaData;
-use IPS\Content\Pinnable;
-use IPS\Content\Solvable;
 use IPS\Node\Permissions;
-use IPS\Content\Anonymous;
-use IPS\Content\ItemTopic;
-use IPS\Content\Reactable;
-use IPS\Content\Shareable;
-use IPS\Content\Embeddable;
-use IPS\Content\Featurable;
-use IPS\Content\Followable;
-use IPS\Content\Reportable;
-use IPS\Content\Searchable;
-use IPS\Content\Statistics;
-use IPS\Content\EditHistory;
-use IPS\Content\ReadMarkers;
-use InvalidArgumentException;
-use IPS\Content\Recognizable;
-use UnexpectedValueException;
-use IPS\Content\ClubContainer;
-use IPS\storm\ReservedWords;
-use IPS\Content\FuturePublishing;
-use IPS\storm\Center\Sources\SourcesFormAbstract;
-use IPS\storm\Center\Sources\SourceBuilderException;
+use IPS\Node\Ratings;
+use IPS\Request;
 use IPS\storm\Center\Sources\Generator\GeneratorAbstract;
+use IPS\storm\Center\Sources\SourceBuilderException;
+use IPS\storm\Center\Sources\SourcesFormAbstract;
+use IPS\storm\Form;
+use IPS\storm\ReservedWords;
+use IPS\storm\Settings;
+use Throwable;
+use UnexpectedValueException;
 
-use function count;
-use function header;
-use function defined;
-use function in_array;
-use function is_array;
 use function array_keys;
-use function mb_ucfirst;
 use function array_search;
 use function class_exists;
-use function trait_exists;
-use function mb_strtolower;
+use function count;
+use function defined;
+use function header;
+use function in_array;
 use function interface_exists;
+use function is_array;
+use function mb_strtolower;
+use function mb_ucfirst;
+use function trait_exists;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -131,7 +126,7 @@ class Sources
         $this->application = $application;
         $url = 'app=storm&module=developer&controller=sources&appKey=' . $this->application->directory;
         $base = [
-            'source' => (string) $url . '&do=findClass',
+            'source' => (string)$url . '&do=findClass',
             'minimized' => false,
             'commaTrigger' => false,
             'unique' => true,
@@ -201,6 +196,121 @@ class Sources
 //        ];
 //        Output::i()->sidebar['mobilenav'] = static::subMenus();
 //    }
+    /**
+     * create file
+     */
+    public function create(): ?string
+    {
+        if ($values = $this->form->values()) {
+            return $this->generate($values);
+        }
+
+        return null;
+    }
+
+    public function generate(array $values = []): string
+    {
+        /* @var Application $app */
+        foreach (Application::allExtensions('storm', 'SourcesFormAbstract') as $app) {
+            /* @var SourcesFormAbstract $extension */
+            foreach ($app->extensions('storm', 'SourcesFormAbstract') as $extension) {
+                $extension->formProcess($values);
+            }
+        }
+        /* @var GeneratorAbstract $class */
+        $class = 'IPS\\storm\Center\\Sources\\Generator\\';
+        $og = $class;
+        $type = $this->type;
+        $values['type'] = $type;
+
+        try {
+            switch ($type) {
+                case 'Debug':
+                    $class .= 'Profiler';
+                    $values['className'] = $type;
+                    $values['namespace'] = '';
+                    break;
+                case 'Member':
+                    $class .= 'Member';
+                    $values['className'] = 'Member';
+                    $values['namespace'] = '';
+                    $values['prefix'] = $this->application->directory . '_member';
+                    $values['scaffolding_create'] = true;
+                    $values['scaffolding_type'] = ['db'];
+                    $values['strict_types'] = true;
+                    if (trait_exists('IPS\\' . $this->application->directory . '\\Orm')) {
+                        $values['traits'] = ['IPS\\' . $this->application->directory . '\\Orm'];
+                    }
+                    break;
+                case 'Orm':
+                    $class .= 'Orm';
+                    $values['type'] = 'Traits';
+                    $values['className'] = 'Orm';
+                    $values['namespace'] = '';
+                    break;
+                default:
+                    $class .= $type;
+                    break;
+            }
+
+            $class = new $class($values, $this->application);
+            $class->process();
+
+            $msg = Member::loggedIn()->language()->addToStack(
+                'storm_devcenter_class_created',
+                false,
+                [
+                    'sprintf' => [
+                        $type,
+                        $class->classname,
+                    ],
+                ]
+            );
+        } catch (SourceBuilderException $e) {
+            $msg = $e->getMessage();
+        }
+
+        return $msg;
+    }
+//
+//    public static function subMenus()
+//    {
+//        $menus = static::processedSubMenus();
+//
+//        return Theme::i()->getTemplate('dtdpmenu', 'storm', 'admin')->menu(
+//            $menus['sources'],
+//            $menus['dev'],
+//            Request::i()->appKey,
+//            'sources',
+//            $menus['ignored']
+//        );
+//    }
+
+    public static function processedSubMenus(): array
+    {
+        $menus = static::getSubMenus();
+        $subs = $menus['sources'];
+        $ns = '\\IPS\\' . Request::i()->appKey;
+        foreach ($menus['check'] as $ignored) {
+            $og = $ns;
+            $cs = $ns . '\\' . $ignored;
+            try {
+                if (class_exists($cs) || trait_exists($cs) || interface_exists($cs)) {
+                    $key = array_search(mb_strtolower($ignored), $subs, true);
+                    if ($key !== false) {
+                        unset($subs[$key]);
+                    }
+                }
+            } catch (Throwable|Exception $e) {
+            }
+            $ns = $og;
+        }
+        $menus['sources'] = $subs;
+
+        return $menus;
+    }
+
+
 
     public static function getSubMenus(): array
     {
@@ -244,43 +354,6 @@ class Sources
         ];
     }
 
-    public static function processedSubMenus(): array
-    {
-        $menus = static::getSubMenus();
-        $subs = $menus['sources'];
-        $ns = '\\IPS\\' . Request::i()->appKey;
-        foreach ($menus['check'] as $ignored) {
-            $og = $ns;
-            $cs = $ns . '\\' . $ignored;
-            try {
-                if (class_exists($cs) || trait_exists($cs) || interface_exists($cs)) {
-                    $key = array_search(mb_strtolower($ignored), $subs, true);
-                    if ($key !== false) {
-                        unset($subs[$key]);
-                    }
-                }
-            } catch (Throwable | Exception $e) {
-            }
-            $ns = $og;
-        }
-        $menus['sources'] = $subs;
-
-        return $menus;
-    }
-//
-//    public static function subMenus()
-//    {
-//        $menus = static::processedSubMenus();
-//
-//        return Theme::i()->getTemplate('dtdpmenu', 'storm', 'admin')->menu(
-//            $menus['sources'],
-//            $menus['dev'],
-//            Request::i()->appKey,
-//            'sources',
-//            $menus['ignored']
-//        );
-//    }
-
     /**
      * @param array $config
      * @param string $type
@@ -292,7 +365,7 @@ class Sources
             ->setPrefix('storm_devcenter_')
             ->setId('storm_devcenter__r' . $this->type . 'r_')
             ->submitLang('Create Source');
-        if($this->type === 'Debug' || $this->type === 'Orm' || $this->type === 'Member'){
+        if ($this->type === 'Debug' || $this->type === 'Orm' || $this->type === 'Member') {
             $this->form->addHidden('type', $this->type);
         }
         foreach ($config as $func) {
@@ -303,83 +376,6 @@ class Sources
                 $this->{$method}();
             }
         }
-    }
-
-    /**
-     * create file
-     */
-    public function create(): ?string
-    {
-        if ($values = $this->form->values()) {
-            return $this->generate($values);
-        }
-
-        return null;
-    }
-
-    public function generate(array $values = []): string
-    {
-        /* @var Application $app */
-        foreach (Application::allExtensions('storm', 'SourcesFormAbstract') as $app) {
-            /* @var SourcesFormAbstract $extension */
-            foreach ($app->extensions('storm', 'SourcesFormAbstract') as $extension) {
-                $extension->formProcess($values);
-            }
-        }
-        /* @var GeneratorAbstract $class */
-        $class = 'IPS\\storm\Center\\Sources\\Generator\\';
-        $og = $class;
-        $type = $this->type;
-        $values['type'] = $type;
-
-        try {
-            switch ($type) {
-                case 'Debug':
-                    $class .= 'Profiler';
-                    $values['className'] = $type;
-                    $values['namespace'] = '';
-                    break;
-                case 'Member':
-                    $class .= 'Member';
-                    $values['className'] = 'Member';
-                    $values['namespace'] = '';
-                    $values['prefix'] = $this->application->directory . '_member';
-                    $values['scaffolding_create'] = true;
-                    $values['scaffolding_type'] = ['db'];
-                    $values['strict_types'] = true;
-                    if(trait_exists('IPS\\'.$this->application->directory.'\\Orm')){
-                        $values['traits'] = ['IPS\\'.$this->application->directory.'\\Orm'];
-                    }
-                    break;
-                case 'Orm':
-                    $class .= 'Orm';
-                    $values['type'] = 'Traits';
-                    $values['className'] = 'Orm';
-                    $values['namespace'] = '';
-                    break;
-                default:
-                    $class .= $type;
-                    break;
-            }
-
-            $class = new $class($values, $this->application);
-            $class->process();
-
-            $msg = Member::loggedIn()->language()->addToStack(
-                'storm_devcenter_class_created',
-                false,
-                [
-                    'sprintf' => [
-                        $type,
-                        $class->classname,
-                    ],
-                ]
-            );
-        } catch (SourceBuilderException $e) {
-            $msg = $e->getMessage();
-        }
-
-        return $msg;
     }
 
     /**
@@ -396,7 +392,7 @@ class Sources
         $ns = 'storm_devcenter__r' . $this->type . 'r_namespace';
         $ns = Request::i()->{$ns};
         $class = $data;
-        if ($ns && \IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+        if ($ns && Settings::i()->storm_devcenter_keep_case === false) {
             $ns = mb_ucfirst($ns);
             $class = mb_ucfirst($class);
         }
@@ -408,19 +404,34 @@ class Sources
             }
         } catch (InvalidArgumentException $e) {
             throw $e;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             try {
                 if ($data !== 'Form' && class_exists($class2)) {
                     throw new InvalidArgumentException('storm_devcenter_exists');
                 }
             } catch (InvalidArgumentException $e) {
                 throw $e;
-            } catch (\Throwable) {
+            } catch (Throwable) {
             }
         }
 
         if (ReservedWords::check($data)) {
             throw new InvalidArgumentException('storm_devcenter_reserved');
+        }
+    }
+
+    /**
+     * checks to see if the Class/Trait/Interface name isn't blank!
+     *
+     * @param $data
+     *
+     * @throws InvalidArgumentException
+     *
+     */
+    public function noBlankCheck($data): void
+    {
+        if (!$data) {
+            throw new InvalidArgumentException('storm_devcenter_no_blank');
         }
     }
 
@@ -439,7 +450,7 @@ class Sources
         $ns = Request::i()->{$ns};
         $class = $data;
 
-        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+        if (Settings::i()->storm_devcenter_keep_case === false) {
             $ns = mb_ucfirst($ns);
             $class = mb_ucfirst($class);
         }
@@ -474,7 +485,7 @@ class Sources
         $ns = Request::i()->{$ns};
         $class = $data;
 
-        if (\IPS\storm\Settings::i()->storm_devcenter_keep_case === false) {
+        if (Settings::i()->storm_devcenter_keep_case === false) {
             $ns = mb_ucfirst($ns);
             $class = mb_ucfirst($class);
         }
@@ -491,21 +502,6 @@ class Sources
 
         if (ReservedWords::check($data)) {
             throw new InvalidArgumentException('storm_devcenter_reserved');
-        }
-    }
-
-    /**
-     * checks to see if the Class/Trait/Interface name isn't blank!
-     *
-     * @param $data
-     *
-     * @throws InvalidArgumentException
-     *
-     */
-    public function noBlankCheck($data): void
-    {
-        if (!$data) {
-            throw new InvalidArgumentException('storm_devcenter_no_blank');
         }
     }
 
@@ -645,7 +641,7 @@ class Sources
         $this
             ->form
             ->addElement('caches_names', 'stack')
-        ->required();
+            ->required();
     }
 
     protected function elCachesEnabled(): void
@@ -790,8 +786,8 @@ class Sources
 
         $this->form->addTab('interfaces');
         $this->form->addElement('ips_implements', 'checkboxset')
-                   ->label('interface_implements_node')
-                   ->options(['options' => $interfacesNode]);
+            ->label('interface_implements_node')
+            ->options(['options' => $interfacesNode]);
         $this->elInterfaces();
     }
 
@@ -811,15 +807,6 @@ class Sources
             ->validation([$this, 'implementsCheck']);
     }
 
-    protected function arTraits($traits)
-    {
-        $trait = '\\IPS\\' . $this->application->directory . '\\Traits\Orm';
-        if (trait_exists($trait)) {
-            return array_merge([$trait => $trait], $traits);
-        }
-        return $traits;
-    }
-
     /**
      * traits tab for nodes
      */
@@ -827,12 +814,12 @@ class Sources
     {
         $traitsNode = [
             ClubContainer::class => ClubContainer::class,
-            Colorize::class      => Colorize::class,
+            Colorize::class => Colorize::class,
             CustomBadge::class => CustomBadge::class,
             DelayedCount::class => DelayedCount::class,
-            Grouping::class      => Grouping::class,
-            Icon::class          => Icon::class,
-            Ratings::class       => Ratings::class,
+            Grouping::class => Grouping::class,
+            Icon::class => Icon::class,
+            Ratings::class => Ratings::class,
             Statistics::class => Statistics::class
         ];
         $traitsNode = $this->arTraits($traitsNode);
@@ -849,6 +836,15 @@ class Sources
             ->addElement('icon_storage')
             ->required();
         $this->elTraits();
+    }
+
+    protected function arTraits($traits)
+    {
+        $trait = '\\IPS\\' . $this->application->directory . '\\Traits\Orm';
+        if (trait_exists($trait)) {
+            return array_merge([$trait => $trait], $traits);
+        }
+        return $traits;
     }
 
     /**
@@ -924,9 +920,9 @@ class Sources
         $traits = $this->arTraits($traits);
         $this->form->addTab('traits');
         $this->form->addElement('ips_traits', 'cbs')
-                   ->label('ips_traits_item')
-                   ->value([])
-                   ->options(['options' => $traits]);
+            ->label('ips_traits_item')
+            ->value([])
+            ->options(['options' => $traits]);
 
         $this->elTraits();
     }
@@ -937,15 +933,15 @@ class Sources
     protected function elItemInterfaces(): void
     {
         $interfacesItem = [
-            Embeddable::class               => Embeddable::class,
-            Filter::class                   => Filter::class
+            Embeddable::class => Embeddable::class,
+            Filter::class => Filter::class
         ];
 
         $this->form->addTab('interfaces');
         $this->form->addElement('ips_implements', 'checkboxset')
-                   ->label('interface_implements_item')
-                   ->value([])
-                   ->options(['options' => $interfacesItem]);
+            ->label('interface_implements_item')
+            ->value([])
+            ->options(['options' => $interfacesItem]);
 
         $this->elInterfaces();
     }

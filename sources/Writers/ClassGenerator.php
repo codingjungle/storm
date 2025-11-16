@@ -141,8 +141,8 @@ class ClassGenerator extends GeneratorAbstract
     {
         $continue = true;
         $rand = 'foo' . random_int(1, 20000) . random_int(1, 20000) . random_int(1, 30000) . md5(
-            time() + rand(1, 10000)
-        );
+                time() + rand(1, 10000)
+            );
         $newParams = [];
         $class = <<<EOF
 class {$rand} {
@@ -299,6 +299,11 @@ EOF;
         return $this->classUses;
     }
 
+    public function getExtends(): string
+    {
+        return $this->extends;
+    }
+
     /**
      * @param $extends
      *
@@ -322,11 +327,6 @@ EOF;
         return $this;
     }
 
-    public function getExtends(): string
-    {
-        return $this->extends;
-    }
-
     /**
      * @param $interface
      *
@@ -337,7 +337,7 @@ EOF;
         if (empty($interface) === false) {
             $og = explode('\\', $interface);
 
-            if ( count($og) >= 2) {
+            if (count($og) >= 2) {
                 $this->addImport($interface);
                 $interface = array_pop($og);
             }
@@ -346,23 +346,6 @@ EOF;
             $this->interfaces[$hash] = $interface;
         }
         return $this;
-    }
-
-    protected function writeBody(): void
-    {
-        $tab = $this->tab;
-        //psr-12 updates
-        if (empty($this->classUses) === false) {
-            foreach ($this->classUses as $use) {
-                {
-                    $this->output("{$tab}use " . $use . ";\n");
-                }
-            }
-        }
-        $this->writeConst();
-        $this->writeProperties();
-        $this->writeMethods();
-        $this->output("\n}");
     }
 
     public function writeSourceType(): void
@@ -397,6 +380,23 @@ EOF;
     public function isFinal(): bool
     {
         return $this->isFinal;
+    }
+
+    protected function writeBody(): void
+    {
+        $tab = $this->tab;
+        //psr-12 updates
+        if (empty($this->classUses) === false) {
+            foreach ($this->classUses as $use) {
+                {
+                    $this->output("{$tab}use " . $use . ";\n");
+                }
+            }
+        }
+        $this->writeConst();
+        $this->writeProperties();
+        $this->writeMethods();
+        $this->output("\n}");
     }
 
     protected function tab2space($line): string

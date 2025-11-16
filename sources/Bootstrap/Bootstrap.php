@@ -1,13 +1,20 @@
 <?php
 
+use IPS\IPS;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+
 use const IPS\ROOT_PATH;
 
 //require_once ROOT_PATH . '/init.php';
 require_once ROOT_PATH . '/applications/storm/sources/Helpers/Helpers.php';
-class Bootstrap extends \IPS\IPS
+
+class Bootstrap extends IPS
 {
     public static bool $override = false;
-
+    public static array $constants = [
+        'STORM_MY_APPS' => [],
+    ];
     protected static array $hf = [
         'IPS\\Db' => ['ips' => 'system/Db/Db.php', 'hook' => 'Db.php'],
         'IPS\\Theme' => ['ips' => 'system/Theme/Theme.php', 'hook' => 'Theme.php'],
@@ -15,15 +22,11 @@ class Bootstrap extends \IPS\IPS
         'IPS\\Log' => ['ips' => 'system/Log/Log.php', 'hook' => 'Log.php']
     ];
 
-    public static array $constants = [
-        'STORM_MY_APPS' => [],
-    ];
-
     public static function init()
     {
         $vendor = ROOT_PATH . '/applications/storm/sources/Vendor/autoload.php';
         require $vendor;
-        \spl_autoload_register(array('\Bootstrap', 'autoloader' ), true, true);
+        spl_autoload_register(array('\Bootstrap', 'autoloader'), true, true);
 //        \set_exception_handler(array('\Bootstrap', 'exceptionHandler' ));
 
         foreach (static::$constants as $key => $value) {
@@ -36,12 +39,11 @@ class Bootstrap extends \IPS\IPS
     /**
      * Autoloader
      *
-     * @param   string  $classname  Class to load
+     * @param string $classname Class to load
      * @return  void
      */
     public static function autoloader($classname)
     {
-
         /* Separate by namespace */
         $bits = explode('\\', ltrim($classname, '\\'));
 
@@ -53,7 +55,7 @@ class Bootstrap extends \IPS\IPS
 
         /* Work out what namespace we're in */
         $class = array_pop($bits);
-        $namespace = empty($bits) ? 'IPS' : ( 'IPS\\' . implode('\\', $bits) );
+        $namespace = empty($bits) ? 'IPS' : ('IPS\\' . implode('\\', $bits));
         $lookUp = "{$namespace}\\{$class}";
 
         if (isset(static::$hf[$lookUp])) {
@@ -63,16 +65,16 @@ class Bootstrap extends \IPS\IPS
                 $ipsFile = ROOT_PATH . '/' . $hookInfo['ips'];
                 $hookFile = ROOT_PATH . '/applications/storm/sources/Hooks/' . $hookInfo['hook'];
                 $mtime = filemtime($ipsFile);
-                $name = \str_replace(\IPS\ROOT_PATH, '', $ipsFile);
-                $name = \str_replace(["\\", '/'], '_', $name);
+                $name = str_replace(ROOT_PATH, '', $ipsFile);
+                $name = str_replace(["\\", '/'], '_', $name);
                 $filename = $name . '_' . $mtime . '.php';
 
-                if (!file_exists($path . $filename) && \file_exists($ipsFile)) {
-                    if (!\is_dir($path)) {
-                        \mkdir($path, 0777, true);
+                if (!file_exists($path . $filename) && file_exists($ipsFile)) {
+                    if (!is_dir($path)) {
+                        mkdir($path, 0777, true);
                     }
-                    $fs = new \Symfony\Component\Filesystem\Filesystem();
-                    $finder = new \Symfony\Component\Finder\Finder();
+                    $fs = new Filesystem();
+                    $finder = new Finder();
                     $finder->in($path)->files()->name($name . '*.php');
 
                     foreach ($finder as $f) {
@@ -81,8 +83,8 @@ class Bootstrap extends \IPS\IPS
 
                     $content = file_get_contents($ipsFile);
                     $content = preg_replace('#\b(?<![\'|"])class ' . $class . '\b#', 'class _' . $class, $content);
-                    if (!\file_exists($path . $filename)) {
-                        \file_put_contents($path . $filename, $content);
+                    if (!file_exists($path . $filename)) {
+                        file_put_contents($path . $filename, $content);
                     }
                 }
 
@@ -110,7 +112,10 @@ class Bootstrap extends \IPS\IPS
 
                 /* Doesn't exist? */
                 if (!class_exists("{$namespace}\\{$class}", false)) {
-                    trigger_error("Class {$classname} could not be loaded. Ensure it is in the correct namespace. storm", E_USER_ERROR);
+                    trigger_error(
+                        "Class {$classname} could not be loaded. Ensure it is in the correct namespace. storm",
+                        E_USER_ERROR
+                    );
                 }
             }
         }

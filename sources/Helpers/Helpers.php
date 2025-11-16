@@ -2,6 +2,7 @@
 
 require_once \IPS\ROOT_PATH . '/applications/storm/sources/Profiler/Profiler.php';
 
+use IPS\Member;
 use IPS\storm\Profiler;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -25,187 +26,14 @@ class Helpers
     protected string $style;
     protected string $title;
     protected string $sidebar;
-    #[NoReturn] public function __construct($args)
+
+    #[NoReturn]
+    public function __construct($args)
     {
         $this->args = $args;
         $this->style();
         $this->backTrace();
     }
-
-    public function _method($func = 'print'): void
-    {
-        $this->title = $func . '()';
-        $html = [];
-        $container = <<<'EOF'
-        <div class="helpersTitle">#func# ...$arguments #count#</div>
-        <div class="helpersPrintBody space-mono-bold">
-        #body#
-        </div>
-        EOF;
-        $row = <<<'EOF'
-        <div class="helpersRow helpersPrintRow#type">
-        #count#
-        #row#
-        </div>
-        EOF;
-        $i = 1;
-        $count = count($this->args);
-
-        $style['default'] = 'background-color:#18171B; color:#FF8400; line-height:1.2em; font-family: "Space Mono", monospace;font-weight: 700;font-style: normal;font-size:18px; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:99999; word-break: break-all';
-        foreach ($this->args as $arg) {
-            $c = '';
-            $val = '';
-            $type = '';
-            if ($count > 1) {
-                $c = '<div class="helpersRowCount"><span>#' . $i++ . '<span></span></div>';
-            }
-
-            if ($func === 'print') {
-                $val = Profiler::dump($arg, $style);
-            } elseif ($func === 'var_dump') {
-                ob_start();
-                $type = 'Dump';
-                if (is_array($arg) || is_object($arg)) {
-                    $type = 'Array';
-                } elseif (is_numeric($arg)) {
-                    $type = 'Int';
-                } elseif (is_bool($arg)) {
-                    $type = 'Bool';
-                } else {
-                    $arg = htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
-                    $type = 'String';
-                }
-                var_dump($arg);
-                $val = ob_get_contents();
-                ob_end_clean();
-            }
-
-            $html[] = str_replace(['#row#', '#type#', '#count#'], [$val, $type, $c], $row);
-        }
-
-        $this->body = str_replace(
-            ['#body#', '#count#', '#func#'],
-            [implode("\n", $html), $count, $this->title],
-            $container,
-        );
-        $this->execute();
-    }
-
-    public function execute(): void
-    {
-        $document = <<<'EOF'
-        <!DOCTYPE html>
-        <html lang="en-US" dir="ltr">
-        	<head>
-                <title>#title#</title>
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-                <link rel='stylesheet' href='/applications/storm/dev/css/global/varDumper.css' media='all'>
-                <script type="text/javascript" src="/applications/storm/dev/js/global/controllers/profiler/htmldumper.js"></script>
-
-                #style#
-            </head>
-            <body class="stormColumns">
-                <div class="stormColumnLarge">
-                #sidebar#
-                </div>
-                <div class="stormColumnFluid">
-                #body#
-                </div>
-            </body>
-        </html>
-        EOF;
-
-        try {
-            if (ob_get_length()) {
-                @ob_end_clean();
-            }
-            echo str_replace(
-                ['#title#', '#style#', '#body#', '#sidebar#'],
-                [$this->title, $this->style, $this->body,$this->sidebar],
-                $document
-            );
-            exit();
-        } catch (Throwable $e) {
-        }
-    }
-
-    /**
-     * builds an url for the file to open it up in an editor
-     *
-     * @param string $path
-     * @param int $line
-     *
-     * @return string
-     */
-    public function replace(string $path, int $line = 0): string
-    {
-        if (isset(static::$editors[\IPS\DEV_WHOOPS_EDITOR])) {
-            $editor = static::$editors[\IPS\DEV_WHOOPS_EDITOR];
-            if ($line === null) {
-                $line = 0;
-            }
-//            if (CH_WSL === true) {
-//                $path = CH_WSL_PATH . $path;
-//            }
-//
-//            if (CH_DOCKER === true) {
-//                $path = str_replace(CH_DOCKER_PATH, CH_DOCKER_PATH_REPLACEMENT, $path);
-//            }
-            $path = rawurlencode($path);
-            return str_replace(['#file', '#line', '%file', '%line'], [$path, $line, $path, $line], $editor);
-        }
-
-        return '';
-    }
-
-    #[NoReturn] protected function backTrace()
-    {
-        $not = __FILE__;
-        $backtraces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $container = <<<'EOF'
-        <div class="helpersTitle">Backtrace</div>
-        <div class="helpersBackTrace">
-            #body#
-        </div>
-        EOF;
-
-        $html = [];
-
-        $i = 0;
-        foreach ($backtraces as $backtrace) {
-            if (is_array($backtrace)) {
-                if (isset($backtrace['file']) && $backtrace['file'] === $not) {
-                    continue;
-                }
-                $next = '<div class="helpersBackTraceRowContainer clearfix">';
-                $next .= '<div class="helpersIndex goLeft">' . $i++ . '</div>';
-                $next .= '<div class="goLeft"><div class="helpersLink"><a href="' . $this->replace($backtrace['file'], $backtrace['line'] ?? 0) . '">';
-                if (isset($backtrace['class'])) {
-                    $next .= $backtrace['class'];
-                    if (isset($backtrace['type'])) {
-                        $next .= $backtrace['type'];
-                    }
-                }
-
-                if (isset($backtrace['function'])) {
-                    $next .= $backtrace['function'];
-                }
-
-                $next .= '</a></div>';
-                $line = '';
-                if (isset($backtrace['line'])) {
-                    $line = ':' . $backtrace['line'];
-                }
-                $next .= '<div class="helpersFile"><a href="' . $this->replace($backtrace['file'], $backtrace['line'] ?? 0) . '">' . str_replace(\IPS\ROOT_PATH, '', $backtrace['file']) . $line . '</a></div></div>';
-                $next .= '</div>';
-                $html[] = $next;
-            }
-        }
-        $this->sidebar = str_replace('#body#', implode("\n", $html), $container);
-    }
-
 
     protected function style(): void
     {
@@ -383,6 +211,187 @@ class Helpers
         EOF;
         $this->style = $style;
     }
+
+    #[NoReturn]
+    protected function backTrace()
+    {
+        $not = __FILE__;
+        $backtraces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $container = <<<'EOF'
+        <div class="helpersTitle">Backtrace</div>
+        <div class="helpersBackTrace">
+            #body#
+        </div>
+        EOF;
+
+        $html = [];
+
+        $i = 0;
+        foreach ($backtraces as $backtrace) {
+            if (is_array($backtrace)) {
+                if (isset($backtrace['file']) && $backtrace['file'] === $not) {
+                    continue;
+                }
+                $next = '<div class="helpersBackTraceRowContainer clearfix">';
+                $next .= '<div class="helpersIndex goLeft">' . $i++ . '</div>';
+                $next .= '<div class="goLeft"><div class="helpersLink"><a href="' . $this->replace(
+                        $backtrace['file'],
+                        $backtrace['line'] ?? 0
+                    ) . '">';
+                if (isset($backtrace['class'])) {
+                    $next .= $backtrace['class'];
+                    if (isset($backtrace['type'])) {
+                        $next .= $backtrace['type'];
+                    }
+                }
+
+                if (isset($backtrace['function'])) {
+                    $next .= $backtrace['function'];
+                }
+
+                $next .= '</a></div>';
+                $line = '';
+                if (isset($backtrace['line'])) {
+                    $line = ':' . $backtrace['line'];
+                }
+                $next .= '<div class="helpersFile"><a href="' . $this->replace(
+                        $backtrace['file'],
+                        $backtrace['line'] ?? 0
+                    ) . '">' . str_replace(\IPS\ROOT_PATH, '', $backtrace['file']) . $line . '</a></div></div>';
+                $next .= '</div>';
+                $html[] = $next;
+            }
+        }
+        $this->sidebar = str_replace('#body#', implode("\n", $html), $container);
+    }
+
+    /**
+     * builds an url for the file to open it up in an editor
+     *
+     * @param string $path
+     * @param int $line
+     *
+     * @return string
+     */
+    public function replace(string $path, int $line = 0): string
+    {
+        if (isset(static::$editors[\IPS\DEV_WHOOPS_EDITOR])) {
+            $editor = static::$editors[\IPS\DEV_WHOOPS_EDITOR];
+            if ($line === null) {
+                $line = 0;
+            }
+//            if (CH_WSL === true) {
+//                $path = CH_WSL_PATH . $path;
+//            }
+//
+//            if (CH_DOCKER === true) {
+//                $path = str_replace(CH_DOCKER_PATH, CH_DOCKER_PATH_REPLACEMENT, $path);
+//            }
+            $path = rawurlencode($path);
+            return str_replace(['#file', '#line', '%file', '%line'], [$path, $line, $path, $line], $editor);
+        }
+
+        return '';
+    }
+
+    public function _method($func = 'print'): void
+    {
+        $this->title = $func . '()';
+        $html = [];
+        $container = <<<'EOF'
+        <div class="helpersTitle">#func# ...$arguments #count#</div>
+        <div class="helpersPrintBody space-mono-bold">
+        #body#
+        </div>
+        EOF;
+        $row = <<<'EOF'
+        <div class="helpersRow helpersPrintRow#type">
+        #count#
+        #row#
+        </div>
+        EOF;
+        $i = 1;
+        $count = count($this->args);
+
+        $style['default'] = 'background-color:#18171B; color:#FF8400; line-height:1.2em; font-family: "Space Mono", monospace;font-weight: 700;font-style: normal;font-size:18px; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:99999; word-break: break-all';
+        foreach ($this->args as $arg) {
+            $c = '';
+            $val = '';
+            $type = '';
+            if ($count > 1) {
+                $c = '<div class="helpersRowCount"><span>#' . $i++ . '<span></span></div>';
+            }
+
+            if ($func === 'print') {
+                $val = Profiler::dump($arg, $style);
+            } elseif ($func === 'var_dump') {
+                ob_start();
+                $type = 'Dump';
+                if (is_array($arg) || is_object($arg)) {
+                    $type = 'Array';
+                } elseif (is_numeric($arg)) {
+                    $type = 'Int';
+                } elseif (is_bool($arg)) {
+                    $type = 'Bool';
+                } else {
+                    $arg = htmlspecialchars((string)$arg, ENT_QUOTES, 'UTF-8');
+                    $type = 'String';
+                }
+                var_dump($arg);
+                $val = ob_get_contents();
+                ob_end_clean();
+            }
+
+            $html[] = str_replace(['#row#', '#type#', '#count#'], [$val, $type, $c], $row);
+        }
+
+        $this->body = str_replace(
+            ['#body#', '#count#', '#func#'],
+            [implode("\n", $html), $count, $this->title],
+            $container,
+        );
+        $this->execute();
+    }
+
+    public function execute(): void
+    {
+        $document = <<<'EOF'
+        <!DOCTYPE html>
+        <html lang="en-US" dir="ltr">
+        	<head>
+                <title>#title#</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+                <link rel='stylesheet' href='/applications/storm/dev/css/global/varDumper.css' media='all'>
+                <script type="text/javascript" src="/applications/storm/dev/js/global/controllers/profiler/htmldumper.js"></script>
+
+                #style#
+            </head>
+            <body class="stormColumns">
+                <div class="stormColumnLarge">
+                #sidebar#
+                </div>
+                <div class="stormColumnFluid">
+                #body#
+                </div>
+            </body>
+        </html>
+        EOF;
+
+        try {
+            if (ob_get_length()) {
+                @ob_end_clean();
+            }
+            echo str_replace(
+                ['#title#', '#style#', '#body#', '#sidebar#'],
+                [$this->title, $this->style, $this->body, $this->sidebar],
+                $document
+            );
+            exit();
+        } catch (Throwable $e) {
+        }
+    }
 }
 
 function _p(): void
@@ -402,7 +411,7 @@ function _d(): void
 
 function lang(string $key, bool $vle = false, array $options = []): string
 {
-    return \IPS\Member::loggedIn()->language()->addToStack($key, $vle, $options);
+    return Member::loggedIn()->language()->addToStack($key, $vle, $options);
 }
 
 /**

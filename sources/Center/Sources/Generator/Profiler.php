@@ -17,6 +17,8 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     exit;
 }
 
+use Exception;
+
 use function defined;
 use function header;
 use function mb_strtolower;
@@ -42,7 +44,7 @@ class Profiler extends GeneratorAbstract
         }   
 EOF;
 
-        $this->generator->addImport(\Exception::class);
+        $this->generator->addImport(Exception::class);
         $params = [
             [
                 'name' => 'message',

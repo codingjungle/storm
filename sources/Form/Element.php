@@ -1,66 +1,66 @@
 <?php
 
 /**
-* @brief      Element Class
-* @author     -storm_author-
-* @copyright  -storm_copyright-
-* @package    IPS Social Suite
-* @subpackage nucleus
-* @since      
-*/
+ * @brief      Element Class
+ * @author     -storm_author-
+ * @copyright  -storm_copyright-
+ * @package    IPS Social Suite
+ * @subpackage nucleus
+ * @since
+ */
 
 namespace IPS\storm\Form;
 
-use IPS\File;
-use IPS\Helpers\Form\Ftp;
-use IPS\Helpers\Form\Tel;
-use IPS\Helpers\Form\Url;
-use IPS\Helpers\Form\Enum;
-use IPS\Helpers\Form\Trbl;
-use IPS\Helpers\Form\Date;
-use IPS\Helpers\Form\Item;
-use IPS\Helpers\Form\Node;
-use IPS\Helpers\Form\Poll;
-use IPS\Helpers\Form\Sort;
-use IPS\Helpers\Form\Text;
-use IPS\Helpers\Form\Color;
-use IPS\Helpers\Form\Email;
-use IPS\Helpers\Form\Radio;
-use IPS\Helpers\Form\Stack;
-use IPS\Helpers\Form\YesNo;
-use IPS\Helpers\Form\Custom;
-use IPS\Helpers\Form\Editor;
-use IPS\Helpers\Form\Matrix;
-use IPS\Helpers\Form\Member;
-use IPS\Helpers\Form\Number;
-use IPS\Helpers\Form\Rating;
-use IPS\Helpers\Form\Search;
-use IPS\Helpers\Form\Upload;
-use IPS\Helpers\Form\Select;
 use InvalidArgumentException;
+use IPS\File;
+use IPS\formularize\Form\_Element;
 use IPS\Helpers\Form\Address;
 use IPS\Helpers\Form\Captcha;
 use IPS\Helpers\Form\Checkbox;
+use IPS\Helpers\Form\CheckboxSet;
+use IPS\Helpers\Form\Codemirror;
+use IPS\Helpers\Form\Color;
+use IPS\Helpers\Form\Custom;
+use IPS\Helpers\Form\Date;
+use IPS\Helpers\Form\DateRange;
+use IPS\Helpers\Form\Editor;
+use IPS\Helpers\Form\Email;
+use IPS\Helpers\Form\Enum;
+use IPS\Helpers\Form\FormAbstract;
+use IPS\Helpers\Form\Ftp;
 use IPS\Helpers\Form\Interval;
+use IPS\Helpers\Form\Item;
 use IPS\Helpers\Form\KeyValue;
+use IPS\Helpers\Form\Matrix;
+use IPS\Helpers\Form\Member;
+use IPS\Helpers\Form\Node;
+use IPS\Helpers\Form\Number;
 use IPS\Helpers\Form\Password;
+use IPS\Helpers\Form\Poll;
+use IPS\Helpers\Form\Radio;
+use IPS\Helpers\Form\Rating;
+use IPS\Helpers\Form\Search;
+use IPS\Helpers\Form\Select;
+use IPS\Helpers\Form\SocialGroup;
+use IPS\Helpers\Form\Sort;
+use IPS\Helpers\Form\Stack;
+use IPS\Helpers\Form\Tel;
+use IPS\Helpers\Form\Text;
 use IPS\Helpers\Form\TextArea;
 use IPS\Helpers\Form\Timezone;
-use IPS\Helpers\Form\DateRange;
-use IPS\Helpers\Form\Codemirror;
-use IPS\Helpers\Form\CheckboxSet;
-use IPS\Helpers\Form\SocialGroup;
-use IPS\Helpers\Form\WidthHeight;
-use IPS\Helpers\Form\FormAbstract;
 use IPS\Helpers\Form\Translatable;
-use \IPS\storm\Form\Arguments;
+use IPS\Helpers\Form\Trbl;
+use IPS\Helpers\Form\Upload;
+use IPS\Helpers\Form\Url;
+use IPS\Helpers\Form\WidthHeight;
+use IPS\Helpers\Form\YesNo;
 
-use function header;
+use function array_merge;
+use function array_pop;
 use function defined;
 use function explode;
+use function header;
 use function is_array;
-use function array_pop;
-use function array_merge;
 use function mb_strtolower;
 use function property_exists;
 
@@ -69,17 +69,18 @@ use const null;
 use const true;
 
 
-if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) ) {
-    header( ( $_SERVER[ 'SERVER_PROTOCOL' ] ?? 'HTTP/1.0' ) . ' 403 Forbidden' );
+if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
+    header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
     exit;
 }
 
 /**
-* Element Class
-* @mixin \IPS\nucleus\Form\Element
-*/
+ * Element Class
+ * @mixin \IPS\nucleus\Form\Element
+ */
 class Element
-{/**
+{
+    /**
      * @var array
      */
     public static $helpers = [
@@ -273,11 +274,10 @@ class Element
      */
     public function __construct(string $name, string $type)
     {
-        if(class_exists($type)) {
+        if (class_exists($type)) {
             $class = $type;
             $type = 'helper';
-        }
-        else{
+        } else {
             $type = mb_strtolower($type);
             $class = null;
             if (static::isHelper($type) === true && $type !== 'matrix') {
@@ -340,7 +340,7 @@ class Element
     }
 
     /**
-     * @return \IPS\formularize\Form\_Element
+     * @return _Element
      */
     public function required(bool $required = true): self
     {
@@ -538,11 +538,9 @@ class Element
             }
         } elseif ($class === Node::class) {
             $key = 'toggleIdsOff';
-        }
-        elseif($class === Select::class){
+        } elseif ($class === Select::class) {
             $key = 'toggles';
-        }
-        elseif(isset($togglesOn[$class])){
+        } elseif (isset($togglesOn[$class])) {
             $key = 'togglesOff';
         }
 

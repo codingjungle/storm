@@ -31,18 +31,6 @@ class CreateMenu extends ExtensionsAbstract
     /**
      * @inheritdoc
      */
-    protected function _content()
-    {
-        $this->link = 'app=' . $this->application->directory . '&' . $this->link;
-        $this->seo = $this->seo ? "'" . $this->seo . "'" : null;
-        $this->seoTitle = $this->seoTitle ? "'" . $this->seoTitle . "'" : null;
-
-        return $this->_getFile($this->extension);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function elements()
     {
         $this->form->element('use_default')->toggles(['key', 'link', 'seo', 'seoTitle'], true);
@@ -50,5 +38,17 @@ class CreateMenu extends ExtensionsAbstract
         $this->form->addElement('link')->required()->prefix('app=' . $this->application->directory . '&');
         $this->form->addElement('seo');
         $this->form->addElement('seoTitle');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function _content()
+    {
+        $this->link = 'app=' . $this->application->directory . '&' . $this->link;
+        $this->seo = $this->seo ? "'" . $this->seo . "'" : null;
+        $this->seoTitle = $this->seoTitle ? "'" . $this->seoTitle . "'" : null;
+
+        return $this->_getFile($this->extension);
     }
 }

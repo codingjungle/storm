@@ -21,7 +21,6 @@ use IPS\storm\Writers\FileGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function defined;
-use function file_put_contents;
 use function header;
 use function is_file;
 use function var_export;
@@ -43,7 +42,7 @@ trait LanguageBuilder
     protected function addToLangs($key, $value, Application $application)
     {
         $lang = [];
-        $dir = \IPS\Application::getRootPath() . "/applications/{$application->directory}/dev/";
+        $dir = Application::getRootPath() . "/applications/{$application->directory}/dev/";
         $file = $dir . 'lang.php';
 
         try {
@@ -67,7 +66,7 @@ trait LanguageBuilder
                 ->addBody($body)
                 ->save();
         } catch (Exception $e) {
-            Debug::log($e,'Languages Creationg');
+            Debug::log($e, 'Languages Creationg');
         }
     }
 }

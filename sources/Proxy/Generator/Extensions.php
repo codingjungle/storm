@@ -12,7 +12,7 @@ namespace IPS\storm\Proxy\Generator;
 
 use Exception;
 use IPS\Application;
-use IPS\storm\Proxy;
+use IPS\Patterns\Singleton;
 use IPS\storm\Writers\FileGenerator;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -43,7 +43,7 @@ class Extensions extends GeneratorAbstract
      * @note  This needs to be declared in any child class.
      * @var static
      */
-    protected static ?\IPS\Patterns\Singleton $instance  = null;
+    protected static ?Singleton $instance = null;
 
     public function __construct()
     {
@@ -58,7 +58,7 @@ class Extensions extends GeneratorAbstract
     {
         $name = [];
         foreach (Application::roots() as $key) {
-            $path = \IPS\Application::getRootPath() . '/applications/' . $key->directory . '/data/defaults/extensions/';
+            $path = Application::getRootPath() . '/applications/' . $key->directory . '/data/defaults/extensions/';
             if (is_dir($path)) {
                 try {
                     $files = (new Finder())->in($path)->files()->name('*.txt');
@@ -100,7 +100,7 @@ class Extensions extends GeneratorAbstract
         $toWrite = [];
 
         foreach ($name as $val) {
-            $toWrite[] = "'" . $val. "'";
+            $toWrite[] = "'" . $val . "'";
         }
         $toWrite = implode(',', $toWrite);
         $body[] = <<<EOF
@@ -112,8 +112,7 @@ EOF;
             ['f' => '\\IPS\\Application::allExtensions()', 'i' => 1]
         ];
 
-        foreach ( $methods as $m )
-        {
+        foreach ($methods as $m) {
             $body[] = <<<EOF
     expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Extensions'));
 EOF;

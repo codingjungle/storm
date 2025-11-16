@@ -17,10 +17,7 @@ use IPS\Output;
 use IPS\Request;
 use IPS\storm\Profiler\Debug;
 use IPS\storm\Tpl;
-use IPS\Theme;
 use Throwable;
-
-use function _p;
 
 if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
     header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0') . ' 403 Forbidden');
@@ -34,7 +31,6 @@ trait Assets
 {
     protected function manage()
     {
-
         $menus = \IPS\storm\Center\Sources::processedSubMenus();
         $output = Tpl::get('devcenter.storm.global')
             ->sources(
@@ -106,7 +102,7 @@ trait Assets
                     Output::i()->redirect(Request::i()->url()->stripQueryString(['do']), $return);
                 }
             }
-        } catch (Throwable | \Exception $e) {
+        } catch (Throwable|Exception $e) {
             Debug::log($e);
         }
     }

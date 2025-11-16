@@ -2,6 +2,7 @@
 
 namespace IPS;
 
+use mysqli;
 use mysqli_result;
 use mysqli_stmt;
 use Exception;
@@ -11,50 +12,38 @@ use IPS\storm\Settings;
 use Throwable;
 
 use function class_exists;
+use function debug_backtrace;
+
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 class Db extends \IPS\_Db
 {
-    protected $dtkey;
-
+    protected int $dbKey = 0;
+    protected int $currentKey = 0;
     /**
      * @inheritdoc
      */
-    public function addColumn(string $table, array $definition): mysqli_result|bool
-    {
-        $result = parent::addColumn($table, $definition);
-        if (class_exists(\IPS\storm\Proxy::i()::class, true)) {
-            \IPS\storm\Proxy::i()->adjustModel($table);
-        }
-        return $result;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createTable(array $data): mysqli_result|bool
-    {
-        $return = parent::createTable($data);
-
-        if (class_exists(\IPS\storm\Proxy::i()::class, true)) {
-           // \IPS\storm\Proxy::i()->adjustModel($table);
-        }
-
-        return $return;
-    }
+//    public function addColumn(string $table, array $definition): mysqli_result|bool
+//    {
+//        $result = parent::addColumn($table, $definition);
+//        if (class_exists(\IPS\storm\Proxy::i()::class, true)) {
+//            \IPS\storm\Proxy::i()->adjustModel($table);
+//        }
+//        return $result;
+//    }
 
     /**
      * @inheritdoc
      */
     protected function log(string $logQuery, string $server = null): void
     {
-        $this->dtkey++;
+        $this->currentKey = $this->dbKey;
+        $this->dbKey++;
+
         parent::log($logQuery, $server);
-//        $this->log[] = array(
-//            'query' => $logQuery,
-//            'server' => $server,
-//            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
-//            'extra' => $extra,
-//        );
+
+        $log = array_pop($this->log);
+        $this->log[$this->currentKey] = $log;
     }
 
     /**
@@ -63,18 +52,14 @@ class Db extends \IPS\_Db
      */
     public function preparedQuery(string $query, array $_binds, bool $read = false): string|mysqli_stmt
     {
-        if (
-            \IPS\QUERY_LOG
-        ) {
+        if (\IPS\QUERY_LOG) {
             $memory = new Memory();
             $time = new Time();
         }
 
         $parent = parent::preparedQuery($query, $_binds, $read);
 
-        if (
-            \IPS\QUERY_LOG
-        ) {
+        if (\IPS\QUERY_LOG) {
             $final = $time->end();
             $mem = $memory->end();
             $this->finalizeLog($final, $mem);
@@ -83,14 +68,30 @@ class Db extends \IPS\_Db
         return $parent;
     }
 
+    protected function _establishConnection(bool $read = false): mysqli
+    {
+        if (\IPS\QUERY_LOG) {
+            $memory = new Memory();
+            $time = new Time();
+        }
+
+        $return = parent::_establishConnection($read);
+
+        if (\IPS\QUERY_LOG) {
+            $final = $time->end();
+            $mem = $memory->end();
+            $this->finalizeLog($final, $mem);
+        }
+
+        return $return;
+    }
+
     /**
      * @inheritdoc
      */
     public function query(string $query, int $result_mode = MYSQLI_STORE_RESULT, bool $read = true): mysqli_result|bool
     {
-        if (
-            \IPS\QUERY_LOG
-        ) {
+        if (\IPS\QUERY_LOG) {
             $memory = new Memory();
             $time = new Time();
         }
@@ -101,9 +102,7 @@ class Db extends \IPS\_Db
             throw new \IPS\Db\Exception($this->error, $this->errno);
         }
 
-        if (
-            \IPS\QUERY_LOG
-        ) {
+        if (\IPS\QUERY_LOG) {
             $final = $time->end();
             $mem = $memory->end();
             $this->finalizeLog($final, $mem);
@@ -118,7 +117,7 @@ class Db extends \IPS\_Db
      */
     protected function finalizeLog($time, $mem)
     {
-        $id = $this->dtkey - 1;
+        $id = $this->currentKey;
         $this->log[$id]['time'] = $time;
         $this->log[$id]['mem'] = $mem;
     }

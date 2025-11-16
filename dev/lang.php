@@ -2,6 +2,7 @@
 
 $lang = array(
     '__app_storm' => "Storm: Dev Toolbox",
+    '__app_storm_description' => 'Storm: Dev Toolbox, a set of useful tools and script to help with the development of your IPS third party applications.',
     'menutab__storm' => 'Storm: Dev Toolbox',
     'menutab__storm_icon' => 'toolbox',
     'menu__storm_general_settings' => 'Settings',
@@ -338,16 +339,12 @@ $lang = array(
     'storm_devcenter_other_header_doc_update_copyright_desc' => 'If you enable this option, it will only update the copyright tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
     'storm_devcenter_other_header_doc_message' => 'This tool will add a HeaderDoc comment to your php files. Add a Storm->HeaderDoc extension to your application to gain customization options for the various tags it can generate. This tool can also be used to replace/update the existing headerDoc in your php files or update particular tags. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
     'storm_devcenter_other_header_doc_message_no_extension' => 'This app does not have a Storm->HeaderDoc extension. Please add one to gain customization options for the various tags it can generate.',
-
-
     'storm_devcenter_other_header_doc_update_author' => 'Update Author',
     'storm_devcenter_other_header_doc_update_author_desc' => 'If you enable this option, it will only update the @author tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).',
-
     'storm_devcenter_other_header_doc_success' => 'Successfully added HeaderDoc to your php files.',
-
     'storm_devcenter_other_header_doc_success_replace' => 'Successfully added/replaced HeaderDoc in your php files.',
-
     'storm_devcenter_other_header_doc_update_success' => 'Successfully updated HeaderDoc in your php files. Tags Updated: %1$s',
+    'storm_devcenter_other_langs' => 'Lang Strings'
 
 
 );

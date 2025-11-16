@@ -14,11 +14,9 @@ namespace IPS\storm\Writers;
 
 use a;
 use Exception;
-use IPS\Patterns\Singleton;
+use IPS\IPS;
 use IPS\storm\Application;
-use IPS\storm\Writers\Traits\Imports;
 use ReflectionNamedType;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 
@@ -30,6 +28,8 @@ use function is_string;
 use function method_exists;
 use function str_replace;
 use function str_starts_with;
+
+use const IPS\IPS_FOLDER_PERMISSION;
 
 Application::initAutoloader();
 
@@ -48,7 +48,9 @@ abstract class GeneratorAbstract
      * @var ?string
      */
     public ?string $path = null;
-
+    public string $pathFileName;
+    public string $extension = 'php';
+    public bool $strictTypes = false;
     /**
      * the file document
      *
@@ -73,58 +75,49 @@ abstract class GeneratorAbstract
      * @var array
      */
     protected array $classComment = [];
-
     /**
      * class name
      *
      * @var string
      */
     protected string $className = '';
-
     /**
      * class contents to write to file
      *
      * @var string
      */
     protected string $toWrite = '';
-
     /**
      * this gets added after the class body
      *
      * @var string
      */
     protected string $extra = '';
-
     /**
      * an array of required files
      *
      * @var array
      */
     protected array $required = [];
-
     /**
      * an array of included files
      *
      * @var array
      */
     protected array $included = [];
-
     protected string $tab = '    ';
-
     protected string $fileName = '';
-    public string $pathFileName;
-    public string $extension = 'php';
-    public bool $strictTypes = false;
     protected ?Filesystem $filesystem = null;
-
-    public static function i(): static
-    {
-        return new static();
-    }
+    protected bool $delete = true;
 
     public function __construct()
     {
         $this->filesystem = new Filesystem();
+    }
+
+    public static function i(): static
+    {
+        return new static();
     }
 
     public function setStrictTypes(bool $strictTypes): static
@@ -152,7 +145,6 @@ abstract class GeneratorAbstract
      */
     public function setDocumentComment(array $comment): static
     {
-
         $this->docComment = $comment;
         return $this;
     }
@@ -173,6 +165,11 @@ abstract class GeneratorAbstract
         return $this->classComment;
     }
 
+    public function getNameSpace(): string
+    {
+        return $this->nameSpace;
+    }
+
     /**
      * @param $namespace
      *
@@ -190,11 +187,6 @@ abstract class GeneratorAbstract
         return $this;
     }
 
-    public function getNameSpace(): string
-    {
-        return $this->nameSpace;
-    }
-
     /**
      * @return $this
      */
@@ -202,6 +194,11 @@ abstract class GeneratorAbstract
     {
         $this->headerCatch = true;
         return $this;
+    }
+
+    public function getClassName(): string
+    {
+        return $this->className;
     }
 
     /**
@@ -215,36 +212,12 @@ abstract class GeneratorAbstract
         return $this;
     }
 
-    public function getClassName(): string
-    {
-        return $this->className;
-    }
-
     /**
      * @deprecat    ed use static::save();
      */
     public function write(): void
     {
         $this->save();
-    }
-
-    protected bool $delete = true;
-
-    public function setAppend(): static
-    {
-        $this->delete = false;
-        return $this;
-    }
-
-    public function setOverwrite(): static
-    {
-        $this->delete = true;
-        return $this;
-    }
-
-    public function exists(): bool
-    {
-        return $this->filesystem->exists($this->saveFileName());
     }
 
     /**
@@ -257,7 +230,7 @@ abstract class GeneratorAbstract
         }
 
         if (!$this->filesystem->exists($this->path)) {
-            $this->filesystem->mkdir($this->path, \IPS\IPS_FOLDER_PERMISSION);
+            $this->filesystem->mkdir($this->path, IPS_FOLDER_PERMISSION);
             $this->filesystem->appendToFile($this->path . '/index.html', '');
         }
 
@@ -276,7 +249,7 @@ abstract class GeneratorAbstract
         $this->writeBody();
         $this->writeExtra();
         //$this->toWrite = trim($this->toWrite);
-        if (\IPS\IPS::classUsesTrait($this, 'IPS\storm\Writers\Traits\Imports')) {
+        if (IPS::classUsesTrait($this, 'IPS\storm\Writers\Traits\Imports')) {
             $this->wrapUp();
         }
         $this->wrapUp2();
@@ -294,11 +267,19 @@ abstract class GeneratorAbstract
         $this->filesystem->appendToFile($this->saveFileName(), $this->toWrite);
     }
 
-    public function delete(): void
+    public function exists(): bool
     {
-        if ($this->filesystem->exists($this->saveFileName())) {
-            $this->filesystem->remove($this->saveFileName());
+        return $this->filesystem->exists($this->saveFileName());
+    }
+
+    protected function saveFileName(): string
+    {
+        $name = $this->fileName;
+        if ($name === null) {
+            $name = $this->className;
         }
+        $this->pathFileName = $this->path . '/' . $name . '.' . $this->extension;
+        return $this->pathFileName;
     }
 
     protected function writeHead(): void
@@ -316,7 +297,7 @@ EOF;
                     foreach ($this->docComment as $item) {
                         $this->output('* ' . $item . "\n");
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     _p($item, $this->docComment);
                 }
                 $this->output('*/');
@@ -429,20 +410,29 @@ EOF;
         }
     }
 
+    public function setAppend(): static
+    {
+        $this->delete = false;
+        return $this;
+    }
+
+    public function setOverwrite(): static
+    {
+        $this->delete = true;
+        return $this;
+    }
+
+    public function delete(): void
+    {
+        if ($this->filesystem->exists($this->saveFileName())) {
+            $this->filesystem->remove($this->saveFileName());
+        }
+    }
+
     public function setExtension(string $extension): static
     {
         $this->extension = $extension;
         return $this;
-    }
-
-    protected function saveFileName(): string
-    {
-        $name = $this->fileName;
-        if ($name === null) {
-            $name = $this->className;
-        }
-        $this->pathFileName = $this->path . '/' . $name . '.' . $this->extension;
-        return $this->pathFileName;
     }
 
     public function setFileName(string $name): static
@@ -549,13 +539,17 @@ EOF;
                 $val = '';
                 if ($param['value'] === '[]' || $param['value'] === 'array()' || is_array($param['value'])) {
                     $val = '[]';
-                } elseif (empty($param['value']) === false && (mb_strtolower($param['value']) === 'true' || mb_strtolower($param['value']) === 'false')) {
+                } elseif (empty($param['value']) === false && (mb_strtolower(
+                            $param['value']
+                        ) === 'true' || mb_strtolower($param['value']) === 'false')) {
                     $val = mb_strtolower($param['value']);
                 } elseif ($param['value'] === false) {
                     $val = 'false';
                 } elseif ($param['value'] === true) {
                     $val = 'true';
-                } elseif ($param['value'] === null || ( empty($param['value']) === false && mb_strtolower($param['value']) === 'null')) {
+                } elseif ($param['value'] === null || (empty($param['value']) === false && mb_strtolower(
+                            $param['value']
+                        ) === 'null')) {
                     $val = 'null';
                 } elseif ($param['value'] === "''" || $param === '""') {
                     $val = $param['value'];

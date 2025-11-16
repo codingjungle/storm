@@ -17,7 +17,6 @@ use IPS\storm\Settings;
 use function implode;
 use function json_encode;
 use function mb_strtolower;
-use function str_replace;
 
 class Javascript extends CompilerAbstract
 {
