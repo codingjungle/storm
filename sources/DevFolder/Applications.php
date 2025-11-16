@@ -346,13 +346,13 @@ class Applications
         FileGenerator::i()
             ->setFileName('lang')
             ->setPath($this->dev)
-            ->addBody('$lang=' . var_export($lang, true) . ";")
+            ->addBody("<?php\n\n\$lang=" . var_export($lang, true) . ";")
             ->save();
 
         FileGenerator::i()
             ->setFileName('jslang')
             ->setPath($this->dev)
-            ->addBody('$lang=' . var_export($langJs, true) . ";")
+            ->addBody("<?php\n\n\$lang=" . var_export($langJs, true) . ";")
             ->save();
 
         return $this;

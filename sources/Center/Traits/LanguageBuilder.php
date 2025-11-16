@@ -58,7 +58,8 @@ trait LanguageBuilder
             }
 
             $lang[$key] = $value;
-            $body = "\$lang = " . var_export($lang, true) . ";\n\n";
+            $body = "<?php\n\n";
+            $body .= "\$lang = " . var_export($lang, true) . ";\n\n";
 
             FileGenerator::i()
                 ->setFileName('lang')

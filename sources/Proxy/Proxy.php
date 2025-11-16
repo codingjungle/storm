@@ -143,6 +143,10 @@ class Proxy extends Singleton
             $namespace = substr($namespace, 1);
         }
 
+//        if($nonOwned === true){
+//            $this->nonOwnedModels[] = 'override(\\'.$namespace.'\\'.$class.', map(["" => "'.$namespace.'\\'.$className.'"]));';
+//        }
+
         $nc = ClassGenerator::i()
             ->setOverwrite()
             ->setNameSpace($namespace)
@@ -287,11 +291,12 @@ class Proxy extends Singleton
             $mixinDocComment = preg_replace("/\s\*\s*\n/", '', $mixinDocComment);
         }
 
-        $mixinDocComment .= "\n#[\AllowDynamicProperties]";
         $filename = $reflection->getFileName();
         $contents = swapLineEndings(file_get_contents($filename));
-        $contents = str_replace("#[\AllowDynamicProperties]", "", $contents);
-
+        if( str_contains($contents, "#[\AllowDynamicProperties]") === false) {
+            $mixinDocComment .= "\n#[\AllowDynamicProperties]";
+            $contents = str_replace("#[\AllowDynamicProperties]", "", $contents);
+        }
         if ($originalDoc) {
             $contents = str_replace($originalDoc, $mixinDocComment, $contents);
         } else {
@@ -307,14 +312,18 @@ class Proxy extends Singleton
         $ext = $fileInfo->getExtension();
         $baseName = $fileInfo->getBasename('.' . $ext);
         FileGenerator::i()
+            ->setOverwrite()
             ->setFileName($baseName)
+            ->setExtension($ext)
             ->setPath($path)
             ->addBody($contents)
             ->save();
     }
 
+   // protected $nonOwnedModels = [];
     public function buildNonOwnedModels(): void
     {
+       // $this->nonOwnedModels = Store::i()->read('storm_metadata_final');
         $modelCheck = Store::i()->read('storm_model_check');
         if (Settings::i()->storm_proxy_do_non_owned === true) {
             foreach ($this->scrubAr() as $table => $classes) {
@@ -324,6 +333,7 @@ class Proxy extends Singleton
             }
         }
         Store::i()->write($modelCheck, 'storm_model_check');
+      //  Store::i()->write($this->nonOwnedModels, 'storm_metadata_final');
     }
 
     protected function scrubAr()
@@ -342,7 +352,7 @@ class Proxy extends Singleton
     public function constants(): void
     {
         $load = IPS::defaultConstants();
-        $extra = "\n";
+        $extra = "<?php\n\n";
         $extra .= "namespace IPS;\n";
         foreach ($load as $key => $val) {
             if (defined($key)) {
@@ -360,7 +370,7 @@ class Proxy extends Singleton
             $extra .= 'const ' . $key . ' = ' . $val . ";\n";
         }
 
-        $nc = FileGenerator::i()
+        FileGenerator::i()
             ->setOverwrite()
             ->setFileName('IPS_Constants')
             ->setPath($this->path)
@@ -859,8 +869,6 @@ class Proxy extends Singleton
                         }
 
                         $checkClass = $namespace . '\\' . $ipsClass;
-
-
 
                         try {
                             if (

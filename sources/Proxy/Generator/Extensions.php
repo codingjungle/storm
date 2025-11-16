@@ -73,15 +73,13 @@ class Extensions extends GeneratorAbstract
                             '{subpackage}',
 //                            '{date}',
                             '{app}',
-                            '{class}',
-                            '<?php',
+                            '{class}'
                         ];
                         $replace = [
                             $key->directory,
 //                            date('d M Y'),
                             $key->directory,
-                            $file->getBasename('.txt'),
-                            '',
+                            $file->getBasename('.txt')
                         ];
 
                         $content = str_replace($find, $replace, $file->getContents());

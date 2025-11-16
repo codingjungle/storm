@@ -284,10 +284,9 @@ abstract class GeneratorAbstract
 
     protected function writeHead(): void
     {
-        if ($this->extension === 'php') {
+        if ($this->extension === 'php' && !($this instanceof FileGenerator)) {
             $openTag = <<<'EOF'
 <?php
-
 EOF;
             $this->output($openTag);
             if ($this->docComment) {

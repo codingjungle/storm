@@ -10,6 +10,8 @@ class phpstormMeta extends GeneratorAbstract
     public function create(): void
     {
         $body[] = <<<eof
+<?php
+
 namespace PHPSTORM_META {
 eof;
 

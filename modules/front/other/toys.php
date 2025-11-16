@@ -122,7 +122,6 @@ class toys extends Controller
 
     protected function diffs(): void
     {
-
         Head::i()->js(['global_diffs']);
         Output::i()->output = Tpl::get('toys.storm.global')->diffs();
     }

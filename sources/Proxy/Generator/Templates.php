@@ -168,28 +168,27 @@ EOF;
 
         $toWrite = [];
 
-        foreach (Store::i()->read('storm_extensions') as $key => $val) {
+        foreach (Store::i()->read('storm_phpstorm_templates') as $key => $val) {
             $toWrite[] = "'" . $key . "'";
         }
 
         $toWrite = implode(',', $toWrite);
         $body[] = <<<EOF
-    registerArgumentsSet('Extensions', {$toWrite});
+    registerArgumentsSet('Templates', {$toWrite});
 EOF;
 
         $methods = [
-            ['f' => '\\IPS\\Application::extensions()', 'i' => 1],
-            ['f' => '\\IPS\\Application::allExtensions()', 'i' => 1]
+            ['f' => '\IPS\Theme::getTemplate()', 'i' => 0],
         ];
 
         foreach ($methods as $m) {
             $body[] = <<<EOF
-    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Extensions'));
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Templates'));
 EOF;
         }
 
         $body[] = <<<EOF
-        override(\IPS\Theme::getTemplate(), map([
+        override(\IPS\Theme::getTemplate(0), map([
 EOF;
         $templates = Store::i()->read('storm_phpstorm_templates');
 
@@ -199,28 +198,49 @@ EOF;
 
         $body[] = "]));";
 
-        $body[] = <<<EOF
-    override(\\IPS\\nucleus\\Template::get(), map([
+        if (Settings::i()->storm_proxy_alt_templates === true) {
+            $toWrite = [];
+
+            foreach (Store::i()->read('storm_alt_templates') as $key => $val) {
+                $toWrite[] = "'" . $key . "'";
+            }
+            $toWrite = implode(',', $toWrite);
+            $body[] = <<<EOF
+    registerArgumentsSet('altTemplates', {$toWrite});
 EOF;
-        $altTemplates = Store::i()->read('storm_alt_templates');
 
-        $parts = '';
-        foreach ($altTemplates as $k => $v) {
-            $ns = str_replace('.', '_', $k);
-            $parts .= "'{$k}' => 'stormProxy\\{$ns}',\n";
-        }
+            $methods = [
+                ['f' => '\\IPS\\storm\\Tpl::get()', 'i' => 0],
+                ['f' => '\\IPS\\nucleus\\Tpl::get()', 'i' => 0],
+            ];
 
-        $body[] = $parts;
+            foreach ($methods as $m) {
+                $body[] = <<<EOF
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('altTemplates'));
+EOF;
+            }
+            $body[] = <<<EOF
+    override(\\IPS\\nucleus\\Tpl::get(), map([
+EOF;
+            $altTemplates = Store::i()->read('storm_alt_templates');
 
-        $body[] = "]));";
+            $parts = '';
+            foreach ($altTemplates as $k => $v) {
+                $ns = str_replace('.', '_', $k);
+                $parts .= "'{$k}' => 'stormProxy\\{$ns}',\n";
+            }
 
-        $body[] = <<<EOF
+            $body[] = $parts;
+
+            $body[] = "]));";
+
+            $body[] = <<<EOF
     override(\\IPS\\storm\\Tpl::get(), map([
 EOF;
-        $body[] = $parts;
+            $body[] = $parts;
 
-        $body[] = "]));";
-
+            $body[] = "]));";
+        }
         Store::i()->write($body, 'storm_metadata_final');
     }
 
