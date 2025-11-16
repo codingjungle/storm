@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language>
+ <app key="storm" version="10000">
+  <word key="__app_storm" js="0">Storm: Dev Toolbox</word>
+  <word key="__app_storm_description" js="0">Storm: Dev Toolbox, a set of useful tools and script to help with the development of your IPS third party applications.</word>
+  <word key="menutab__storm" js="0">Storm: Dev Toolbox</word>
+  <word key="menutab__storm_icon" js="0">toolbox</word>
+  <word key="menu__storm_general_settings" js="0">Settings</word>
+  <word key="menu__storm_general" js="0">General</word>
+  <word key="storm_profiler_button_title" js="0">Storm</word>
+  <word key="storm_profiler_enabled" js="0">Enable Profiler</word>
+  <word key="storm_profiler_js_enabled" js="0">Enable JS Tab</word>
+  <word key="storm_profiler_js_vars_enabled" js="0">Enable JS Variables Tab</word>
+  <word key="storm_profiler_css_enabled" js="0">Enable CSS Tab</word>
+  <word key="storm_profiler_button_execution_time" js="0">Execution Time</word>
+  <word key="storm_profiler_button_memory_total" js="0">Memory Usage</word>
+  <word key="storm_profiler_button_database" js="0">Database Queries</word>
+  <word key="storm_profiler_button_files" js="0">Included Files</word>
+  <word key="storm_profiler_title_files" js="0">Included Files (%1$s)</word>
+  <word key="storm_profiler_button_environment" js="0">Environment</word>
+  <word key="storm_profiler_title_environment" js="0">Environment (%1$s)</word>
+  <word key="storm_profiler_button_templates" js="0">Templates</word>
+  <word key="storm_profiler_title_templates" js="0">Templates (%1$s)</word>
+  <word key="storm_profiler_button_css" js="0">CSS</word>
+  <word key="storm_profiler_title_css" js="0">CSS (%1$s)</word>
+  <word key="storm_profiler_button_js" js="0">JS</word>
+  <word key="storm_profiler_title_js" js="0">JS (%1$s)</word>
+  <word key="storm_profiler_title_jsvars" js="0">JS Vars (%1$s)</word>
+  <word key="storm_profiler_button_jsvars" js="0">JS Vars</word>
+  <word key="storm_profiler_button_debug" js="0">Debug Log</word>
+  <word key="storm_profiler_title_debug" js="0"><![CDATA[Debug Log (<a href="#"  data-delete-all>Clear</a>)]]></word>
+  <word key="storm_profiler_templates_enabled" js="0">Enable Templates</word>
+  <word key="storm_profiler_execution_times_enabled" js="0">Execution Times</word>
+  <word key="storm_profiler_memory_tab_enabled" js="0">Memory Usage</word>
+  <word key="storm_profiler_files_enabled" js="0">Enable Files</word>
+  <word key="storm_profiler_database_enabled" js="0">Enable DB Queries</word>
+  <word key="storm_profiler_environment_enabled" js="0">Enable Environment</word>
+  <word key="storm_profiler_debug_enabled" js="0">Enable Debug Log</word>
+  <word key="storm_profiler_bar_header" js="0">Profiler</word>
+  <word key="storm_profiler_tabs_header" js="0">Profiler Features</word>
+  <word key="storm_profiler_admin_enabled" js="0">Enable Profiler ACP</word>
+  <word key="menu__storm_generators" js="0">Generators</word>
+  <word key="menu__storm_developer_devfolder" js="0">Dev Folder</word>
+  <word key="storm_devfolder_folder_exist" js="0">%s exist already!</word>
+  <word key="storm_devfolder_select" js="0">Select App...</word>
+  <word key="storm_devfolder_app" js="0">Application</word>
+  <word key="storm_devfolder_overwrite" js="0">Overwrite?</word>
+  <word key="storm_devfolder_overwrite_desc" js="0"><![CDATA[Overwrite existing dev folder? If yes, will rename current dev folder dev_bu_<dd_mm_yy_(randomstring)>]]></word>
+  <word key="storm_devfolder_title" js="0">Dev Folder Generator</word>
+  <word key="storm_proxy_meta_all" js="0">All</word>
+  <word key="storm_proxy_meta_all_desc" js="0">Build all proxy files.</word>
+  <word key="storm_proxy_meta_constants" js="0">Constants</word>
+  <word key="storm_proxy_meta_constants_desc" js="0">Build proxy constants.</word>
+  <word key="storm_proxy_meta_settings" js="0">Settings</word>
+  <word key="storm_proxy_meta_settings_desc" js="0">Build proxy settings.</word>
+  <word key="storm_proxy_meta_models" js="0">DB models</word>
+  <word key="storm_proxy_meta_models_desc" js="0">Build proxy models.</word>
+  <word key="storm_proxy_meta_css" js="0">CSS</word>
+  <word key="storm_proxy_meta_css_desc" js="0">Build proxy styles.</word>
+  <word key="storm_proxy_meta_toolbox" js="0">phpStorm Toolbox</word>
+  <word key="storm_proxy_meta_toolbox_desc" js="0">Build meta data for the phpstorm plugin Toolbox</word>
+  <word key="menu__storm_developer_sources" js="0">Sources</word>
+  <word key="menu__storm_developer" js="0">DevCenter Plus</word>
+  <word key="storm_menu_title_standard" js="0">Standard</word>
+  <word key="storm_menu_title_cinterface" js="0">Interface</word>
+  <word key="storm_menu_title_traits" js="0">Traits</word>
+  <word key="storm_menu_title_singleton" js="0">Singleton</word>
+  <word key="storm_menu_title_ar" js="0">Active Record</word>
+  <word key="storm_menu_title_api" js="0">API</word>
+  <word key="storm_menu_title_node" js="0">Node</word>
+  <word key="storm_menu_title_item" js="0">Item</word>
+  <word key="storm_menu_title_comment" js="0">Comment</word>
+  <word key="storm_menu_title_review" js="0">Review</word>
+  <word key="storm_menu_title_oauthApi" js="0">OAuth API</word>
+  <word key="storm_menu_title_member" js="0">Member</word>
+  <word key="storm_menu_title_orm" js="0">ORM</word>
+  <word key="storm_devcenter_namespace" js="0">Namespace</word>
+  <word key="storm_devcenter_className" js="0">Class Name</word>
+  <word key="storm_devcenter_abstract" js="0">Abstract</word>
+  <word key="storm_devcenter_extendsYN" js="0">Extends class?</word>
+  <word key="storm_devcenter_extends" js="0">Extends</word>
+  <word key="storm_devcenter_implements" js="0">Implements</word>
+  <word key="storm_devcenter_traits" js="0">Traits</word>
+  <word key="storm_menu_title_debug" js="0">Debug</word>
+  <word key="storm_menu_title_settings" js="0">Settings</word>
+  <word key="storm_menu_title_ctraits" js="0">Traits</word>
+  <word key="storm_devcenter_interfaceName" js="0">Interface name</word>
+  <word key="storm_devcenter_traitName" js="0">Trait Name</word>
+  <word key="storm_devcenter_database" js="0">Database Name</word>
+  <word key="storm_devcenter_prefix" js="0">Database Prefix</word>
+  <word key="storm_devcenter_scaffolding_create" js="0">Create Scaffolding?</word>
+  <word key="storm_devcenter_scaffolding_type" js="0">Scaffolding Types</word>
+  <word key="storm_devcenter_apiType" js="0">API Type</word>
+  <word key="storm_devcenter_subnode" js="0">Subnode</word>
+  <word key="storm_devcenter_parentnode_class" js="0">Parent Node Class</word>
+  <word key="storm_devcenter_item_class" js="0">Item Class</word>
+  <word key="storm_devcenter_general_tab" js="0">General</word>
+  <word key="storm_devcenter_interfaces_tab" js="0">Interfaces</word>
+  <word key="storm_devcenter_traits_tab" js="0">Traits</word>
+  <word key="storm_devcenter_interface_implements_node" js="0">Interface Nodes implements</word>
+  <word key="storm_devcenter_ips_traits_node" js="0">Traits Node</word>
+  <word key="storm_devcenter_item_node_class" js="0">Item Node Class</word>
+  <word key="storm_devcenter_comment_class" js="0">Comment Class</word>
+  <word key="storm_devcenter_review_class" js="0">Review Class</word>
+  <word key="storm_devcenter_interface_implements_item" js="0">IPS Interface</word>
+  <word key="storm_devcenter_ips_traits_item" js="0">IPS Traits</word>
+  <word key="storm_devcenter_content_item_class" js="0">Item Class</word>
+  <word key="storm_devcenter_strict_types" js="0">Strict Type</word>
+  <word key="storm_devcenter_strict_types_desc" js="0">Adds in declare(strict_types=1); to your class file.</word>
+  <word key="storm_devcenter_interface_implements_comment" js="0">Interface Comment implements</word>
+  <word key="storm_devcenter_oauth_message" js="0">a simple class to connect to an oauth api, only tested on IPS oauth, so it might not work with others and it isn't totally complete atm. used at your own discretion.</word>
+  <word key="storm_devcenter_settings_message" js="0">This will create a special settings class for your class, this will allow you to define in properties, what type of return the setting is for. This extends \IPS\Settings.</word>
+  <word key="storm_devcenter_class_created" js="0">Created %s Class: %s has been created successfully!</word>
+  <word key="storm_class_db_error" js="0">Created %s Class: %s has been created successfully! however the some of the scaffolding couldn't be created, please check manually!</word>
+  <word key="storm_devcenter_icon_storage" js="0">Icon Storage Extension</word>
+  <word key="storm_devcenter_icon_storage_desc" js="0">The storage class used for the icon.</word>
+  <word key="storm_devcenter_reserved" js="0">The name appears to be a PHP reserved keyword, please change it and try again!</word>
+  <word key="storm_devcenter_no_blank" js="0">Can not be blank!</word>
+  <word key="storm_devcenter_exists" js="0">This class exists already in this namespace!</word>
+  <word key="storm_devcenter_trait_exists" js="0">This trait exists in this namespace!</word>
+  <word key="storm_devcenter_interface_exists" js="0">This interface exists in this namespace!</word>
+  <word key="storm_devcenter_extended_class_no_exist" js="0">Can't extend with this class, as it doesn't exist!</word>
+  <word key="storm_devcenter_implemented_no_interface" js="0">%s interface doesn't exist, please check and try again!</word>
+  <word key="storm_devcenter_no_trait" js="0">%s trait doesn't exist, please check and try again!</word>
+  <word key="storm_devcenter_node_item_missing" js="0">Node Class doesn't exists.</word>
+  <word key="storm_devcenter_keep_case" js="0">Keep Case?</word>
+  <word key="storm_devcenter_keep_case_desc" js="0">If enabled, will keep class/namespace/traits/interfaces as they are typed, other wise will convert to PascalCase.</word>
+  <word key="storm_profiler_tab" js="0">Profiler</word>
+  <word key="storm_devcenter_tab" js="0">DevCenter Plus</word>
+  <word key="storm_proxy_tab" js="0"><![CDATA[Proxy & MetaData]]></word>
+  <word key="storm_proxy_do_non_owned" js="0">Non-owned Db Models</word>
+  <word key="storm_proxy_do_non_owned_desc" js="0">If enabled, will build non-owned DB models, this will cause your IDE to throw a warning about class being defined in multiple locations. you can disable this warning.</word>
+  <word key="storm_proxy_write_mixin" js="0">Mixin</word>
+  <word key="storm_proxy_write_mixin_desc" js="0">Write a @mixin tag to your DB model if one doesn't exist.</word>
+  <word key="storm_proxy_alt_templates" js="0">Alternative Templates</word>
+  <word key="storm_proxy_alt_templates_desc" js="0">You can mostly ignore this setting, as it only works with my apps.</word>
+  <word key="storm_profiler_ajax_enabled" js="0">Ajax Log</word>
+  <word key="storm_profiler_ajax_enabled_desc" js="0">Enabling the ajax log, will capture ajax requests and log them.</word>
+  <word key="storm_profiler_button_ajax" js="0">Ajax Log</word>
+  <word key="storm_profiler_title_ajax" js="0"><![CDATA[Ajax Log (<a href="#" data-wipe>Clear</a>)]]></word>
+  <word key="storm_profiler_ajax_options_header" js="0">Ajax Panel Options</word>
+  <word key="storm_profiler_filter_url" js="0">Url Fragments Filters</word>
+  <word key="storm_profiler_filter_default" js="0">Common Filters</word>
+  <word key="storm_profiler_debug_catpure_ips_log" js="0">Capture IPS Log</word>
+  <word key="storm_profiler_debug_catpure_ips_log_desc" js="0">If enabled, will capture the IPS log and store it in the debug log.</word>
+  <word key="storm_profiler_debug_keep_ips_log" js="0">Keep IPS Log</word>
+  <word key="storm_profiler_debug_keep_ips_log_desc" js="0">If enabled, will save the IPS log to the IPS Database as well to the Storm Debug Log.</word>
+  <word key="storm_profiler_debug_options_header" js="0">Debug Log Options</word>
+  <word key="storm_devcenter_queue_title" js="0">Generating Dev Files</word>
+  <word key="storm_devcenter_completed" js="0">Dev folder generated for %s</word>
+  <word key="storm_devcenter_total_done" js="0">Processing %s of %s</word>
+  <word key="storm_devtoys_clear" js="0">Clear</word>
+  <word key="storm_devtoys_copy" js="0">Copy</word>
+  <word key="storm_devtoys_decoded" js="0">Decoded</word>
+  <word key="storm_devtoys_encoded" js="0">Encoded</word>
+  <word key="storm_devtoys_diffs_source" js="0">Source %s</word>
+  <word key="storm_devtoys_diffs_diff" js="0">Diffs</word>
+  <word key="storm_devtoys_general_diffs" js="0">Diffs</word>
+  <word key="storm_devtoys_general_other" js="0">Other</word>
+  <word key="storm_devtoys_general_generators" js="0">Generators</word>
+  <word key="storm_devtoys_general_lorem_ipsum" js="0">Lorem Ipsum</word>
+  <word key="storm_devtoys_lorem_amount" js="0">Amount</word>
+  <word key="storm_devtoys_lorem_type" js="0">Type</word>
+  <word key="storm_devtoys_lorem_generate" js="0">Generate</word>
+  <word key="storm_devtoys_general_bitwise" js="0">BitWise</word>
+  <word key="storm_devtoys_general_hash" js="0">Hash</word>
+  <word key="storm_devtoys_hash_generate" js="0">Generate</word>
+  <word key="storm_devtoys_general_uuid" js="0">UUID</word>
+  <word key="storm_devtoys_uuid_count" js="0">Count</word>
+  <word key="storm_devtoys_uuid_count_desc" js="0">How many UUID's to generate.</word>
+  <word key="storm_devtoys_uuid_hyphens" js="0">Hyphens</word>
+  <word key="storm_devtoys_uuid_hyphens_desc" js="0">Include hyphens in generated UUID's</word>
+  <word key="storm_devtoys_uuid_lowercase" js="0">Lowercase</word>
+  <word key="storm_devtoys_uuid_lowercase_desc" js="0">Generate UUID's as lowercase.</word>
+  <word key="storm_devtoys_uuid_generator" js="0">Generate</word>
+  <word key="storm_devtoys_general_compare" js="0">Compare 2 sources</word>
+  <word key="storm_devtoys_general_genaratore_lorem" js="0">Lorem Ipsum Generator</word>
+  <word key="storm_devtoys_general_genaratore_bitwise" js="0">Bitwise Generator</word>
+  <word key="storm_devtoys_general_genaratore_hash" js="0">Hash Generator</word>
+  <word key="storm_devtoys_general_genaratore_uuid" js="0">UUID Generator</word>
+  <word key="storm_devtoys_general_decode_encode" js="0">Encoders/Decoders</word>
+  <word key="storm_devtoys_general_title_html" js="0">HTML Encoder/Decoder</word>
+  <word key="storm_devtoys_general_html" js="0">HTML</word>
+  <word key="storm_devtoys_general_title_base64" js="0">Base64 Encoder/Decoder</word>
+  <word key="storm_devtoys_general_base64" js="0">Base 64</word>
+  <word key="storm_devtoys_general_title_converter" js="0">Converters</word>
+  <word key="storm_devtoys_general_nums" js="0">Numbers</word>
+  <word key="storm_devtoys_general_title_nums" js="0">Numbers Converter</word>
+  <word key="storm_devtoys_numbers_decimal" js="0">Decimal</word>
+  <word key="storm_devtoys_numbers_hexadecimal" js="0">Hexadecimal</word>
+  <word key="storm_devtoys_numbers_binary" js="0">Binary</word>
+  <word key="storm_devtoys_numbers_octal" js="0">Octal</word>
+  <word key="storm_devtoys_general_title_dates" js="0">Dates Converter</word>
+  <word key="storm_devtoys_general_dates" js="0">Dates</word>
+  <word key="storm_devtoys_dates_date" js="0">Date</word>
+  <word key="storm_devtoys_dates_date_rfc" js="0">RFC 2822</word>
+  <word key="storm_devtoys_dates_unix" js="0">Unix Timestamp</word>
+  <word key="storm_devtoys_dates_iso_8601" js="0">ISO 8601</word>
+  <word key="storm_devtoys_dates_utc_times" js="0">All times are in UTC Timezone</word>
+  <word key="storm_devtoys_dates_atom" js="0">Atom</word>
+  <word key="storm_devtoys_dates_cookie" js="0">COOKIE</word>
+  <word key="storm_devtoys_dates_date_rfc3339" js="0">RFC 3339</word>
+  <word key="storm_devtoys_dates_date_rfc3339e" js="0">RFC 3339 Extended</word>
+  <word key="storm_devtoys_dates_date_rfc7231" js="0">RFC 7231</word>
+  <word key="storm_devtoys_dates_date_rss" js="0">RSS</word>
+  <word key="storm_devtoys_dates_date_sql" js="0">SQL</word>
+  <word key="storm_devtoys_dates_date_w3c" js="0">W3C</word>
+  <word key="storm_devtoys_general_images" js="0">Images</word>
+  <word key="storm_devtoys_general_title_images" js="0">Image Converter</word>
+  <word key="storm_devtoys_images_images" js="0">Image</word>
+  <word key="storm_devtoys_images_to" js="0">Format</word>
+  <word key="storm_devtoys_images_convert" js="0">Convert</word>
+  <word key="storm_devtoys_images_image" js="0">Image</word>
+  <word key="storm_devtoys_images_download" js="0">Download</word>
+  <word key="storm_devtoys_general_aes" js="0">AES</word>
+  <word key="storm_devtoys_general_title_aes" js="0">AES Encoder/Decoder</word>
+  <word key="storm_devtoys_aes_decoded_key" js="0">Key</word>
+  <word key="storm_devtoys_aes_decoded_bits" js="0">Bits</word>
+  <word key="storm_devtoys_aes_decoded_content" js="0">Content</word>
+  <word key="storm_devtoys_aes_encoded_key" js="0">Key</word>
+  <word key="storm_devtoys_aes_encoded_bits" js="0">Bits</word>
+  <word key="storm_devtoys_aes_encoded_content" js="0">Content</word>
+  <word key="storm_devtoys_aes_encode" js="0">Encode</word>
+  <word key="storm_devtoys_aes_decode" js="0">Decode</word>
+  <word key="storm_devtoys_general_pretty" js="0">JSON</word>
+  <word key="storm_devtoys_general_titlt_pretty" js="0">JSON Pretty Print</word>
+  <word key="storm_devtoys_pretty_pretty" js="0">Pretty Printed JSON</word>
+  <word key="storm_devtoys_pretty_json" js="0">JSON</word>
+  <word key="storm_devtoys_pretty_make" js="0">Make Pretty</word>
+  <word key="storm_devtoys_qr_create_general_tab" js="0">General</word>
+  <word key="storm_devtoys_qr_create_fileType" js="0">File Type</word>
+  <word key="storm_devtoys_qr_create_size" js="0">Size</word>
+  <word key="storm_devtoys_qr_create_margin" js="0">Margin</word>
+  <word key="storm_devtoys_qr_create_module" js="0">Shape</word>
+  <word key="storm_devtoys_qr_create_fg_bg_color_tab" js="0">Modules</word>
+  <word key="storm_devtoys_qr_create_bg" js="0">Background</word>
+  <word key="storm_devtoys_qr_create_fg" js="0">Foreground</word>
+  <word key="storm_devtoys_qr_create_eye_color_tab" js="0">Eyes</word>
+  <word key="storm_devtoys_qr_create_eye" js="0">Eye Shape</word>
+  <word key="storm_devtoys_qr_create_eyeUniform" js="0">Eye Color</word>
+  <word key="storm_devtoys_qr_create_eyeSeparateColorsInner" js="0">Inner Eye Color</word>
+  <word key="storm_devtoys_qr_create_eyeSeparateColors" js="0">Separate Eye Colors</word>
+  <word key="storm_devtoys_qr_create_topLeftInner" js="0">Top Left Inner</word>
+  <word key="storm_devtoys_qr_create_topRightInner" js="0">Top Right Inner</word>
+  <word key="storm_devtoys_qr_create_bottomLeftInner" js="0">Bottom Left Inner</word>
+  <word key="storm_devtoys_qr_create_eye_shape" js="0">Eye Shape</word>
+  <word key="storm_devtoys_qr_create_topLeft" js="0">Top Left</word>
+  <word key="storm_devtoys_qr_create_topRight" js="0">Top Right</word>
+  <word key="storm_devtoys_qr_create_bottomLeft" js="0">Bottom Left</word>
+  <word key="storm_devtoys_qr_create_gradient_tab" js="0">Gradient</word>
+  <word key="storm_devtoys_qr_create_gradient" js="0">Use Gradient</word>
+  <word key="storm_devtoys_qr_create_gradientStart" js="0">Start Color</word>
+  <word key="storm_devtoys_qr_create_gradientEnd" js="0">End Color</word>
+  <word key="storm_devtoys_qr_create_gradientType" js="0">Pattern</word>
+  <word key="storm_devtoys_qr_create" js="0">Generate QR</word>
+  <word key="storm_devtoys_qr_decode" js="0">Decode QR</word>
+  <word key="storm_devtoys_qr_create_dataType" js="0">Data Type</word>
+  <word key="storm_devtoys_qr_create_dataType_desc" js="0">Select the type of data this QR code will deliver once decoded.</word>
+  <word key="storm_devtoys_qr_create_wifi" js="0">Wifi</word>
+  <word key="storm_devtoys_qr_create_ssid" js="0">SSID</word>
+  <word key="storm_devtoys_qr_create_pass" js="0">Password</word>
+  <word key="storm_devtoys_qr_create_hidden" js="0">Hidden Network</word>
+  <word key="storm_devtoys_qr_create_encoding" js="0">Format</word>
+  <word key="storm_devtoys_qr_create_name" js="0">First Name</word>
+  <word key="storm_devtoys_qr_create_surname" js="0">Surname/Last Name</word>
+  <word key="storm_devtoys_qr_create_org" js="0">Company/Organization</word>
+  <word key="storm_devtoys_qr_create_title" js="0">Title</word>
+  <word key="storm_devtoys_qr_create_telw" js="0">Telephone Work</word>
+  <word key="storm_devtoys_qr_create_telh" js="0">Telephone Home</word>
+  <word key="storm_devtoys_qr_create_fax" js="0">Fax</word>
+  <word key="storm_devtoys_qr_create_url" js="0">Url</word>
+  <word key="storm_devtoys_qr_create_url2" js="0">Url</word>
+  <word key="storm_devtoys_qr_create_text" js="0">Text</word>
+  <word key="storm_devtoys_qr_create_email" js="0">Email</word>
+  <word key="storm_devtoys_qr_create_email2" js="0">Email</word>
+  <word key="storm_devtoys_qr_create_body2" js="0">Msg Body</word>
+  <word key="storm_devtoys_qr_create_address" js="0">Address</word>
+  <word key="storm_devtoys_qr_create_note" js="0">Note/Memo</word>
+  <word key="storm_devtoys_qr_create_subject" js="0">Subject</word>
+  <word key="storm_devtoys_qr_create_body" js="0">Msg Body</word>
+  <word key="storm_devtoys_qr_create_color_warning" js="0">NOTICE: You can change the colors that generate the QR code, but the colors need to have enough contrast in between them for it to be read by a scanner. Please keep this in mind if changing the colors.</word>
+  <word key="storm_devtoys_qr_create_color_warning2" js="0">NOTICE: You can change the colors of the QR Code &quot;eyes&quot;, but there has to be a sufficient amount of contrast between the Background/Foreground color for it to be read by a scanner. Please keep this in mind if changing the colors.</word>
+  <word key="storm_devtoys_qr_create_phone" js="0">Phone Number</word>
+  <word key="storm_devtoys_general_qr" js="0">QR Code</word>
+  <word key="storm_devtoys_general_title_qr" js="0">QR Code Generator/Decoder</word>
+  <word key="storm_devtoys_qr_create_phone2" js="0">Phone</word>
+  <word key="storm_devtoys_qr_decode_decodeQr" js="0">QR Code</word>
+  <word key="storm_devtoys_qr_create_generate" js="0">Generate</word>
+  <word key="storm_devtoys_qr_decode_decode" js="0">Decode</word>
+  <word key="storm_devtoys_decoded_decoded_qr" js="0">Decoded QR Code</word>
+  <word key="storm_devtoys_general_qr_decode" js="0">QR Decode</word>
+  <word key="storm_devtoys_general_title_qr_decode" js="0">QR Code Decoder</word>
+  <word key="storm_devcenter_caches" js="0">Caches</word>
+  <word key="storm_devcenter_caches_desc" js="0">will add the caches property to your class.</word>
+  <word key="storm_devcenter_caches_enabled" js="0">Load From Cache</word>
+  <word key="storm_devcenter_caches_enabled_desc" js="0">If yes, will set the static property $loadFromCache to true.</word>
+  <word key="storm_devcenter_caches_names" js="0">Cache Names</word>
+  <word key="storm_devcenter_debug_message2" js="0">This will create a Debug Class wrapper for Storm's Debug class (which will allow you to keep your \IPS\%1$s\Debug::log() calls in your code, and have them logged to the Storm Debug Log if Storm is installed and your special constant is defined in constants.php. Custom Constant: %2$s)</word>
+  <word key="storm_devcenter_orm_message" js="0"><![CDATA[This will add a trait you can add to ActiveRecords/Nodes/Content Items/Comments & Review classes, that will add some additional functionality that you might find useful.]]></word>
+  <word key="storm_devcenter_member_message" js="0">This will create a special Member class and database table for your app, similar to the one found in Nexus. It will also created a Groups class/Database that can be used with the GroupForm Extension to create group settings for your app.</word>
+  <word key="menu__storm_developer_assets" js="0">Assets</word>
+  <word key="storm_menu_title_template" js="0">Template</word>
+  <word key="storm_menu_title_widget" js="0">JS Widget</word>
+  <word key="storm_menu_title_controller" js="0">JS Controller</word>
+  <word key="storm_menu_title_module" js="0">JS Module</word>
+  <word key="storm_menu_title_jstemplate" js="0">JS Template</word>
+  <word key="storm_menu_title_jsmixin" js="0">JS Mixin</word>
+  <word key="storm_devcenter_assets_filename" js="0">Filename</word>
+  <word key="storm_devcenter_assets_group_manual_location" js="0">Location</word>
+  <word key="storm_devcenter_assets_group_manual_folder" js="0">Folder</word>
+  <word key="storm_devcenter_assets_arguments" js="0">Arguments</word>
+  <word key="storm_devcenter_assets_arguments_desc" js="0">Arguments for the template, do not include the $ as part of the argument. Use FQN or data type for hint.</word>
+  <word key="storm_devcenter_assets_group_manual" js="0">Existing Group</word>
+  <word key="storm_devcenter_assets_group_manual_desc" js="0">Uncheck if you want to create a new Location+Folder.</word>
+  <word key="storm_devcenter_assets__group" js="0">Group</word>
+  <word key="storm_devcenter_assets_widgetname" js="0">Widget Name</word>
+  <word key="storm_devcenter_assets_widgetname_desc" js="0">this is the part that is used with the data-ips portion of it.</word>
+  <word key="storm_devcenter_assets_options" js="0">Options</word>
+  <word key="storm_devcenter_assets_options_desc" js="0">Options for the widget.</word>
+  <word key="storm_devcenter_assets_templateName" js="0">Templates</word>
+  <word key="storm_devcenter_assets_templateName_desc" js="0">Place a name of the templates you are wanting to create.</word>
+  <word key="storm_devcenter_assets_mixin" js="0">Controller</word>
+  <word key="storm_devcenter_asset_key" js="0">Hint</word>
+  <word key="storm_devcenter_asset_value" js="0">Argument</word>
+  <word key="menu__storm_developer_other" js="0">Other</word>
+  <word key="storm_other_landing" js="0">%1$s - DevCenter+ : Other Tools</word>
+  <word key="storm_devcenter_assets_landing" js="0">%1$s - DevCenter+ : Assets</word>
+  <word key="storm_devcenter_sources_landing" js="0">%1$s - DevCenter+ : Sources</word>
+  <word key="storm_devcenter_devfolder_landing" js="0">%1$s - DevCenter+ : Dev Folder Generator</word>
+  <word key="storm_devcenter_other_index_html" js="0">index.html</word>
+  <word key="storm_devcenter_other_index_html_alert" js="0">This will generate empty index.html files in your directories if one doesn't already exist.</word>
+  <word key="storm_devcenter_other_index_html_success" js="0">Successfully generated empty index.html files in your directories.</word>
+  <word key="storm_devcenter_other_header_doc" js="0">HeaderDoc</word>
+  <word key="storm_devcenter_other_header_doc_replace" js="0">Replace/Update All</word>
+  <word key="storm_devcenter_other_header_doc_replace_desc" js="0">If you need/want to replace the existing headerDoc in your php files, switch this to on.</word>
+  <word key="storm_devcenter_other_header_doc_update_version" js="0">Update Version</word>
+  <word key="storm_devcenter_other_header_doc_update_version_desc" js="0">If you enable this option, it will only update the @version tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).</word>
+  <word key="storm_devcenter_other_header_doc_update_copyright" js="0">Update Copyright</word>
+  <word key="storm_devcenter_other_header_doc_update_copyright_desc" js="0">If you enable this option, it will only update the copyright tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).</word>
+  <word key="storm_devcenter_other_header_doc_message" js="0"><![CDATA[This tool will add a HeaderDoc comment to your php files. Add a Storm->HeaderDoc extension to your application to gain customization options for the various tags it can generate. This tool can also be used to replace/update the existing headerDoc in your php files or update particular tags. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).]]></word>
+  <word key="storm_devcenter_other_header_doc_message_no_extension" js="0"><![CDATA[This app does not have a Storm->HeaderDoc extension. Please add one to gain customization options for the various tags it can generate.]]></word>
+  <word key="storm_devcenter_other_header_doc_update_author" js="0">Update Author</word>
+  <word key="storm_devcenter_other_header_doc_update_author_desc" js="0">If you enable this option, it will only update the @author tag if one exist. This rewrites your files, this will trigger a VCS update if you use VCS (git, svn, etc).</word>
+  <word key="storm_devcenter_other_header_doc_success" js="0">Successfully added HeaderDoc to your php files.</word>
+  <word key="storm_devcenter_other_header_doc_success_replace" js="0">Successfully added/replaced HeaderDoc in your php files.</word>
+  <word key="storm_devcenter_other_header_doc_update_success" js="0">Successfully updated HeaderDoc in your php files. Tags Updated: %1$s</word>
+  <word key="storm_devcenter_other_langs" js="0">Lang Strings</word>
+  <word key="storm_profiler_debug_notifications" js="1">{!# [1:New Debug Log][?:New Debug Logs]} finished</word>
+  <word key="storm_profiler_debug_notifications_body" js="1">New Debug logs have been added!</word>
+ </app>
+</language>

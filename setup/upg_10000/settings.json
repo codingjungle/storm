@@ -1,0 +1,28 @@
+{
+    "added": [
+        "storm_devcenter_keep_case",
+        "storm_profiler_admin_enabled",
+        "storm_profiler_ajax_enabled",
+        "storm_profiler_css_enabled",
+        "storm_profiler_database_enabled",
+        "storm_profiler_debug_catpure_ips_log",
+        "storm_profiler_debug_enabled",
+        "storm_profiler_debug_keep_ips_log",
+        "storm_profiler_enabled",
+        "storm_profiler_environment_enabled",
+        "storm_profiler_execution_times_enabled",
+        "storm_profiler_files_enabled",
+        "storm_profiler_filter_default",
+        "storm_profiler_filter_url",
+        "storm_profiler_js_enabled",
+        "storm_profiler_js_vars_enabled",
+        "storm_profiler_memory_tab_enabled",
+        "storm_profiler_show_app_button",
+        "storm_profiler_templates_enabled",
+        "storm_proxy_alt_templates",
+        "storm_proxy_do_non_owned",
+        "storm_proxy_write_mixin"
+    ],
+    "edited": [],
+    "removed": []
+}

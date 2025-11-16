@@ -1,0 +1,69 @@
+{
+    "html": {
+        "added": [
+            "global\/cjforms\/args",
+            "global\/cjforms\/header",
+            "global\/devcenter\/other",
+            "global\/devcenter\/sources",
+            "global\/devcenter\/wrapper",
+            "global\/generators\/main",
+            "global\/popup\/includeMeta",
+            "global\/popup\/popup",
+            "global\/profiler\/buttons",
+            "global\/profiler\/databasePanel",
+            "global\/profiler\/debugPanel",
+            "global\/profiler\/debugRow",
+            "global\/profiler\/environmentPanel",
+            "global\/profiler\/executionPanel",
+            "global\/profiler\/listPanel",
+            "global\/profiler\/panelHeader",
+            "global\/profiler\/phpinfo",
+            "global\/profiler\/profiler",
+            "global\/profiler\/slowest",
+            "global\/profiler\/stormPanel",
+            "global\/profiler\/TemplateRow",
+            "global\/profiler\/toys",
+            "global\/toys\/aes",
+            "global\/toys\/base",
+            "global\/toys\/bitwise",
+            "global\/toys\/dates",
+            "global\/toys\/diffs",
+            "global\/toys\/hash",
+            "global\/toys\/html",
+            "global\/toys\/images",
+            "global\/toys\/lorem",
+            "global\/toys\/numbers",
+            "global\/toys\/pretty",
+            "global\/toys\/qr",
+            "global\/toys\/qrdecode",
+            "global\/toys\/uuid",
+            "global\/u\/profiler"
+        ],
+        "edited": [],
+        "removed": []
+    },
+    "css": {
+        "added": [
+            "global\/devtoys.css",
+            "global\/modal.css",
+            "global\/popup.css",
+            "global\/profiler.css",
+            "global\/storm.css",
+            "global\/varDumper.css"
+        ],
+        "edited": [],
+        "removed": []
+    },
+    "resources": {
+        "added": [
+            "global\/bug512.png",
+            "global\/mysql.png",
+            "global\/bug192.png",
+            "global\/bug.png",
+            "global\/php.png",
+            "global\/ips.png"
+        ],
+        "edited": [],
+        "removed": []
+    }
+}

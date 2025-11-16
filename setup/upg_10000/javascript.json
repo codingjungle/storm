@@ -1,0 +1,51 @@
+{
+    "files": {
+        "added": [
+            "storm\/global\/controllers\/aes\/ips.ui.storm.aes.js",
+            "storm\/global\/controllers\/alert\/ips.storm.alert.js",
+            "storm\/global\/controllers\/base\/ips.ui.storm.base.js",
+            "storm\/global\/controllers\/bitwise\/ips.ui.storm.bitwise.js",
+            "storm\/global\/controllers\/copy\/ips.storm.copy.js",
+            "storm\/global\/controllers\/dates\/ips.ui.storm.dates.js",
+            "storm\/global\/controllers\/diffs\/diff.js",
+            "storm\/global\/controllers\/diffs\/ips.ui.storm.diffs.js",
+            "storm\/global\/controllers\/hash\/ips.ui.storm.hash.js",
+            "storm\/global\/controllers\/html\/ips.ui.storm.html.js",
+            "storm\/global\/controllers\/images\/ips.ui.storm.images.js",
+            "storm\/global\/controllers\/lorem\/ips.ui.storm.lorem.js",
+            "storm\/global\/controllers\/modal\/ips.storm.modal.js",
+            "storm\/global\/controllers\/numbers\/ips.ui.storm.numbers.js",
+            "storm\/global\/controllers\/pretty\/ips.ui.storm.pretty.js",
+            "storm\/global\/controllers\/profiler\/htmldumper.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.copy.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.debug.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.hide.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.proxy.js",
+            "storm\/global\/controllers\/profiler\/ips.storm.profiler.search.js",
+            "storm\/global\/controllers\/uuid\/ips.ui.storm.uuid.js",
+            "storm\/global\/templates\/ips.templates.modal.js",
+            "storm\/global\/templates\/ips.templates.profiler.js"
+        ],
+        "edited": [],
+        "removed": []
+    },
+    "orders": {
+        "added": [
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/dates",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/numbers",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/hash",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/images",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/html",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/lorem",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/diffs",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/pretty",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/bitwise",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/uuid",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/base",
+            "storm\/\/applications\/storm\/dev\/js\/global\/\/controllers\/aes"
+        ],
+        "edited": [],
+        "removed": []
+    }
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build>
+ <module key="admin/general"><![CDATA[{"default_controller":"","protected":0,"default":1}]]></module>
+ <module key="admin/generators"><![CDATA[{"default_controller":"","protected":0,"default":0}]]></module>
+ <module key="admin/developer"><![CDATA[{"default_controller":"","protected":false,"default":null}]]></module>
+ <module key="front/profiler"><![CDATA[{"default_controller":"","protected":0,"default":0}]]></module>
+ <module key="front/other"><![CDATA[{"default_controller":"","protected":0,"default":0}]]></module>
+ <setting key="storm_devcenter_keep_case"><![CDATA[{"key":"storm_devcenter_keep_case","default":"0"}]]></setting>
+ <setting key="storm_profiler_admin_enabled"><![CDATA[{"key":"storm_profiler_admin_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_ajax_enabled"><![CDATA[{"key":"storm_profiler_ajax_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_css_enabled"><![CDATA[{"key":"storm_profiler_css_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_database_enabled"><![CDATA[{"key":"storm_profiler_database_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_debug_catpure_ips_log"><![CDATA[{"key":"storm_profiler_debug_catpure_ips_log","default":"1"}]]></setting>
+ <setting key="storm_profiler_debug_enabled"><![CDATA[{"key":"storm_profiler_debug_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_debug_keep_ips_log"><![CDATA[{"key":"storm_profiler_debug_keep_ips_log","default":"1"}]]></setting>
+ <setting key="storm_profiler_enabled"><![CDATA[{"key":"storm_profiler_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_environment_enabled"><![CDATA[{"key":"storm_profiler_environment_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_execution_times_enabled"><![CDATA[{"key":"storm_profiler_execution_times_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_files_enabled"><![CDATA[{"key":"storm_profiler_files_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_filter_default"><![CDATA[{"key":"storm_profiler_filter_default","default":"[]"}]]></setting>
+ <setting key="storm_profiler_filter_url"><![CDATA[{"key":"storm_profiler_filter_url","default":"{'js.php?src=core\/front\/controllers\/widgets\/ips.widgets.block.js','applications\/core\/interface\/static\/pagebuilder\/manifest.json'}"}]]></setting>
+ <setting key="storm_profiler_js_enabled"><![CDATA[{"key":"storm_profiler_js_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_js_vars_enabled"><![CDATA[{"key":"storm_profiler_js_vars_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_memory_tab_enabled"><![CDATA[{"key":"storm_profiler_memory_tab_enabled","default":"1"}]]></setting>
+ <setting key="storm_profiler_show_app_button"><![CDATA[{"key":"storm_profiler_show_app_button","default":"0"}]]></setting>
+ <setting key="storm_profiler_templates_enabled"><![CDATA[{"key":"storm_profiler_templates_enabled","default":"1"}]]></setting>
+ <setting key="storm_proxy_alt_templates"><![CDATA[{"key":"storm_proxy_alt_templates","default":"0"}]]></setting>
+ <setting key="storm_proxy_do_non_owned"><![CDATA[{"key":"storm_proxy_do_non_owned","default":"1"}]]></setting>
+ <setting key="storm_proxy_write_mixin"><![CDATA[{"key":"storm_proxy_write_mixin","default":"1"}]]></setting>
+</build>

@@ -1,0 +1,11 @@
+{
+    "added": [
+        "admin\/general",
+        "admin\/generators",
+        "admin\/developer",
+        "front\/profiler",
+        "front\/other"
+    ],
+    "edited": [],
+    "removed": []
+}

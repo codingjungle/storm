@@ -1,0 +1,10 @@
+<ips:template parameters="array $buttons"/>
+<div class="i-padding_2 i-flex i-gap_1 i-flex-wrap_wrap i-justify-content_center">
+    {{foreach $buttons as $button}}
+    <div>
+        <a href="{$button['url']}" class="ipsButton ipsButton--large ipsButton--primary"{{if isset($button['attributes'])}} {$button['attributes']|raw}{{endif}}>
+            {$button['label']|raw}
+        </a>
+    </div>
+    {{endforeach}}
+</div>
