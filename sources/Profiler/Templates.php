@@ -158,7 +158,6 @@ class Templates extends Singleton
                     . $template['name']
                     . '.phtml';
                 $url = Editor::i()->replace($path);
-
                 $name = Theme::i()->getTemplate('profiler', 'storm', 'global')->TemplateRow($url, $time, $mem, $path);
 
                 $list[$path] = ['name' => $name, 'raw' => $path];

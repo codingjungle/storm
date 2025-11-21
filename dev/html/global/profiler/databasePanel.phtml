@@ -28,10 +28,14 @@
                         <div class="ipsClearfix">
                             <div class="float-start p-2">{$i}:</div>
                             <div class="float-start">
+                                {{if isset($bt['url'])}}
                                 <a href="{$bt['url']}">
+                                    {{endif}}
                                     <p>{$bt['class']}{$bt['type']}{$bt['function']}()</p>
                                     <p>{$bt['file']}::{$bt['line']}</p>
+                                {{if isset($bt['url'])}}
                                 </a>
+                                {{endif}}
                             </div>
                         </div>
                     {{endforeach}}

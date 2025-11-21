@@ -33,11 +33,15 @@
         <div class="stormProfilerPadding ipsHide"> 
             <div>
                 {{foreach $logs->backtrace as $i => $bt}}
-                <div class="stormProfilerDebugBt mt-2"> 
+                <div class="stormProfilerDebugBt mt-2">
+                    {{if isset($bt['url'])}}
                     <a href="{$bt['url']}">
+                        {{endif}}
                         {$i}: {$bt['class']}{$bt['type']}{$bt['function']}()<br>
                             {$bt['file']}::{$bt['line']}
+                    {{if isset($bt['url'])}}
                     </a>
+                    {{endif}}
                 </div>
                 {{endforeach}}
             </div>
