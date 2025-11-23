@@ -67,7 +67,7 @@ class ProxyHelpers
         $classDoc[] = ['pt' => 'p', 'prop' => 'controller', 'type' => 'string'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'id', 'type' => 'int'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'pid', 'type' => 'int'];
-        $classDoc[] = ['pt' => 'p', 'prop' => 'do', 'type' => 'string'];
+        $classDoc[] = ['pt' => 'r', 'prop' => 'do', 'type' => 'string'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'appKey', 'type' => 'string'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'tab', 'type' => 'string'];
         $classDoc[] = ['pt' => 'p', 'prop' => 'adsess', 'type' => 'string'];

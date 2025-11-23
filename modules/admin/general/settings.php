@@ -7,6 +7,7 @@ use IPS\Dispatcher\Controller;
 use IPS\Member;
 use IPS\Output;
 use IPS\storm\Form;
+use IPS\storm\Profiler\Debug;
 use IPS\storm\Settings as StormSettings;
 use IPS\Http\Url;
 
@@ -45,6 +46,8 @@ class settings extends Controller
      */
     protected function manage(): void
     {
+
+
         $form = Form::create()->setObject(StormSettings::i());
         $form->addTab('storm_profiler');
         $form->addHeader('storm_profiler_bar');

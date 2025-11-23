@@ -49,7 +49,7 @@ if (!defined('\IPS\SUITE_UNIQUE_KEY')) {
  * @package IPS\storm\Profiler
  * @mixin _Debug
  */
-#[\AllowDynamicProperties] 
+#[\AllowDynamicProperties]
 class Debug extends ActiveRecord
 {
     use \IPS\storm\Shared\ActiveRecord;
@@ -331,6 +331,8 @@ class Debug extends ActiveRecord
     }
 
 }
+
+
 
 
 

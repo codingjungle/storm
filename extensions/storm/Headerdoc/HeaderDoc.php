@@ -19,7 +19,6 @@ class HeaderDoc extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
     **/
     public function filesSkip(&$skip)
     {
-
     }
 
     /**
@@ -27,7 +26,6 @@ class HeaderDoc extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
     **/
     public function dirSkip(&$skip)
     {
-
     }
 
     public function author(): ?string
@@ -45,5 +43,10 @@ class HeaderDoc extends \IPS\storm\Center\Headerdoc\HeaderdocAbstract
         return 'https://codingjungle.com/license/';
     }
 
-
+    public function since(): ?string
+    {
+        $date = new \IPS\DateTime();
+        $date->format('Y-m-d H:i:s');
+        return (string) $date;
+    }
 }

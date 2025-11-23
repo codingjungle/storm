@@ -81,6 +81,7 @@
                 })
             },
             _close = function() {
+                $(document).trigger('stormProfilerPanelOff');
                 let panel = $(document).find('.stormProfilerPanelActive'),
                     pid;
                 if(panel.length !== 0) {
@@ -90,7 +91,7 @@
                 $('.stormProfilerButton')
                     .removeClass('stormProfilerDim')
                     .find('.fa-chevron-up')
-                    .removeClass('fa-rotate-180');;
+                    .removeClass('fa-rotate-180');
             },
             _open = function (e) {
                 e.preventDefault();
@@ -107,33 +108,34 @@
                             .find('.fa-chevron-up')
                             .removeClass('fa-rotate-180');;
                         panel
-                            .slideDown()
                             .css('zIndex', zd)
                             .data('active', 1)
-                            .addClass('stormProfilerPanelActive');
-                        target
-                            .addClass('stormProfilerButtonActive')
-                            .removeClass('stormProfilerFlash')
-                            .removeClass('stormProfilerDim');
-                        target
-                            .find('.fa-chevron-up')
-                            .addClass('fa-rotate-180');
+                            .addClass('stormProfilerPanelActive')
+                            .slideDown()
+                            .promise()
+                            .done(() => {
+                                panel.find('.stormProfilerPanelChild').scrollTop(0);
+                                target
+                                    .addClass('stormProfilerButtonActive')
+                                    .removeClass('stormProfilerFlash')
+                                    .removeClass('stormProfilerDim')
+                                    .find('.fa-chevron-up')
+                                    .addClass('fa-rotate-180');
+                            });
                         $(document)
                             .trigger('stormProfilerPanelOpen', {panel: target.data('panel'), button: target});
                     });
                 } else {
+                    $(document).trigger('stormProfilerPanelOff', {panel: target.data('panel'), button: target});
                     panel.data('active', 0).slideUp().promise().done(function(){
                         target
                             .removeClass('stormProfilerButtonActive')
-                            .removeClass('stormProfilerFlash');
-                        target
+                            .removeClass('stormProfilerFlash')
                             .find('.fa-chevron-up')
                             .removeClass('fa-rotate-180');
                         panel.removeClass('stormProfilerPanelActive');
                         $('.stormProfilerButton').removeClass('stormProfilerDim');
                     });
-
-                    $(document).trigger('stormProfilerPanelOff', {panel: target.data('panel'), button: target})
                 }
             }
 

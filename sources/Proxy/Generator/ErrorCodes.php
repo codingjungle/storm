@@ -27,7 +27,7 @@ EOF;
 
         foreach ($methods as $m) {
             $body[] = <<<EOF
-    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('Languages'));
+    expectedArguments({$m['f']}, {$m['i']}, argumentsSet('ErrorCodes'));
 EOF;
         }
 
